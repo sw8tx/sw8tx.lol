@@ -3,8 +3,6 @@ import { useEffect, useState, useRef } from "react";
 
 const TARGET = new Date("2026-06-06T13:00:00");
 
-const OUTLINE_LOGO = `data:image/png;base64,`; // wird nicht mehr gebraucht
-
 function FlipUnit({ value, label }: { value: number; label: string }) {
   const [display, setDisplay] = useState(value);
   const [animKey, setAnimKey] = useState(0);
@@ -86,6 +84,7 @@ export default function Home() {
           animation: fadeUp 0.9s ease forwards 0.1s;
         }
         @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
         .eyebrow {
           font-family: 'Syne Mono', monospace;
           font-size: clamp(10px, 2.2vw, 13px);
@@ -93,7 +92,10 @@ export default function Home() {
           text-transform: uppercase;
           color: rgba(237,232,224,0.45);
           margin-bottom: 20px;
+          animation: fadeUp 0.9s ease forwards 0.3s;
+          opacity: 0;
         }
+
         .title {
           font-size: clamp(56px, 15vw, 132px);
           font-weight: 800;
@@ -101,12 +103,25 @@ export default function Home() {
           line-height: 0.9;
           color: #f5f0e8;
           text-shadow: 0 2px 40px rgba(245,240,232,0.06);
+          animation: float 4s ease-in-out infinite, fadeUp 0.9s ease forwards 0.4s;
+          opacity: 0;
+          cursor: default;
+          transition: text-shadow 0.3s ease;
         }
-        .title span { color: rgba(245,240,232,0.2); }
+        .title:hover {
+          text-shadow: 0 0 60px rgba(245,240,232,0.18), 0 2px 40px rgba(245,240,232,0.06);
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-8px); }
+        }
+
         .divider-line {
           width: 1px; height: 44px;
           background: linear-gradient(to bottom, transparent, rgba(237,232,224,0.2), transparent);
           margin: 28px auto;
+          animation: fadeUp 0.9s ease forwards 0.5s;
+          opacity: 0;
         }
         .releasing-label {
           font-family: 'Syne Mono', monospace;
@@ -115,11 +130,16 @@ export default function Home() {
           text-transform: uppercase;
           color: rgba(237,232,224,0.38);
           margin-bottom: 32px;
+          animation: fadeUp 0.9s ease forwards 0.55s;
+          opacity: 0;
         }
+
         .countdown {
           display: flex;
           gap: clamp(4px, 1.5vw, 12px);
           align-items: flex-start;
+          animation: fadeUp 0.9s ease forwards 0.65s;
+          opacity: 0;
         }
         .unit {
           display: flex; flex-direction: column;
@@ -136,6 +156,17 @@ export default function Home() {
           align-items: center;
           justify-content: center;
           overflow: hidden;
+          transition: transform 0.25s cubic-bezier(0.22,1,0.36,1),
+                      border-color 0.25s ease,
+                      box-shadow 0.25s ease;
+          cursor: default;
+        }
+        .card:hover {
+          transform: translateY(-5px);
+          border-color: rgba(237,232,224,0.28);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.5),
+                      0 0 0 1px rgba(237,232,224,0.12),
+                      inset 0 1px 0 rgba(255,255,255,0.06);
         }
         .num {
           font-family: 'Syne', sans-serif;
@@ -144,6 +175,10 @@ export default function Home() {
           color: #f5f0e8;
           line-height: 1;
           letter-spacing: -0.02em;
+          transition: color 0.25s ease;
+        }
+        .card:hover .num {
+          color: #ffffff;
         }
         .num.animate {
           animation: slideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -158,6 +193,10 @@ export default function Home() {
           letter-spacing: 0.25em;
           text-transform: uppercase;
           color: rgba(237,232,224,0.28);
+          transition: color 0.25s ease;
+        }
+        .unit:hover .unit-label {
+          color: rgba(237,232,224,0.5);
         }
         .sep {
           font-family: 'Syne', sans-serif;
@@ -173,6 +212,8 @@ export default function Home() {
           letter-spacing: 0.28em;
           color: rgba(237,232,224,0.22);
           text-transform: uppercase;
+          animation: fadeUp 0.9s ease forwards 0.8s;
+          opacity: 0;
         }
         .footer {
           position: fixed; bottom: 24px;
@@ -183,6 +224,8 @@ export default function Home() {
           color: rgba(237,232,224,0.16);
           text-transform: uppercase;
           z-index: 10;
+          animation: fadeUp 0.9s ease forwards 1s;
+          opacity: 0;
         }
         .corner {
           position: fixed;
@@ -203,7 +246,7 @@ export default function Home() {
 
       <main className="wrapper">
         <p className="eyebrow">Sparkle&apos;s official website</p>
-        <h1 className="title">Sparkle<span>.</span></h1>
+        <h1 className="title">Sparkle</h1>
         <div className="divider-line" />
         <p className="releasing-label">Releasing in</p>
 
