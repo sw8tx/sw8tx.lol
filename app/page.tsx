@@ -11,10 +11,35 @@ const tags = [
 ];
 
 const footer = {
-  Products: ["Discord Boosts", "Nitro", "Giftlinks", "Nitro Accounts", "Partner Programm", "Members"],
-  Company: ["About Us", "Contact", "Blog", "Careers"],
-  Support: ["Help Center", "Terms of Service", "Privacy Policy", "Refund Policy", "Status"],
-  Community: ["Discord Server", "Twitter", "Tiktok", "Reviews", "FAQ", "Partners"],
+  Products: [
+    { label: "Discord Boosts", href: "#" },
+    { label: "Nitro", href: "#" },
+    { label: "Giftlinks", href: "#" },
+    { label: "Nitro Accounts", href: "#" },
+    { label: "Partner Programm", href: "#" },
+    { label: "Members", href: "#" },
+  ],
+  Company: [
+    { label: "About Us", href: "#about" },
+    { label: "Contact", href: "#" },
+    { label: "Blog", href: "#" },
+    { label: "Careers", href: "#" },
+  ],
+  Support: [
+    { label: "Help Center", href: "#" },
+    { label: "Terms of Service", href: "/tos" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Refund Policy", href: "#" },
+    { label: "Status", href: "#" },
+  ],
+  Community: [
+    { label: "Discord Server", href: "#" },
+    { label: "Twitter", href: "#" },
+    { label: "Tiktok", href: "#" },
+    { label: "Reviews", href: "#" },
+    { label: "FAQ", href: "#" },
+    { label: "Partners", href: "#" },
+  ],
 };
 
 export default function Home() {
@@ -27,36 +52,16 @@ export default function Home() {
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Syne+Mono&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body {
-          font-family: 'Syne', sans-serif;
-          color: #ede8e0;
-          background: #0e0c0a;
-          overflow-x: hidden;
-        }
-
-        /* NAV */
+        body { font-family: 'Syne', sans-serif; color: #ede8e0; background: #0e0c0a; overflow-x: hidden; }
         nav {
-          position: fixed; top: 0; left: 0; right: 0;
-          z-index: 100;
-          display: flex; align-items: center;
-          padding: 18px 32px;
+          position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+          display: flex; align-items: center; padding: 18px 32px;
           background: linear-gradient(to bottom, rgba(14,12,10,0.95) 0%, transparent 100%);
           backdrop-filter: blur(10px);
         }
-        .nav-logo-wrap {
-          width: 36px; height: 36px;
-          border-radius: 6px;
-          overflow: hidden;
-          perspective: 600px;
-        }
-        .nav-logo-inner {
-          width: 100%; height: 100%;
-          animation: spin3d 6s ease-in-out infinite;
-          transform-style: preserve-3d;
-        }
-        .nav-logo-inner:hover {
-          animation: spin3d-fast 0.6s ease-in-out infinite;
-        }
+        .nav-logo-wrap { width: 36px; height: 36px; border-radius: 6px; overflow: hidden; perspective: 600px; }
+        .nav-logo-inner { width: 100%; height: 100%; animation: spin3d 6s ease-in-out infinite; transform-style: preserve-3d; }
+        .nav-logo-inner:hover { animation: spin3d-fast 0.6s ease-in-out infinite; }
         @keyframes spin3d {
           0%   { transform: rotateY(0deg); }
           20%  { transform: rotateY(180deg); }
@@ -72,205 +77,55 @@ export default function Home() {
           75%  { transform: rotateY(270deg) rotateX(-15deg); }
           100% { transform: rotateY(360deg) rotateX(0deg); }
         }
-        .nav-name {
-          font-weight: 800; font-size: 15px;
-          letter-spacing: 0.06em;
-          color: rgba(237,232,224,0.7);
-          margin-left: 12px;
-        }
-        .nav-right {
-          margin-left: auto;
-          display: flex; gap: 24px;
-        }
-        .nav-link {
-          font-family: 'Syne Mono', monospace;
-          font-size: 10px; letter-spacing: 0.25em;
-          text-transform: uppercase;
-          color: rgba(237,232,224,0.3);
-          text-decoration: none;
-          transition: color 0.2s;
-        }
+        .nav-name { font-weight: 800; font-size: 15px; letter-spacing: 0.06em; color: rgba(237,232,224,0.7); margin-left: 12px; }
+        .nav-right { margin-left: auto; display: flex; gap: 24px; }
+        .nav-link { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(237,232,224,0.3); text-decoration: none; transition: color 0.2s; }
         .nav-link:hover { color: rgba(237,232,224,0.7); }
-
-        /* HERO */
-        .hero {
-          min-height: 100vh;
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center;
-          text-align: center;
-          padding: 100px 1.5rem 2rem;
-          position: relative;
-        }
-        .bg-glow {
-          position: absolute; top: -20%; left: 50%;
-          transform: translateX(-50%);
-          width: 700px; height: 500px;
-          background: radial-gradient(ellipse, rgba(196,168,120,0.07) 0%, transparent 70%);
-          pointer-events: none;
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(14px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .eyebrow {
-          font-family: 'Syne Mono', monospace;
-          font-size: clamp(10px, 2vw, 12px);
-          letter-spacing: 0.35em; text-transform: uppercase;
-          color: rgba(237,232,224,0.4);
-          margin-bottom: 20px;
-          opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s;
-        }
-        .title {
-          font-size: clamp(64px, 16vw, 144px);
-          font-weight: 800; letter-spacing: -0.02em; line-height: 0.9;
-          color: #f5f0e8;
-          text-shadow: 0 2px 60px rgba(245,240,232,0.06);
-          animation: float 4s ease-in-out infinite, fadeUp 0.8s ease forwards 0.3s;
-          opacity: 0; cursor: default;
-          transition: text-shadow 0.3s;
-        }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 1.5rem 2rem; position: relative; }
+        .bg-glow { position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 700px; height: 500px; background: radial-gradient(ellipse, rgba(196,168,120,0.07) 0%, transparent 70%); pointer-events: none; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        .eyebrow { font-family: 'Syne Mono', monospace; font-size: clamp(10px, 2vw, 12px); letter-spacing: 0.35em; text-transform: uppercase; color: rgba(237,232,224,0.4); margin-bottom: 20px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s; }
+        .title { font-size: clamp(64px, 16vw, 144px); font-weight: 800; letter-spacing: -0.02em; line-height: 0.9; color: #f5f0e8; text-shadow: 0 2px 60px rgba(245,240,232,0.06); animation: float 4s ease-in-out infinite, fadeUp 0.8s ease forwards 0.3s; opacity: 0; cursor: default; transition: text-shadow 0.3s; }
         .title:hover { text-shadow: 0 0 80px rgba(245,240,232,0.18), 0 2px 40px rgba(245,240,232,0.06); }
-        @keyframes float {
-          0%,100% { transform: translateY(0); }
-          50%      { transform: translateY(-8px); }
-        }
-        .divider-line {
-          width: 1px; height: 44px;
-          background: linear-gradient(to bottom, transparent, rgba(237,232,224,0.2), transparent);
-          margin: 28px auto;
-          opacity: 0; animation: fadeUp 0.8s ease forwards 0.45s;
-        }
-        .scroll-hint {
-          margin-top: 64px;
-          display: flex; flex-direction: column; align-items: center; gap: 8px;
-          opacity: 0; animation: fadeUp 0.8s ease forwards 0.9s;
-          cursor: pointer; text-decoration: none;
-        }
-        .scroll-hint span {
-          font-family: 'Syne Mono', monospace; font-size: 9px;
-          letter-spacing: 0.3em; text-transform: uppercase;
-          color: rgba(237,232,224,0.2);
-        }
-        .scroll-arrow {
-          width: 1px; height: 32px;
-          background: linear-gradient(to bottom, rgba(237,232,224,0.2), transparent);
-          animation: arrowPulse 2s ease-in-out infinite;
-        }
-        @keyframes arrowPulse {
-          0%,100% { opacity: 0.4; } 50% { opacity: 1; }
-        }
-
-        /* ABOUT */
-        .about {
-          max-width: 720px; margin: 0 auto;
-          padding: 100px 2rem 80px;
-        }
-        .section-tag {
-          font-family: 'Syne Mono', monospace; font-size: 10px;
-          letter-spacing: 0.35em; text-transform: uppercase;
-          color: rgba(237,232,224,0.3); margin-bottom: 20px; display: block;
-        }
-        .about-heading {
-          font-size: clamp(32px, 6vw, 56px); font-weight: 800;
-          letter-spacing: -0.02em; line-height: 1.05;
-          color: #f5f0e8; margin-bottom: 32px;
-        }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .divider-line { width: 1px; height: 44px; background: linear-gradient(to bottom, transparent, rgba(237,232,224,0.2), transparent); margin: 28px auto; opacity: 0; animation: fadeUp 0.8s ease forwards 0.45s; }
+        .scroll-hint { margin-top: 64px; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.9s; cursor: pointer; text-decoration: none; }
+        .scroll-hint span { font-family: 'Syne Mono', monospace; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(237,232,224,0.2); }
+        .scroll-arrow { width: 1px; height: 32px; background: linear-gradient(to bottom, rgba(237,232,224,0.2), transparent); animation: arrowPulse 2s ease-in-out infinite; }
+        @keyframes arrowPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .about { max-width: 720px; margin: 0 auto; padding: 100px 2rem 80px; }
+        .section-tag { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(237,232,224,0.3); margin-bottom: 20px; display: block; }
+        .about-heading { font-size: clamp(32px, 6vw, 56px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; color: #f5f0e8; margin-bottom: 32px; }
         .about-heading em { font-style: normal; color: rgba(245,240,232,0.35); }
         .about-body { font-size: clamp(15px, 2.2vw, 17px); font-weight: 400; line-height: 1.75; color: rgba(237,232,224,0.6); }
         .about-body p + p { margin-top: 20px; }
         .about-body strong { color: rgba(237,232,224,0.85); font-weight: 700; }
         .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px; }
-        .tag {
-          font-family: 'Syne Mono', monospace; font-size: 10px;
-          letter-spacing: 0.2em; text-transform: uppercase;
-          color: rgba(237,232,224,0.45);
-          border: 1px solid rgba(237,232,224,0.1);
-          border-radius: 4px; padding: 6px 14px;
-          transition: border-color 0.2s, color 0.2s, transform 0.2s;
-          cursor: default;
-        }
+        .tag { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(237,232,224,0.45); border: 1px solid rgba(237,232,224,0.1); border-radius: 4px; padding: 6px 14px; transition: border-color 0.2s, color 0.2s, transform 0.2s; cursor: default; }
         .tag:hover { border-color: rgba(237,232,224,0.3); color: rgba(237,232,224,0.8); transform: translateY(-2px); }
-
-        /* OFFERS */
         .offers { max-width: 720px; margin: 0 auto; padding: 0 2rem 100px; }
         .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px; }
-        .offer-card {
-          background: #131109; border: 1px solid rgba(237,232,224,0.07);
-          border-radius: 10px; padding: 24px 20px;
-          transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
-          cursor: default;
-        }
+        .offer-card { background: #131109; border: 1px solid rgba(237,232,224,0.07); border-radius: 10px; padding: 24px 20px; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; cursor: default; }
         .offer-card:hover { border-color: rgba(237,232,224,0.18); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
         .offer-icon { font-size: 22px; margin-bottom: 14px; display: block; }
         .offer-title { font-weight: 800; font-size: 15px; color: #f5f0e8; margin-bottom: 8px; }
         .offer-desc { font-size: 13px; line-height: 1.6; color: rgba(237,232,224,0.45); }
-
-        /* FOOTER */
-        .site-footer {
-          background: #080706;
-          border-top: 1px solid rgba(237,232,224,0.07);
-          padding: 64px 2rem 32px;
-        }
-        .footer-grid {
-          max-width: 960px; margin: 0 auto;
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 40px 24px;
-          padding-bottom: 48px;
-          border-bottom: 1px solid rgba(237,232,224,0.07);
-        }
-        @media (max-width: 640px) {
-          .footer-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        .footer-col-title {
-          font-weight: 800; font-size: 13px;
-          color: #f5f0e8; margin-bottom: 16px;
-          letter-spacing: 0.02em;
-        }
+        .site-footer { background: #080706; border-top: 1px solid rgba(237,232,224,0.07); padding: 64px 2rem 32px; }
+        .footer-grid { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px 24px; padding-bottom: 48px; border-bottom: 1px solid rgba(237,232,224,0.07); }
+        @media (max-width: 640px) { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
+        .footer-col-title { font-weight: 800; font-size: 13px; color: #f5f0e8; margin-bottom: 16px; letter-spacing: 0.02em; }
         .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-        .footer-col ul li a {
-          font-size: 13px; color: rgba(237,232,224,0.4);
-          text-decoration: none;
-          transition: color 0.2s;
-        }
+        .footer-col ul li a { font-size: 13px; color: rgba(237,232,224,0.4); text-decoration: none; transition: color 0.2s; }
         .footer-col ul li a:hover { color: rgba(237,232,224,0.8); }
-        .footer-bottom {
-          max-width: 960px; margin: 0 auto;
-          display: flex; align-items: center; justify-content: space-between;
-          padding-top: 28px;
-          flex-wrap: wrap; gap: 16px;
-        }
-        .footer-brand {
-          display: flex; align-items: center; gap: 10px;
-        }
-        .footer-brand-logo {
-          width: 28px; height: 28px; border-radius: 4px; overflow: hidden; opacity: 0.7;
-        }
-        .footer-brand-name {
-          font-weight: 800; font-size: 14px;
-          color: rgba(237,232,224,0.5);
-          letter-spacing: 0.04em;
-        }
-        .footer-copy {
-          font-family: 'Syne Mono', monospace; font-size: 10px;
-          letter-spacing: 0.15em; color: rgba(237,232,224,0.25);
-        }
-        .footer-links {
-          display: flex; gap: 20px;
-        }
-        .footer-links a {
-          font-family: 'Syne Mono', monospace; font-size: 10px;
-          letter-spacing: 0.15em; text-transform: uppercase;
-          color: rgba(237,232,224,0.3); text-decoration: none;
-          transition: color 0.2s;
-        }
+        .footer-bottom { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding-top: 28px; flex-wrap: wrap; gap: 16px; }
+        .footer-brand { display: flex; align-items: center; gap: 10px; }
+        .footer-brand-logo { width: 28px; height: 28px; border-radius: 4px; overflow: hidden; opacity: 0.7; }
+        .footer-brand-name { font-weight: 800; font-size: 14px; color: rgba(237,232,224,0.5); letter-spacing: 0.04em; }
+        .footer-copy { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: rgba(237,232,224,0.25); }
+        .footer-links { display: flex; gap: 20px; }
+        .footer-links a { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(237,232,224,0.3); text-decoration: none; transition: color 0.2s; }
         .footer-links a:hover { color: rgba(237,232,224,0.7); }
-
-        /* CORNER DECORATIONS */
-        .corner {
-          position: fixed; width: 14px; height: 14px;
-          border-color: rgba(237,232,224,0.1); border-style: solid; z-index: 50;
-        }
+        .corner { position: fixed; width: 14px; height: 14px; border-color: rgba(237,232,224,0.1); border-style: solid; z-index: 50; }
         .corner.tl { top: 20px; left: 20px; border-width: 1px 0 0 1px; }
         .corner.tr { top: 20px; right: 20px; border-width: 1px 1px 0 0; }
         .corner.bl { bottom: 20px; left: 20px; border-width: 0 0 1px 1px; }
@@ -345,7 +200,7 @@ export default function Home() {
               <div className="footer-col-title">{col}</div>
               <ul>
                 {items.map(item => (
-                  <li key={item}><a href="#">{item}</a></li>
+                  <li key={item.label}><a href={item.href}>{item.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -360,8 +215,8 @@ export default function Home() {
           </div>
           <span className="footer-copy">&copy; {new Date().getFullYear()} Sparkle (sw8tx) — All rights reserved</span>
           <div className="footer-links">
-            <a href="#">Terms</a>
-            <a href="#">Privacy</a>
+            <a href="/tos">Terms</a>
+            <a href="/privacy">Privacy</a>
             <a href="#">Status</a>
           </div>
         </div>
