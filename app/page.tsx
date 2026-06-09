@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const emails = ["info@sw8tx.lol", "info@tylerosthoff.xyz"];
 
@@ -20,7 +20,7 @@ const showcase = [
   {
     id: "brand",
     kicker: "02 / Brand",
-    title: "Ocean Blue Kits",
+    title: "Brand Identity Kits",
     body: "Logos, palettes, type systems and launch-ready social assets.",
     left: 68,
     top: 16,
@@ -68,6 +68,10 @@ const services = [
   "Portfolio Systems",
   "UI/UX",
   "Design Cleanup",
+  "Shop Interfaces",
+  "Animated Launches",
+  "Creator Pages",
+  "Visual Systems",
 ];
 
 const process = [
@@ -77,21 +81,18 @@ const process = [
   ["04", "Launch", "Final QA, copy pass, contact routes and handoff-ready files."],
 ];
 
-type DragOffsets = Record<string, { x: number; y: number }>;
+const heroLines = [
+  ["Design"],
+  ["that", "moves"],
+];
+
+const marqueeWords = [...services, ...services, ...services];
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [popupOpen, setPopupOpen] = useState(false);
   const [copied, setCopied] = useState("");
-  const [activeCard, setActiveCard] = useState<string | null>(null);
-  const [dragOffsets, setDragOffsets] = useState<DragOffsets>({});
-  const dragRef = useRef<{
-    id: string;
-    startX: number;
-    startY: number;
-    originX: number;
-    originY: number;
-  } | null>(null);
+  const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -117,49 +118,6 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    const onMove = (event: PointerEvent) => {
-      const drag = dragRef.current;
-      if (!drag) return;
-
-      const nextX = drag.originX + event.clientX - drag.startX;
-      const nextY = drag.originY + event.clientY - drag.startY;
-
-      setDragOffsets((current) => ({
-        ...current,
-        [drag.id]: { x: nextX, y: nextY },
-      }));
-    };
-
-    const onUp = () => {
-      dragRef.current = null;
-      setActiveCard(null);
-    };
-
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    window.addEventListener("pointercancel", onUp);
-
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-      window.removeEventListener("pointercancel", onUp);
-    };
-  }, []);
-
-  const startDrag = (event: ReactPointerEvent<HTMLButtonElement>, id: string) => {
-    const current = dragOffsets[id] ?? { x: 0, y: 0 };
-    dragRef.current = {
-      id,
-      startX: event.clientX,
-      startY: event.clientY,
-      originX: current.x,
-      originY: current.y,
-    };
-    setActiveCard(id);
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
-
   const copyEmail = async (email: string) => {
     try {
       await navigator.clipboard.writeText(email);
@@ -184,7 +142,7 @@ export default function Home() {
         html { scroll-behavior: smooth; }
         body {
           margin: 0;
-          background: #e8f5ff;
+          background: #f2fbff;
           color: #04162f;
           font-family: "Space Grotesk", Arial, sans-serif;
           overflow-x: hidden;
@@ -192,10 +150,14 @@ export default function Home() {
         button, a { font: inherit; }
 
         :root {
-          --sky: #e8f5ff;
+          --sky: #f2fbff;
           --blue: #0050d8;
           --blue-soft: #9bd3ff;
           --blue-mid: #4db6e5;
+          --coral: #ff4f87;
+          --green: #19ad76;
+          --gold: #ffb12b;
+          --violet: #7768ff;
           --ink: #04162f;
           --muted: rgba(4, 22, 47, 0.62);
           --line: rgba(0, 80, 216, 0.16);
@@ -209,11 +171,33 @@ export default function Home() {
           min-height: 100vh;
           position: relative;
           background:
-            radial-gradient(circle at var(--mx) var(--my), rgba(0, 80, 216, 0.18), transparent 260px),
+            radial-gradient(circle at var(--mx) var(--my), rgba(0, 80, 216, 0.16), transparent 260px),
+            radial-gradient(circle at 14% 78%, rgba(255, 79, 135, 0.13), transparent 260px),
+            radial-gradient(circle at 86% 22%, rgba(25, 173, 118, 0.13), transparent 280px),
             linear-gradient(rgba(0, 80, 216, 0.11) 1px, transparent 1px),
             linear-gradient(90deg, rgba(0, 80, 216, 0.11) 1px, transparent 1px),
             var(--sky);
-          background-size: auto, 72px 72px, 72px 72px, auto;
+          background-size: auto, auto, auto, 72px 72px, 72px 72px, auto;
+        }
+        .site::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          background:
+            linear-gradient(115deg, transparent 0 34%, rgba(255,255,255,0.42) 48%, transparent 62%),
+            linear-gradient(180deg, transparent, rgba(0,80,216,0.05));
+          transform: translateX(-120%);
+          animation: pageSweep 8s cubic-bezier(.16,1,.3,1) infinite;
+        }
+        .hero,
+        .marquee,
+        .section,
+        .contact,
+        .footer {
+          position: relative;
+          z-index: 1;
         }
 
         .nav {
@@ -247,10 +231,21 @@ export default function Home() {
           display: grid;
           place-items: center;
           border-radius: 8px;
-          background: var(--blue);
+          background: linear-gradient(135deg, var(--blue), var(--coral), var(--green));
           box-shadow: 0 12px 34px rgba(0, 80, 216, 0.25);
           overflow: hidden;
-          animation: markPulse 4s ease-in-out infinite;
+          animation: markPulse 5s ease-in-out infinite;
+          transform-style: preserve-3d;
+        }
+        .brand-mark img {
+          width: 34px;
+          height: 34px;
+          animation: logoSpin 7s linear infinite;
+          transform-origin: center;
+          will-change: transform;
+        }
+        .brand:hover .brand-mark img {
+          animation-duration: 900ms;
         }
         .brand-name { font-size: 18px; }
         .nav-links {
@@ -277,8 +272,8 @@ export default function Home() {
         .nav-button:hover {
           transform: translateY(-2px);
           color: #fff;
-          background: var(--blue);
-          box-shadow: 0 14px 30px rgba(0, 80, 216, 0.24);
+          background: var(--ink);
+          box-shadow: 0 14px 30px rgba(4, 22, 47, 0.22);
         }
 
         .hero {
@@ -299,6 +294,16 @@ export default function Home() {
           transform: translate3d(-34vw, 10vh, 0);
           animation: orbitSlow 18s linear infinite;
         }
+        .hero::after {
+          content: "";
+          position: absolute;
+          inset: 14% 8%;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 79, 135, 0.22);
+          transform: rotate(-10deg) scaleX(.2);
+          opacity: 0;
+          animation: buildRing 1200ms cubic-bezier(.16,1,.3,1) forwards 620ms;
+        }
         .hero-copy {
           position: relative;
           z-index: 10;
@@ -311,7 +316,7 @@ export default function Home() {
           align-items: center;
           gap: 10px;
           margin: 0 0 18px;
-          color: var(--blue);
+          color: var(--coral);
           font-family: var(--mono);
           font-size: 12px;
           font-weight: 700;
@@ -328,6 +333,8 @@ export default function Home() {
           background: currentColor;
         }
         .hero-title {
+          display: grid;
+          gap: 0.02em;
           margin: 0;
           color: var(--blue);
           font-size: clamp(58px, 14vw, 180px);
@@ -336,18 +343,31 @@ export default function Home() {
           letter-spacing: 0;
           text-transform: uppercase;
         }
-        .hero-title span {
-          display: block;
-          overflow: hidden;
+        .title-line {
+          display: flex;
+          justify-content: center;
+          gap: 0.16em;
+          flex-wrap: wrap;
+          overflow: visible;
         }
-        .hero-title strong {
-          display: block;
-          transform: translateY(110%);
-          animation: revealTitle 940ms cubic-bezier(.16,1,.3,1) forwards;
+        .title-word {
+          display: inline-flex;
+          overflow: visible;
         }
-        .hero-title span:nth-child(2) strong {
+        .title-letter {
+          display: inline-block;
+          opacity: 0;
+          transform: translate3d(var(--letter-x), var(--letter-y), 0) rotate(var(--letter-r)) scale(.72);
+          filter: blur(12px);
+          animation: letterFly 940ms cubic-bezier(.16,1,.3,1) forwards;
+          animation-delay: calc(130ms + var(--letter-delay));
+          will-change: transform, opacity, filter;
+        }
+        .title-line:nth-child(2) .title-letter {
           color: var(--ink);
-          animation-delay: 120ms;
+        }
+        .title-line:nth-child(2) .title-word:nth-child(2) .title-letter {
+          color: var(--coral);
         }
         .hero-text {
           max-width: 690px;
@@ -408,44 +428,49 @@ export default function Home() {
           padding: 16px;
           color: var(--ink);
           text-align: left;
-          cursor: grab;
+          cursor: pointer;
           user-select: none;
-          touch-action: none;
+          touch-action: manipulation;
           transform:
-            translate3d(var(--dx), var(--dy), 0)
             rotate(var(--rotate))
             translateY(calc(var(--float) * 1px));
           box-shadow: 0 22px 50px rgba(0, 80, 216, 0.18);
-          transition: box-shadow 180ms ease, scale 180ms ease, border-color 180ms ease;
+          transition: transform 220ms ease, box-shadow 220ms ease, scale 220ms ease, border-color 220ms ease, filter 220ms ease;
           animation: cardIn 780ms cubic-bezier(.16,1,.3,1) both, floatCard 5.4s ease-in-out infinite;
           animation-delay: var(--delay), calc(var(--delay) + 780ms);
         }
-        .hero-card:active {
-          cursor: grabbing;
-          scale: 1.04;
+        .hero-card:hover,
+        .hero-card.active {
+          transform: rotate(var(--rotate)) translateY(-14px) scale(1.045);
           border-color: rgba(0, 80, 216, 0.48);
-          box-shadow: 0 34px 70px rgba(0, 80, 216, 0.28);
+          box-shadow: 0 34px 70px rgba(0, 80, 216, 0.24);
+          filter: saturate(1.08);
+        }
+        .hero-card:focus-visible {
+          outline: 3px solid rgba(255, 79, 135, 0.42);
+          outline-offset: 4px;
         }
         .hero-card.active { z-index: 35; }
         .hero-card.solid {
           color: #fff;
           background:
-            radial-gradient(circle at 20% 0%, rgba(255,255,255,0.28), transparent 34%),
-            var(--blue);
+            radial-gradient(circle at 20% 0%, rgba(255,255,255,0.3), transparent 34%),
+            linear-gradient(135deg, var(--blue), var(--violet));
         }
         .hero-card.pale {
           background:
-            linear-gradient(135deg, rgba(255,255,255,0.96), rgba(155,211,255,0.92)),
+            linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255, 177, 43, 0.32), rgba(155,211,255,0.72)),
             var(--sky);
         }
         .hero-card.glass {
           background:
-            linear-gradient(145deg, rgba(255,255,255,0.84), rgba(232,245,255,0.68));
+            linear-gradient(145deg, rgba(255,255,255,0.86), rgba(25,173,118,0.14), rgba(232,245,255,0.72));
           backdrop-filter: blur(16px);
         }
         .hero-card.image {
           background:
-            radial-gradient(circle at 80% 20%, rgba(0,80,216,0.2), transparent 38%),
+            radial-gradient(circle at 80% 20%, rgba(255,79,135,0.22), transparent 38%),
+            radial-gradient(circle at 20% 90%, rgba(0,80,216,0.2), transparent 42%),
             rgba(255,255,255,0.88);
         }
         .card-top {
@@ -468,6 +493,7 @@ export default function Home() {
           padding: 5px;
           border-radius: 999px;
           background: rgba(255,255,255,0.34);
+          animation: signalBlink 2.2s ease-in-out infinite;
         }
         .card-handle span {
           width: 3px;
@@ -503,20 +529,34 @@ export default function Home() {
           background: rgba(255,255,255,0.38);
           backdrop-filter: blur(12px);
         }
+        .marquee-reverse {
+          border-top: 0;
+          background: rgba(255,255,255,0.26);
+        }
         .marquee-track {
           display: flex;
           width: max-content;
-          animation: marquee 24s linear infinite;
+          animation: marquee 38s linear infinite;
+          will-change: transform;
+        }
+        .marquee-reverse .marquee-track {
+          animation-direction: reverse;
+          animation-duration: 44s;
+        }
+        .marquee:hover .marquee-track {
+          animation-play-state: paused;
         }
         .marquee-row {
+          flex: 0 0 auto;
           display: flex;
           align-items: center;
+          min-width: max-content;
         }
         .marquee-item {
           display: inline-flex;
           align-items: center;
-          gap: 22px;
-          padding: 16px 22px;
+          gap: 18px;
+          padding: 15px 24px;
           color: var(--blue);
           font-family: var(--mono);
           font-size: 12px;
@@ -529,7 +569,8 @@ export default function Home() {
           width: 7px;
           height: 7px;
           border-radius: 50%;
-          background: var(--blue-mid);
+          background: var(--coral);
+          box-shadow: 0 0 18px rgba(255, 79, 135, 0.62);
         }
 
         .section {
@@ -560,7 +601,7 @@ export default function Home() {
           font-weight: 800;
           letter-spacing: 0;
         }
-        .section-title .blue { color: var(--blue); }
+        .section-title .accent-text { color: var(--blue); }
         .section-text {
           margin: 0;
           color: var(--muted);
@@ -958,12 +999,35 @@ export default function Home() {
           <div className="hero-copy" style={{ transform: `translateY(${-scrollY * 0.05}px)` }}>
             <p className="eyebrow">Web Designer and Frontend Developer</p>
             <h1 className="hero-title">
-              <span><strong>Design</strong></span>
-              <span><strong>that moves</strong></span>
+              {heroLines.map((line, lineIndex) => (
+                <span className="title-line" key={line.join("-")}>
+                  {line.map((word, wordIndex) => (
+                    <span className="title-word" key={word}>
+                      {word.split("").map((letter, letterIndex) => {
+                        const direction = (letterIndex + lineIndex + wordIndex) % 2 === 0 ? -1 : 1;
+                        return (
+                          <span
+                            className="title-letter"
+                            key={`${word}-${letter}-${letterIndex}`}
+                            style={{
+                              "--letter-delay": `${lineIndex * 180 + wordIndex * 120 + letterIndex * 42}ms`,
+                              "--letter-x": `${direction * (18 + letterIndex * 4)}px`,
+                              "--letter-y": `${-34 + (letterIndex % 3) * 21}px`,
+                              "--letter-r": `${direction * (10 + letterIndex * 2)}deg`,
+                            } as CSSProperties}
+                          >
+                            {letter}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  ))}
+                </span>
+              ))}
             </h1>
             <p className="hero-text">
-              I am Tyler / sw8tx, building blue-toned websites, animated interfaces,
-              portfolio systems and clean Next.js experiences for brands that need to feel alive.
+              I am Tyler / sw8tx, building custom websites, animated interfaces,
+              portfolio systems and clean Next.js experiences for brands that need their own look.
             </p>
             <div className="hero-actions">
               <a className="button primary" href={`mailto:${emails[0]}`}>
@@ -976,23 +1040,21 @@ export default function Home() {
             </div>
           </div>
 
-          {showcase.map((card, index) => {
-            const offset = dragOffsets[card.id] ?? { x: 0, y: 0 };
-            return (
+          {showcase.map((card, index) => (
               <button
                 key={card.id}
                 type="button"
-                className={`hero-card ${card.tone}${activeCard === card.id ? " active" : ""}`}
-                aria-label={`Move ${card.title} card`}
-                onPointerDown={(event) => startDrag(event, card.id)}
+                className={`hero-card ${card.tone}${activeShowcase === card.id ? " active" : ""}`}
+                aria-label={`Highlight ${card.title}`}
+                onClick={() => setActiveShowcase(card.id)}
                 style={{
                   "--left": card.left,
                   "--top": card.top,
                   "--rotate": `${card.rotate}deg`,
-                  "--dx": `${offset.x}px`,
-                  "--dy": `${offset.y}px`,
                   "--float": index % 2 === 0 ? -4 : 4,
                   "--delay": `${220 + index * 90}ms`,
+                  "--entry-x": `${index % 2 === 0 ? -80 : 80}px`,
+                  "--entry-y": `${index < 2 ? -70 : 70}px`,
                 } as CSSProperties}
               >
                 {card.tone === "image" && (
@@ -1009,15 +1071,26 @@ export default function Home() {
                 <h2>{card.title}</h2>
                 <p>{card.body}</p>
               </button>
-            );
-          })}
+          ))}
         </section>
 
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">
             {[0, 1].map((group) => (
               <div className="marquee-row" key={group}>
-                {services.map((service) => (
+                {marqueeWords.map((service, index) => (
+                  <span className="marquee-item" key={`${group}-${service}-${index}`}>{service}</span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="marquee marquee-reverse" aria-hidden="true">
+          <div className="marquee-track">
+            {[0, 1].map((group) => (
+              <div className="marquee-row" key={group}>
+                {marqueeWords.toReversed().map((service, index) => (
                   <span className="marquee-item" key={`${group}-${service}`}>{service}</span>
                 ))}
               </div>
@@ -1029,7 +1102,7 @@ export default function Home() {
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">About</p>
-              <h2 className="section-title">Blue, clean, <span className="blue">animated.</span></h2>
+              <h2 className="section-title">Clean, sharp, <span className="accent-text">animated.</span></h2>
             </div>
             <div className="reveal delay-1">
               <p className="section-text">
@@ -1050,7 +1123,7 @@ export default function Home() {
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">Process</p>
-              <h2 className="section-title">From idea to <span className="blue">live site.</span></h2>
+              <h2 className="section-title">From idea to <span className="accent-text">live site.</span></h2>
             </div>
             <div className="process reveal delay-1">
               {process.map(([num, title, body], index) => (
@@ -1070,11 +1143,11 @@ export default function Home() {
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">Playground</p>
-              <h2 className="section-title">Pieces you can <span className="blue">move.</span></h2>
+              <h2 className="section-title">Pieces that <span className="accent-text">build.</span></h2>
             </div>
             <p className="section-text reveal delay-1">
-              The cards in the hero are draggable, the layout reacts to the pointer, and the page
-              keeps small motion details running in the background. This is the direction:
+              The hero stacks itself in motion, the cards react when selected, and the page
+              keeps small animated details running in the background. The direction stays direct:
               designer portfolio first, useful contact flow always visible.
             </p>
           </div>
