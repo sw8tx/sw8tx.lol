@@ -68,7 +68,9 @@ export default function Privacy() {
           border-bottom: 1px solid rgba(237,232,224,0.06);
         }
         .nav-logo-wrap { width: 32px; height: 32px; border-radius: 5px; overflow: hidden; }
-        .nav-name { font-weight: 800; font-size: 15px; letter-spacing: 0.06em; color: rgba(237,232,224,0.7); margin-left: 10px; }
+        .nav-logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-name { font-weight: 800; font-size: 15px; letter-spacing: 0.06em; color: rgba(237,232,224,0.7); transition: color 0.2s; }
+        .nav-logo-link:hover .nav-name { color: rgba(237,232,224,1); }
         .nav-back {
           margin-left: auto; font-family: 'Syne Mono', monospace; font-size: 10px;
           letter-spacing: 0.25em; text-transform: uppercase; color: rgba(237,232,224,0.3);
@@ -105,10 +107,12 @@ export default function Privacy() {
       `}</style>
 
       <nav>
-        <div className="nav-logo-wrap">
-          <Image src="/logo.png" alt="Sparkle" width={32} height={32} style={{objectFit:"cover"}} />
-        </div>
-        <span className="nav-name">Sparkle</span>
+        <a href="https://sw8tx.lol" className="nav-logo-link">
+          <div className="nav-logo-wrap">
+            <Image src="/logo.png" alt="Sparkle" width={32} height={32} style={{objectFit:"cover"}} />
+          </div>
+          <span className="nav-name">Sparkle</span>
+        </a>
         <Link href="/" className="nav-back">← Back</Link>
       </nav>
 
