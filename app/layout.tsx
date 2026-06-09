@@ -2,20 +2,30 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sparkle's Portfolio & Shop",
-  description: "Hey, my name is Sparkle (sw8tx) — Rocket League freestyler, Roblox trader & limited seller, and Discord marketplace vendor. This is my official site where you can find everything I offer.",
+  title: "sw8tx / Tyler Osthoff - Web Designer",
+  description:
+    "Portfolio of sw8tx / Tyler Osthoff, a web designer and frontend developer building animated blue-toned websites. Contact info@sw8tx.lol or info@tylerosthoff.xyz.",
   openGraph: {
-    title: "Sparkle's Portfolio & Shop",
-    description: "Hey, my name is Sparkle (sw8tx) — Rocket League freestyler, Roblox trader & limited seller, and Discord marketplace vendor. This is my official site.",
+    title: "sw8tx / Tyler Osthoff - Web Designer",
+    description:
+      "Animated web design, frontend development, brand systems and portfolio builds by sw8tx / Tyler Osthoff.",
     url: "https://sw8tx.lol",
-    siteName: "Sparkle",
-    images: [{ url: "https://sw8tx.lol/logo.png", width: 1024, height: 1024, alt: "Sparkle Logo" }],
+    siteName: "sw8tx",
+    images: [
+      {
+        url: "https://sw8tx.lol/logo.png",
+        width: 1024,
+        height: 1024,
+        alt: "sw8tx Logo",
+      },
+    ],
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Sparkle's Portfolio & Shop",
-    description: "Rocket League freestyler · Roblox trader · Discord seller. Official site.",
+    title: "sw8tx / Tyler Osthoff - Web Designer",
+    description:
+      "Animated web design and frontend development. Contact info@sw8tx.lol or info@tylerosthoff.xyz.",
     images: ["https://sw8tx.lol/logo.png"],
   },
   icons: {
