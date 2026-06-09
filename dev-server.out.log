@@ -1,0 +1,17 @@
+
+> sw8tx@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3000
+
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://127.0.0.1:3000
+- Network:       http://127.0.0.1:3000
+✓ Ready in 696ms
+Creating turbopack project {
+  dir: 'C:\\Users\\Tyler\\Desktop\\Neuer Ordner\\sw8tx',
+  testMode: true
+}
+
+ GET / 200 in 3.1s (next.js: 2.8s, application-code: 249ms)
+ GET /tos 200 in 517ms (next.js: 416ms, application-code: 101ms)
+ GET /privacy 200 in 524ms (next.js: 411ms, application-code: 113ms)
+ GET /refund 200 in 445ms (next.js: 383ms, application-code: 62ms)
