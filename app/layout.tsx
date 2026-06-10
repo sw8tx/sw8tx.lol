@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sparkle - Web Designer",
   description:
-    "Portfolio of Sparkle, a web designer and frontend developer building animated, sky-toned websites. Contact info@sw8tx.lol or info@tylerosthoff.xyz.",
+    "Portfolio of Sparkle, a web designer and frontend developer building animated, sky-toned websites. Contact info@sw8tx.lol.",
   openGraph: {
     title: "Sparkle - Web Designer",
     description:
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Sparkle - Web Designer",
     description:
-      "Animated web design and frontend development. Contact info@sw8tx.lol or info@tylerosthoff.xyz.",
+      "Animated web design and frontend development. Contact info@sw8tx.lol.",
     images: ["https://sw8tx.lol/logo-transparent.png"],
   },
   icons: {

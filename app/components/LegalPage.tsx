@@ -20,7 +20,7 @@ type LegalPageProps = {
   sections: LegalSection[];
 };
 
-const sectionColors = ["#0050d8", "#19ad76", "#ff4f87", "#ff9d2e", "#5967ff"];
+const sectionColors = ["#0050d8", "#4db6e5", "#18bfa5", "#9bd3ff", "#2f9cff"];
 
 export function LegalPage({ tone, label, title, updated, intro, sections }: LegalPageProps) {
   const year = new Date().getFullYear();

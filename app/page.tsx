@@ -2,10 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
-const emails = ["info@sw8tx.lol", "info@tylerosthoff.xyz"];
+const primaryEmail = "info@sw8tx.lol";
+const discordHandle = "ylhj";
+const tiktokUrl = "https://www.tiktok.com/@sw8tx";
+const emails = [primaryEmail];
 
 type ShowcaseCard = {
   id: string;
@@ -30,6 +33,41 @@ type DragOffset = {
   y: number;
 };
 
+type ContactKind = "discord" | "tiktok" | "email";
+
+type ContactItem = {
+  kind: ContactKind;
+  label: string;
+  detail: string;
+  action: string;
+  href?: string;
+  copyValue?: string;
+};
+
+const contactItems: ContactItem[] = [
+  {
+    kind: "discord",
+    label: "Discord",
+    detail: discordHandle,
+    action: "Click to copy username",
+    copyValue: discordHandle,
+  },
+  {
+    kind: "tiktok",
+    label: "TikTok",
+    detail: "@sw8tx",
+    action: "Open profile",
+    href: tiktokUrl,
+  },
+  {
+    kind: "email",
+    label: "Email",
+    detail: primaryEmail,
+    action: "Click to copy email",
+    copyValue: primaryEmail,
+  },
+];
+
 const showcase: ShowcaseCard[] = [
   {
     id: "interfaces",
@@ -43,7 +81,7 @@ const showcase: ShowcaseCard[] = [
     mobileTop: 6,
     rotate: -7,
     color: "#0050d8",
-    color2: "#6b7cff",
+    color2: "#4db6e5",
     soft: "#dbefff",
     dark: true,
   },
@@ -58,9 +96,9 @@ const showcase: ShowcaseCard[] = [
     mobileLeft: 52,
     mobileTop: 11,
     rotate: 6,
-    color: "#ff9d2e",
-    color2: "#ffe6a1",
-    soft: "#fff6d9",
+    color: "#1aaed8",
+    color2: "#9bd3ff",
+    soft: "#e7f8ff",
   },
   {
     id: "motion",
@@ -73,7 +111,7 @@ const showcase: ShowcaseCard[] = [
     mobileLeft: 6,
     mobileTop: 42,
     rotate: 5,
-    color: "#19ad76",
+    color: "#18bfa5",
     color2: "#9bf1ff",
     soft: "#dffbf2",
   },
@@ -88,7 +126,7 @@ const showcase: ShowcaseCard[] = [
     mobileLeft: 52,
     mobileTop: 49,
     rotate: -6,
-    color: "#4b5bff",
+    color: "#0076f5",
     color2: "#0050d8",
     soft: "#e7ecff",
     dark: true,
@@ -104,9 +142,9 @@ const showcase: ShowcaseCard[] = [
     mobileLeft: 27,
     mobileTop: 74,
     rotate: 3,
-    color: "#ff4f87",
+    color: "#4db6e5",
     color2: "#9bd3ff",
-    soft: "#ffe8f0",
+    soft: "#eaf6ff",
     image: true,
   },
 ];
@@ -138,29 +176,29 @@ const process = [
     num: "02",
     title: "Design",
     body: "Visual systems in Figma-style thinking, then responsive layouts.",
-    color: "#ff9d2e",
-    soft: "#fff2cf",
+    color: "#4db6e5",
+    soft: "#eaf6ff",
   },
   {
     num: "03",
     title: "Build",
     body: "Next.js implementation with interaction polish and clean details.",
-    color: "#19ad76",
+    color: "#18bfa5",
     soft: "#ddfaef",
   },
   {
     num: "04",
     title: "Launch",
     body: "Final QA, copy pass, contact routes and handoff-ready files.",
-    color: "#ff4f87",
-    soft: "#ffe4ef",
+    color: "#0097d7",
+    soft: "#e7f8ff",
   },
 ];
 
 const proofStats = [
   { value: "20+", label: "Digital surfaces", color: "#0050d8" },
-  { value: "3+", label: "Years designing", color: "#19ad76" },
-  { value: "2", label: "Direct inboxes", color: "#ff4f87" },
+  { value: "3+", label: "Years designing", color: "#18bfa5" },
+  { value: "3", label: "Contact routes", color: "#4db6e5" },
 ];
 
 const heroLines = [
@@ -196,6 +234,70 @@ function writingText(parts: { text: string; accent?: boolean }[]) {
   ));
 }
 
+function ContactIcon({ kind }: { kind: ContactKind }) {
+  const commonProps = {
+    className: "connect-icon-svg",
+    viewBox: "0 0 24 24",
+    "aria-hidden": true,
+  };
+
+  if (kind === "discord") {
+    return (
+      <svg {...commonProps}>
+        <path
+          fill="currentColor"
+          d="M19.5 5.3A15.2 15.2 0 0 0 15.7 4l-.2.4c1.3.4 1.9.9 2.5 1.4-1.1-.6-2.2-1-3.4-1.2a12.8 12.8 0 0 0-5.3.2c-.3.1-1.5.4-3 1.2.3-.3 1.1-.9 2.6-1.5L8.7 4a15.1 15.1 0 0 0-3.8 1.3C2.5 8.8 1.8 12.2 2.1 15.5c1.6 1.2 3.1 1.9 4.6 2.4l1-1.7c-.6-.2-1.1-.5-1.6-.8l.4-.3c3 1.4 6.4 1.4 9.3 0l.4.3c-.5.3-1 .6-1.6.8l1 1.7c1.5-.5 3-1.2 4.6-2.4.4-3.9-.7-7.2-2.7-10.2ZM8.7 14.3c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8Zm6.6 0c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8Z"
+        />
+      </svg>
+    );
+  }
+
+  if (kind === "tiktok") {
+    return (
+      <svg {...commonProps}>
+        <path
+          fill="currentColor"
+          d="M16.3 3c.3 2.1 1.5 3.4 3.6 3.5v3.1a6.8 6.8 0 0 1-3.6-1.1v5.9c0 3-2 5.6-5.6 5.6A5.4 5.4 0 0 1 5 14.5C5 11.2 7.6 9 10.8 9c.4 0 .8 0 1.1.1v3.3a3.2 3.2 0 0 0-1.2-.2c-1.4 0-2.4.9-2.4 2.2 0 1.4 1 2.2 2.3 2.2 1.5 0 2.4-.8 2.4-2.7V3h3.3Z"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...commonProps} fill="none">
+      <path
+        d="M4.5 6.5h15v11h-15v-11Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+      <path
+        d="m5 7 7 5.4L19 7"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+    </svg>
+  );
+}
+
+function renderContactContent(item: ContactItem, copied: string): ReactNode {
+  return (
+    <>
+      <span className="connect-icon">
+        <ContactIcon kind={item.kind} />
+      </span>
+      <span className="connect-copy">
+        <strong>{item.label}</strong>
+        <span>{copied === item.copyValue ? "Copied" : item.action}</span>
+      </span>
+      <span className="connect-detail">{item.detail}</span>
+    </>
+  );
+}
+
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -209,11 +311,12 @@ export default function Home() {
     startY: number;
     origin: DragOffset;
   } | null>(null);
+  const popupDismissedRef = useRef(false);
   const year = new Date().getFullYear();
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
-    const revealEls = document.querySelectorAll(".reveal");
+    const revealEls = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -222,28 +325,50 @@ export default function Home() {
       },
       { threshold: 0.16, rootMargin: "0px 0px -48px 0px" },
     );
+    const popupTimer = window.setTimeout(() => {
+      if (!popupDismissedRef.current) setPopupOpen(true);
+    }, 5000);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      popupDismissedRef.current = true;
+      setPopupOpen(false);
+    };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    revealEls.forEach((el) => observer.observe(el));
+    window.addEventListener("keydown", onKeyDown);
+    revealEls.forEach((el, index) => {
+      el.style.setProperty("--reveal-delay", `${Math.min(index % 5, 4) * 70}ms`);
+      observer.observe(el);
+    });
     window.requestAnimationFrame(onScroll);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("keydown", onKeyDown);
+      window.clearTimeout(popupTimer);
       observer.disconnect();
     };
   }, []);
 
-  const copyEmail = async (email: string) => {
+  const closePopup = () => {
+    popupDismissedRef.current = true;
+    setPopupOpen(false);
+  };
+
+  const copyContact = async (value: string, fallbackHref?: string) => {
     try {
-      await navigator.clipboard.writeText(email);
-      setCopied(email);
+      await navigator.clipboard.writeText(value);
+      setCopied(value);
       window.setTimeout(() => setCopied(""), 2200);
     } catch {
+      if (!fallbackHref) return;
       const fallbackLink = document.createElement("a");
-      fallbackLink.href = `mailto:${email}`;
+      fallbackLink.href = fallbackHref;
       fallbackLink.click();
     }
   };
+
+  const copyEmail = (email: string) => copyContact(email, `mailto:${email}`);
 
   const updatePointer = (event: ReactPointerEvent<HTMLElement>) => {
     event.currentTarget.style.setProperty("--mx", `${event.clientX}px`);
@@ -511,7 +636,7 @@ export default function Home() {
           <div className="contact-panel reveal delay-1">
             <p className="contact-note soft-copy">
               For web design, frontend builds, portfolio work, brand refreshes or collaborations,
-              send a mail to either inbox.
+              send a mail or use one of the direct contact routes.
             </p>
             {emails.map((email) => (
               <button className="email-row" type="button" key={email} onClick={() => copyEmail(email)}>
@@ -537,28 +662,51 @@ export default function Home() {
 
       <div
         className={`popup-backdrop${popupOpen ? " open" : ""}`}
-        onClick={(event) => event.target === event.currentTarget && setPopupOpen(false)}
+        onClick={(event) => event.target === event.currentTarget && closePopup()}
       >
         <div className="popup" role="dialog" aria-modal="true" aria-labelledby="contact-title">
           <div className="popup-head">
-            <h2 id="contact-title">Contact Sparkle</h2>
-            <button className="popup-close" type="button" onClick={() => setPopupOpen(false)} aria-label="Close contact popup">
+            <div>
+              <p className="popup-kicker">sw8tx.lol</p>
+              <h2 id="contact-title">Stay connected</h2>
+            </div>
+            <button className="popup-close" type="button" onClick={closePopup} aria-label="Close contact popup">
               x
             </button>
           </div>
           <div className="popup-body">
-            <p>Pick the inbox that fits. Click copies the address, or use your mail app from the hero button.</p>
-            <div className="popup-actions">
-              {emails.map((email) => (
-                <button className="email-row" type="button" key={email} onClick={() => copyEmail(email)}>
-                  <span className="email-main">
-                    <span className="email-label">{copied === email ? "Copied" : "Copy email"}</span>
-                    <span className="email-address">{email}</span>
-                  </span>
-                  <span className="email-arrow">-&gt;</span>
-                </button>
-              ))}
+            <p>Join the community or reach out directly for business.</p>
+            <div className="connect-list">
+              {contactItems.map((item) => {
+                if (item.href) {
+                  return (
+                    <a
+                      className="connect-card"
+                      href={item.href}
+                      key={item.kind}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {renderContactContent(item, copied)}
+                    </a>
+                  );
+                }
+
+                return (
+                  <button
+                    className="connect-card"
+                    key={item.kind}
+                    type="button"
+                    onClick={() => copyContact(item.copyValue ?? item.detail, item.kind === "email" ? `mailto:${item.detail}` : undefined)}
+                  >
+                    {renderContactContent(item, copied)}
+                  </button>
+                );
+              })}
             </div>
+            <button className="popup-dismiss" type="button" onClick={closePopup}>
+              Dismiss
+            </button>
           </div>
         </div>
       </div>
