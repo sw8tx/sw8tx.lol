@@ -1,0 +1,5 @@
+2026/06/11-19:36:20.055 d50 Creating DB C:\Users\Tyler\Desktop\Neuer Ordner\sw8tx\.edge-shot-profile-2\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/06/11-19:36:20.063 d50 Reusing MANIFEST C:\Users\Tyler\Desktop\Neuer Ordner\sw8tx\.edge-shot-profile-2\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/06/11-19:36:20.247 6a88 Level-0 table #5: started
+2026/06/11-19:36:20.250 6a88 Level-0 table #5: 682669 bytes OK
+2026/06/11-19:36:20.251 6a88 Delete type=0 #3

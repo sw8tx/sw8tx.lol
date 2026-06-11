@@ -2,6 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionStyle,
+  type MotionValue,
+} from "framer-motion";
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -195,6 +205,8 @@ const process = [
   },
 ];
 
+type ProcessStep = (typeof process)[number];
+
 const proofStats = [
   { value: "20+", label: "Digital surfaces", color: "#0050d8" },
   { value: "3+", label: "Years designing", color: "#18bfa5" },
@@ -207,6 +219,374 @@ const heroLines = [
 ];
 
 const marqueeWords = [...services, ...services, ...services];
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function useMagnetic(strength = 8) {
+  const reduceMotion = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 420, damping: 28, mass: 0.22 });
+  const springY = useSpring(y, { stiffness: 420, damping: 28, mass: 0.22 });
+
+  const onPointerMove = <T extends HTMLElement>(event: ReactPointerEvent<T>) => {
+    if (reduceMotion || event.pointerType !== "mouse") return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const offsetX = ((event.clientX - rect.left) / rect.width - 0.5) * strength * 2;
+    const offsetY = ((event.clientY - rect.top) / rect.height - 0.5) * strength * 2;
+
+    x.set(clamp(offsetX, -strength, strength));
+    y.set(clamp(offsetY, -strength, strength));
+  };
+
+  const onPointerLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return {
+    style: { x: springX, y: springY },
+    onPointerMove,
+    onPointerLeave,
+  };
+}
+
+function MagneticAnchor({
+  children,
+  className,
+  href,
+  strength = 8,
+}: {
+  children: ReactNode;
+  className: string;
+  href: string;
+  strength?: number;
+}) {
+  const magnetic = useMagnetic(strength);
+
+  return (
+    <motion.a
+      className={className}
+      href={href}
+      onPointerLeave={magnetic.onPointerLeave}
+      onPointerMove={magnetic.onPointerMove}
+      style={magnetic.style}
+      whileHover={{ translateY: -2 }}
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+function MagneticButton({
+  ariaLabel,
+  children,
+  className,
+  onClick,
+  strength = 8,
+}: {
+  ariaLabel?: string;
+  children: ReactNode;
+  className: string;
+  onClick: () => void;
+  strength?: number;
+}) {
+  const magnetic = useMagnetic(strength);
+
+  return (
+    <motion.button
+      aria-label={ariaLabel}
+      className={className}
+      onClick={onClick}
+      onPointerLeave={magnetic.onPointerLeave}
+      onPointerMove={magnetic.onPointerMove}
+      style={magnetic.style}
+      type="button"
+      whileHover={{ translateY: -2 }}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+function ProcessStackCard({
+  index,
+  item,
+  scrollYProgress,
+  total,
+}: {
+  index: number;
+  item: ProcessStep;
+  scrollYProgress: MotionValue<number>;
+  total: number;
+}) {
+  const segment = 1 / total;
+  const enterStart = Math.max(0, index * segment - 0.1);
+  const enterEnd = Math.min(1, index * segment + 0.12);
+  const nextStart = Math.min(1, (index + 1) * segment - 0.07);
+  const nextEnd = Math.min(1, (index + 1) * segment + 0.1);
+  const scaleInput = index === total - 1 ? [0, 1] : [nextStart, nextEnd];
+  const scaleOutput = index === total - 1 ? [1, 1] : [1, 0.95];
+  const y = useTransform(scrollYProgress, [enterStart, enterEnd], [index === 0 ? 0 : 92, 0]);
+  const scale = useTransform(scrollYProgress, scaleInput, scaleOutput);
+  const opacity = useTransform(scrollYProgress, [enterStart, enterEnd], [index === 0 ? 1 : 0.74, 1]);
+
+  return (
+    <motion.article
+      className="process-stack-card"
+      key={item.title}
+      style={{
+        "--process-color": item.color,
+        "--process-soft": item.soft,
+        "--stack-offset": `${index * 14}px`,
+        opacity,
+        scale,
+        y,
+      } as MotionStyle}
+    >
+      <span className="process-num">{item.num}</span>
+      <div>
+        <h3>{item.title}</h3>
+        <p>{item.body}</p>
+      </div>
+    </motion.article>
+  );
+}
+
+function ProcessStack({ items }: { items: ProcessStep[] }) {
+  const stackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: stackRef,
+    offset: ["start 78%", "end 18%"],
+  });
+
+  return (
+    <div
+      className="process-stack reveal delay-1"
+      ref={stackRef}
+      style={{ "--stack-count": items.length } as CSSProperties}
+    >
+      {items.map((item, index) => (
+        <ProcessStackCard
+          index={index}
+          item={item}
+          key={item.title}
+          scrollYProgress={scrollYProgress}
+          total={items.length}
+        />
+      ))}
+    </div>
+  );
+}
+
+function HeroShowcaseCard({
+  active,
+  card,
+  dragging,
+  index,
+  offset,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+}: {
+  active: boolean;
+  card: ShowcaseCard;
+  dragging: boolean;
+  index: number;
+  offset: DragOffset;
+  onPointerDown: (event: ReactPointerEvent<HTMLButtonElement>, id: string) => void;
+  onPointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+  onPointerUp: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+}) {
+  const reduceMotion = useReducedMotion();
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const shineX = useMotionValue(50);
+  const shineY = useMotionValue(50);
+  const shadowX = useMotionValue(0);
+  const shadowY = useMotionValue(0);
+  const smoothRotateX = useSpring(rotateX, { stiffness: 260, damping: 24, mass: 0.34 });
+  const smoothRotateY = useSpring(rotateY, { stiffness: 260, damping: 24, mass: 0.34 });
+  const smoothShadowX = useSpring(shadowX, { stiffness: 260, damping: 24, mass: 0.34 });
+  const smoothShadowY = useSpring(shadowY, { stiffness: 260, damping: 24, mass: 0.34 });
+  const shineXPercent = useTransform(shineX, (value) => `${value}%`);
+  const shineYPercent = useTransform(shineY, (value) => `${value}%`);
+  const shadowXPx = useTransform(smoothShadowX, (value) => `${value}px`);
+  const shadowYPx = useTransform(smoothShadowY, (value) => `${value}px`);
+
+  const resetTilt = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+    shineX.set(50);
+    shineY.set(50);
+    shadowX.set(0);
+    shadowY.set(0);
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    onPointerMove(event);
+    if (reduceMotion || event.pointerType !== "mouse") return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const percentX = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+    const percentY = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+
+    rotateX.set((0.5 - percentY) * 11);
+    rotateY.set((percentX - 0.5) * 13);
+    shineX.set(percentX * 100);
+    shineY.set(percentY * 100);
+    shadowX.set((percentX - 0.5) * 18);
+    shadowY.set((percentY - 0.5) * 14);
+  };
+
+  return (
+    <button
+      aria-label={`${card.category}: ${card.title}`}
+      className={`hero-card${active ? " active" : ""}${dragging ? " dragging" : ""}${card.dark ? " dark" : ""}`}
+      key={card.id}
+      onPointerCancel={onPointerUp}
+      onPointerDown={(event) => onPointerDown(event, card.id)}
+      onPointerLeave={resetTilt}
+      onPointerMove={handlePointerMove}
+      onPointerUp={onPointerUp}
+      style={{
+        "--left": card.left,
+        "--top": card.top,
+        "--mobile-left": card.mobileLeft,
+        "--mobile-top": card.mobileTop,
+        "--rotate": `${card.rotate}deg`,
+        "--drag-x": `${offset.x}px`,
+        "--drag-y": `${offset.y}px`,
+        "--card-color": card.color,
+        "--card-color-2": card.color2,
+        "--card-soft": card.soft,
+        "--delay": `${220 + index * 90}ms`,
+      } as CSSProperties}
+      type="button"
+    >
+      <motion.span
+        className="card-lift"
+        style={{
+          "--shine-x": shineXPercent,
+          "--shine-y": shineYPercent,
+          "--tilt-shadow-x": shadowXPx,
+          "--tilt-shadow-y": shadowYPx,
+          rotateX: smoothRotateX,
+          rotateY: smoothRotateY,
+        } as MotionStyle}
+      >
+        {card.image && (
+          <span className="card-logo">
+            <Image src="/logo-transparent.png" alt="" width={58} height={58} />
+          </span>
+        )}
+        <span className="card-top">
+          <span className="card-kicker">{card.kicker}</span>
+          <span className="card-handle" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </span>
+        </span>
+        <span className="card-category">{card.category}</span>
+        <span className="card-title">{card.title}</span>
+        <span className="card-body">{card.body}</span>
+      </motion.span>
+    </button>
+  );
+}
+
+function MarqueeLine({
+  direction = "normal",
+  row,
+  speed,
+}: {
+  direction?: "normal" | "reverse";
+  row: "near" | "mid" | "far";
+  speed: number;
+}) {
+  const words = direction === "reverse" ? [...marqueeWords].reverse() : marqueeWords;
+
+  return (
+    <div className={`marquee marquee-${row}`} style={{ "--marquee-speed": `${speed}s` } as CSSProperties}>
+      <div className="marquee-track">
+        {[0, 1].map((group) => (
+          <div className="marquee-row" key={group}>
+            {words.map((service, index) => (
+              <span className="marquee-item" key={`${row}-${group}-${service}-${index}`}>
+                {service}
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InteractivePlayground() {
+  const reduceMotion = useReducedMotion();
+  const xPercent = useMotionValue(50);
+  const yPercent = useMotionValue(50);
+  const orbX = useTransform(xPercent, [0, 100], [-36, 36]);
+  const orbY = useTransform(yPercent, [0, 100], [-24, 24]);
+  const tileX = useTransform(xPercent, [0, 100], [20, -20]);
+  const tileY = useTransform(yPercent, [0, 100], [18, -18]);
+  const ringRotate = useTransform(xPercent, [0, 100], [-10, 10]);
+  const beamOpacity = useTransform(yPercent, [0, 100], [0.38, 0.78]);
+  const playgroundX = useTransform(xPercent, (value) => `${value}%`);
+  const playgroundY = useTransform(yPercent, (value) => `${value}%`);
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduceMotion || event.pointerType !== "mouse") return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    xPercent.set(clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100));
+    yPercent.set(clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100));
+  };
+
+  const resetPlayground = () => {
+    xPercent.set(50);
+    yPercent.set(50);
+  };
+
+  return (
+    <motion.div
+      className="playground-demo reveal delay-1"
+      onPointerLeave={resetPlayground}
+      onPointerMove={handlePointerMove}
+      style={
+        {
+          "--pg-x": playgroundX,
+          "--pg-y": playgroundY,
+        } as MotionStyle
+      }
+    >
+      <div className="playground-grid" aria-hidden="true" />
+      <motion.div className="playground-beam" style={{ opacity: beamOpacity }} />
+      <motion.div className="playground-orb" style={{ x: orbX, y: orbY }} />
+      <motion.div className="playground-ring" style={{ rotate: ringRotate }} />
+      <motion.div className="playground-tile tile-one" style={{ x: tileX, y: tileY }}>
+        <span>Motion</span>
+        <strong>88</strong>
+      </motion.div>
+      <motion.div className="playground-tile tile-two" style={{ x: orbX, y: tileY }}>
+        <span>Glow</span>
+        <strong>Live</strong>
+      </motion.div>
+      <motion.div className="playground-tile tile-three" style={{ x: tileX, y: orbY }}>
+        <span>Depth</span>
+        <strong>3D</strong>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 function writingText(parts: { text: string; accent?: boolean }[]) {
   let order = 0;
@@ -299,12 +679,15 @@ function renderContactContent(item: ContactItem, copied: string): ReactNode {
 }
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0);
+  const [navScrolled, setNavScrolled] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const [copied, setCopied] = useState("");
   const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
   const [draggingCard, setDraggingCard] = useState("");
   const [cardOffsets, setCardOffsets] = useState<Record<string, DragOffset>>({});
+  const siteRef = useRef<HTMLElement | null>(null);
+  const pointerFrameRef = useRef<number | null>(null);
+  const pointerRef = useRef({ x: 0, y: 0 });
   const dragRef = useRef<{
     id: string;
     startX: number;
@@ -312,10 +695,31 @@ export default function Home() {
     origin: DragOffset;
   } | null>(null);
   const popupDismissedRef = useRef(false);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll();
+  const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -66]);
+  const heroFieldTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 110]);
+  const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.2]);
+  const heroCopyY = useSpring(heroCopyTargetY, {
+    stiffness: 120,
+    damping: 28,
+  });
+  const heroFieldY = useSpring(heroFieldTargetY, {
+    stiffness: 120,
+    damping: 28,
+  });
+  const heroGlowScale = useSpring(heroGlowTargetScale, {
+    stiffness: 120,
+    damping: 28,
+  });
+  const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.92, 0.48]);
+  const morphY = useTransform(scrollYProgress, [0.1, 0.9], [-80, 260]);
+  const morphRotate = useTransform(scrollYProgress, [0.1, 0.9], [-8, 16]);
+  const morphScaleX = useTransform(scrollYProgress, [0.1, 0.5, 0.9], [0.95, 1.18, 0.9]);
   const year = new Date().getFullYear();
 
   useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
+    const onScroll = () => setNavScrolled(window.scrollY > 60);
     const revealEls = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
     const observer = new IntersectionObserver(
       (entries) => {
@@ -346,6 +750,7 @@ export default function Home() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKeyDown);
       window.clearTimeout(popupTimer);
+      if (pointerFrameRef.current !== null) window.cancelAnimationFrame(pointerFrameRef.current);
       observer.disconnect();
     };
   }, []);
@@ -371,8 +776,16 @@ export default function Home() {
   const copyEmail = (email: string) => copyContact(email, `mailto:${email}`);
 
   const updatePointer = (event: ReactPointerEvent<HTMLElement>) => {
-    event.currentTarget.style.setProperty("--mx", `${event.clientX}px`);
-    event.currentTarget.style.setProperty("--my", `${event.clientY}px`);
+    if (event.pointerType !== "mouse") return;
+
+    pointerRef.current = { x: event.clientX, y: event.clientY };
+    if (pointerFrameRef.current !== null) return;
+
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      pointerFrameRef.current = null;
+      siteRef.current?.style.setProperty("--mx", `${pointerRef.current.x}px`);
+      siteRef.current?.style.setProperty("--my", `${pointerRef.current.y}px`);
+    });
   };
 
   const startDrag = (event: ReactPointerEvent<HTMLButtonElement>, id: string) => {
@@ -416,8 +829,40 @@ export default function Home() {
   };
 
   return (
-    <main className="site" onPointerMove={updatePointer}>
-      <nav className={`nav${scrollY > 60 ? " scrolled" : ""}`}>
+    <main className="site" onPointerMove={updatePointer} ref={siteRef}>
+      <motion.div
+        aria-hidden="true"
+        className="load-gate"
+        initial={{ opacity: reduceMotion ? 0 : 1 }}
+        animate={{ opacity: 0, pointerEvents: "none" }}
+        transition={{ delay: reduceMotion ? 0 : 1.16, duration: reduceMotion ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <motion.div
+          className="load-logo"
+          initial={{ scale: 0.72, opacity: 0, rotate: -8 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          transition={{ duration: 0.44, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Image src="/logo-transparent.png" alt="" width={84} height={84} priority />
+        </motion.div>
+        <motion.span
+          className="load-word"
+          initial={{ clipPath: "inset(0 100% 0 0)" }}
+          animate={{ clipPath: "inset(0 0% 0 0)" }}
+          transition={{ delay: 0.32, duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+        >
+          Sparkle
+        </motion.span>
+      </motion.div>
+
+      <motion.div
+        aria-hidden="true"
+        className="section-morpher"
+        style={{ rotate: morphRotate, scaleX: morphScaleX, y: morphY }}
+      />
+      <div aria-hidden="true" className="noise-layer" />
+
+      <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
         <Link className="brand" href="/" aria-label="Sparkle home">
           <span className="brand-mark">
             <Image src="/logo-transparent.png" alt="" width={38} height={38} priority />
@@ -428,14 +873,19 @@ export default function Home() {
           <a className="nav-link" href="#about">About</a>
           <a className="nav-link" href="#process">Process</a>
           <a className="nav-link" href="#contact">Contact</a>
-          <button className="nav-button" type="button" onClick={() => setPopupOpen(true)}>
+          <MagneticButton className="nav-button magnetic-action" onClick={() => setPopupOpen(true)} strength={7}>
             Contact Sparkle
-          </button>
+          </MagneticButton>
         </div>
       </nav>
 
       <section className="hero" aria-label="Sparkle web designer portfolio">
-        <div className="hero-copy" style={{ transform: `translateY(${-scrollY * 0.04}px)` }}>
+        <motion.div
+          aria-hidden="true"
+          className="hero-parallax-field"
+          style={{ opacity: heroGlowOpacity, scale: heroGlowScale, y: heroFieldY }}
+        />
+        <motion.div className="hero-copy" style={{ y: heroCopyY }}>
           <p className="eyebrow">Web Designer and Frontend Developer</p>
           <h1 className="hero-title">
             {heroLines.map((line, lineIndex) => (
@@ -470,95 +920,43 @@ export default function Home() {
             clean Next.js experiences for brands that need their own look.
           </p>
           <div className="hero-actions">
-            <a className="button primary" href={`mailto:${emails[0]}`}>
+            <MagneticAnchor className="button primary magnetic-action" href={`mailto:${emails[0]}`} strength={8}>
               <span>Email Sparkle</span>
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </a>
-            <a className="button" href="#work">
-              <span>View playground</span>
-            </a>
+            </MagneticAnchor>
+            <MagneticAnchor className="button magnetic-action" href="#work" strength={8}>
+              <span>View Playground</span>
+            </MagneticAnchor>
           </div>
-        </div>
+        </motion.div>
 
         <div className="card-stage" aria-label="Sparkle service cards">
           {showcase.map((card, index) => {
             const offset = cardOffsets[card.id] ?? { x: 0, y: 0 };
 
             return (
-              <button
+              <HeroShowcaseCard
+                active={activeShowcase === card.id}
+                card={card}
+                dragging={draggingCard === card.id}
+                index={index}
                 key={card.id}
-                type="button"
-                className={`hero-card${activeShowcase === card.id ? " active" : ""}${draggingCard === card.id ? " dragging" : ""}${card.dark ? " dark" : ""}`}
-                aria-label={`${card.category}: ${card.title}`}
-                onPointerDown={(event) => startDrag(event, card.id)}
+                offset={offset}
+                onPointerDown={startDrag}
                 onPointerMove={moveDrag}
                 onPointerUp={endDrag}
-                onPointerCancel={endDrag}
-                style={{
-                  "--left": card.left,
-                  "--top": card.top,
-                  "--mobile-left": card.mobileLeft,
-                  "--mobile-top": card.mobileTop,
-                  "--rotate": `${card.rotate}deg`,
-                  "--drag-x": `${offset.x}px`,
-                  "--drag-y": `${offset.y}px`,
-                  "--card-color": card.color,
-                  "--card-color-2": card.color2,
-                  "--card-soft": card.soft,
-                  "--delay": `${220 + index * 90}ms`,
-                } as CSSProperties}
-              >
-                <span className="card-lift">
-                  {card.image && (
-                    <span className="card-logo">
-                      <Image src="/logo-transparent.png" alt="" width={58} height={58} />
-                    </span>
-                  )}
-                  <span className="card-top">
-                    <span className="card-kicker">{card.kicker}</span>
-                    <span className="card-handle" aria-hidden="true">
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                    </span>
-                  </span>
-                  <span className="card-category">{card.category}</span>
-                  <span className="card-title">{card.title}</span>
-                  <span className="card-body">{card.body}</span>
-                </span>
-              </button>
+              />
             );
           })}
         </div>
       </section>
 
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[0, 1].map((group) => (
-            <div className="marquee-row" key={group}>
-              {marqueeWords.map((service, index) => (
-                <span className="marquee-item" key={`${group}-${service}-${index}`}>{service}</span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="marquee marquee-reverse" aria-hidden="true">
-        <div className="marquee-track">
-          {[0, 1].map((group) => (
-            <div className="marquee-row" key={group}>
-              {[...marqueeWords].reverse().map((service, index) => (
-                <span className="marquee-item" key={`${group}-${service}-${index}`}>{service}</span>
-              ))}
-            </div>
-          ))}
-        </div>
+      <div className="marquee-field" aria-hidden="true">
+        <MarqueeLine row="near" speed={32} />
+        <MarqueeLine direction="reverse" row="mid" speed={42} />
+        <MarqueeLine row="far" speed={54} />
       </div>
 
       <section className="section" id="about">
@@ -591,25 +989,7 @@ export default function Home() {
             <p className="section-label">Process</p>
             <h2 className="section-title">{writingText([{ text: "From idea" }, { text: "to live site.", accent: true }])}</h2>
           </div>
-          <div className="process reveal delay-1">
-            {process.map((item, index) => (
-              <article
-                className="process-item"
-                key={item.title}
-                style={{
-                  "--process-color": item.color,
-                  "--process-soft": item.soft,
-                  "--process-delay": `${index * 90}ms`,
-                } as CSSProperties}
-              >
-                <span className="process-num">{item.num}</span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+          <ProcessStack items={process} />
         </div>
       </section>
 
@@ -619,11 +999,7 @@ export default function Home() {
             <p className="section-label">Playground</p>
             <h2 className="section-title">{writingText([{ text: "Pieces that" }, { text: "build.", accent: true }])}</h2>
           </div>
-          <p className="section-text reveal delay-1 soft-copy">
-            The hero stacks itself in motion, the cards respond to your hand, and the page
-            keeps a calmer sky palette running underneath every section. The direction stays direct:
-            designer portfolio first, useful contact flow always visible.
-          </p>
+          <InteractivePlayground />
         </div>
       </section>
 
@@ -639,13 +1015,13 @@ export default function Home() {
               send a mail or use one of the direct contact routes.
             </p>
             {emails.map((email) => (
-              <button className="email-row" type="button" key={email} onClick={() => copyEmail(email)}>
+              <MagneticButton className="email-row magnetic-action" key={email} onClick={() => copyEmail(email)} strength={7}>
                 <span className="email-main">
                   <span className="email-label">{copied === email ? "Copied" : "Email"}</span>
                   <span className="email-address">{email}</span>
                 </span>
                 <span className="email-arrow">-&gt;</span>
-              </button>
+              </MagneticButton>
             ))}
           </div>
         </div>
