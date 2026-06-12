@@ -2,50 +2,32 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sparkle - Web Designer",
-  description:
-    "Portfolio of Sparkle, a web designer and frontend developer building animated, sky-toned websites. Contact info@sw8tx.lol.",
+  title: "Sparkle's Portfolio & Shop",
+  description: "Hey, my name is Sparkle (sw8tx) — Rocket League freestyler, Roblox trader & limited seller, and Discord marketplace vendor. This is my official site where you can find everything I offer.",
   openGraph: {
-    title: "Sparkle - Web Designer",
-    description:
-      "Animated web design, frontend development, brand systems and portfolio builds by Sparkle.",
+    title: "Sparkle's Portfolio & Shop",
+    description: "Hey, my name is Sparkle (sw8tx) — Rocket League freestyler, Roblox trader & limited seller, and Discord marketplace vendor. This is my official site.",
     url: "https://sw8tx.lol",
     siteName: "Sparkle",
-    images: [
-      {
-        url: "https://sw8tx.lol/logo-transparent.png",
-        width: 1024,
-        height: 1024,
-        alt: "Sparkle Logo",
-      },
-    ],
+    images: [{ url: "https://sw8tx.lol/logo.png", width: 1024, height: 1024, alt: "Sparkle Logo" }],
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Sparkle - Web Designer",
-    description:
-      "Animated web design and frontend development. Contact info@sw8tx.lol.",
-    images: ["https://sw8tx.lol/logo-transparent.png"],
+    title: "Sparkle's Portfolio & Shop",
+    description: "Rocket League freestyler · Roblox trader · Discord seller. Official site.",
+    images: ["https://sw8tx.lol/logo.png"],
   },
   icons: {
-    icon: "/logo-transparent.png",
-    apple: "/logo-transparent.png",
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <div className="global-background" aria-hidden="true">
-          <span className="bubble bubble-one" />
-          <span className="bubble bubble-two" />
-          <span className="bubble bubble-three" />
-          <span className="bubble bubble-four" />
-        </div>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,4 +1,4 @@
-import { LegalPage, type LegalSection } from "../components/LegalPage";
+import { LegalPage, type LegalSection } from "../../components/LegalPage";
 
 const sections: LegalSection[] = [
   {

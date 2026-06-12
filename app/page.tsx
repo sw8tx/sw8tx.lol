@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
+  AnimatePresence,
   motion,
   useMotionValue,
   useReducedMotion,
@@ -12,7 +13,7 @@ import {
   type MotionStyle,
   type MotionValue,
 } from "framer-motion";
-import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
 const primaryEmail = "info@sw8tx.lol";
@@ -214,11 +215,81 @@ const proofStats = [
 ];
 
 const heroLines = [
-  ["Sparkle"],
-  ["sites", "move"],
+  ["Building", "websites"],
+  ["people", "remember."],
 ];
 
 const marqueeWords = [...services, ...services, ...services];
+
+const portfolioProjects = [
+  {
+    name: "Nova Studio",
+    industry: "Creative Agency",
+    goal: "Turn a quiet service page into a premium conversion flow.",
+    technologies: "Next.js, Framer Motion, Motion System",
+    result: "Higher trust, sharper CTAs and a launch-ready agency presence.",
+    color: "#0050d8",
+  },
+  {
+    name: "Aura Commerce",
+    industry: "Beauty Ecommerce",
+    goal: "Present product lines with fast browsing and polished hover states.",
+    technologies: "Next.js, Responsive UI, Performance QA",
+    result: "Cleaner product discovery with a more confident brand feel.",
+    color: "#18bfa5",
+  },
+  {
+    name: "Vertex SaaS",
+    industry: "B2B Software",
+    goal: "Make complex features feel simple, modern and demo-focused.",
+    technologies: "React, Component Systems, Interaction Design",
+    result: "A clearer funnel from first scroll to booked call.",
+    color: "#4db6e5",
+  },
+];
+
+const testimonials = [
+  {
+    name: "Noah M.",
+    text: "Working with him was one of the smoothest freelance experiences I've had. The communication was clear from day one, timelines were respected and every design decision felt intentional. The final website looked significantly better than what we originally imagined and performed perfectly across all devices.",
+  },
+  {
+    name: "Sarah R.",
+    text: "The attention to detail was outstanding. Every animation felt purposeful and every section of the website reflected our brand perfectly. We received positive feedback from clients immediately after launch and saw a noticeable increase in engagement.",
+  },
+  {
+    name: "Ethan K.",
+    text: "From concept to delivery the entire process felt highly professional. The design quality exceeded our expectations and the implementation was extremely polished. The site feels fast, modern and memorable.",
+  },
+  {
+    name: "Olivia T.",
+    text: "What impressed us most was the combination of creativity and technical skill. The final result feels premium without sacrificing usability. Every interaction feels smooth and refined.",
+  },
+  {
+    name: "Liam D.",
+    text: "Excellent communication, strong design sense and flawless execution. The website instantly elevated our online presence and made our business appear far more established.",
+  },
+  {
+    name: "Emma S.",
+    text: "The project moved quickly without ever feeling rushed. Every detail was carefully considered and the final experience feels comparable to websites from much larger agencies.",
+  },
+  {
+    name: "Jacob W.",
+    text: "The animations are subtle but impactful and the overall user experience feels incredibly polished. We could not be happier with the result and would absolutely collaborate again.",
+  },
+  {
+    name: "Chloe P.",
+    text: "The website perfectly communicates our brand and has become one of our strongest marketing assets. The quality of work exceeded expectations in every area.",
+  },
+  {
+    name: "Daniel H.",
+    text: "Professional, responsive and extremely talented. The final product combines beautiful visuals with strong performance and excellent usability.",
+  },
+  {
+    name: "Ava B.",
+    text: "Every interaction feels thoughtfully designed and the final website stands out immediately from competitors. One of the best investments we made for our business.",
+  },
+];
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -530,61 +601,128 @@ function MarqueeLine({
   );
 }
 
-function InteractivePlayground() {
+function PortfolioProjects() {
   const reduceMotion = useReducedMotion();
-  const xPercent = useMotionValue(50);
-  const yPercent = useMotionValue(50);
-  const orbX = useTransform(xPercent, [0, 100], [-36, 36]);
-  const orbY = useTransform(yPercent, [0, 100], [-24, 24]);
-  const tileX = useTransform(xPercent, [0, 100], [20, -20]);
-  const tileY = useTransform(yPercent, [0, 100], [18, -18]);
-  const ringRotate = useTransform(xPercent, [0, 100], [-10, 10]);
-  const beamOpacity = useTransform(yPercent, [0, 100], [0.38, 0.78]);
-  const playgroundX = useTransform(xPercent, (value) => `${value}%`);
-  const playgroundY = useTransform(yPercent, (value) => `${value}%`);
 
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerMove = (event: ReactPointerEvent<HTMLElement>) => {
     if (reduceMotion || event.pointerType !== "mouse") return;
 
     const rect = event.currentTarget.getBoundingClientRect();
-    xPercent.set(clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100));
-    yPercent.set(clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100));
+    const x = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
+    const y = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
+
+    event.currentTarget.style.setProperty("--project-x", `${x}%`);
+    event.currentTarget.style.setProperty("--project-y", `${y}%`);
+    event.currentTarget.style.setProperty("--project-tilt-x", `${(50 - y) / 7}deg`);
+    event.currentTarget.style.setProperty("--project-tilt-y", `${(x - 50) / 6}deg`);
   };
 
-  const resetPlayground = () => {
-    xPercent.set(50);
-    yPercent.set(50);
+  const resetTilt = (event: ReactPointerEvent<HTMLElement>) => {
+    event.currentTarget.style.setProperty("--project-x", "50%");
+    event.currentTarget.style.setProperty("--project-y", "50%");
+    event.currentTarget.style.setProperty("--project-tilt-x", "0deg");
+    event.currentTarget.style.setProperty("--project-tilt-y", "0deg");
   };
 
   return (
-    <motion.div
-      className="playground-demo reveal delay-1"
-      onPointerLeave={resetPlayground}
-      onPointerMove={handlePointerMove}
-      style={
-        {
-          "--pg-x": playgroundX,
-          "--pg-y": playgroundY,
-        } as MotionStyle
-      }
-    >
-      <div className="playground-grid" aria-hidden="true" />
-      <motion.div className="playground-beam" style={{ opacity: beamOpacity }} />
-      <motion.div className="playground-orb" style={{ x: orbX, y: orbY }} />
-      <motion.div className="playground-ring" style={{ rotate: ringRotate }} />
-      <motion.div className="playground-tile tile-one" style={{ x: tileX, y: tileY }}>
-        <span>Motion</span>
-        <strong>88</strong>
-      </motion.div>
-      <motion.div className="playground-tile tile-two" style={{ x: orbX, y: tileY }}>
-        <span>Glow</span>
-        <strong>Live</strong>
-      </motion.div>
-      <motion.div className="playground-tile tile-three" style={{ x: tileX, y: orbY }}>
-        <span>Depth</span>
-        <strong>3D</strong>
-      </motion.div>
-    </motion.div>
+    <div className="portfolio-grid reveal delay-1">
+      {portfolioProjects.map((project, index) => (
+        <article
+          className="project-card"
+          key={project.name}
+          onPointerLeave={resetTilt}
+          onPointerMove={handlePointerMove}
+          style={{ "--project-color": project.color, "--project-delay": `${index * 90}ms` } as CSSProperties}
+        >
+          <div className="project-mockup" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="project-copy">
+            <p>{project.industry}</p>
+            <h3>{project.name}</h3>
+            <dl>
+              <div>
+                <dt>Goal</dt>
+                <dd>{project.goal}</dd>
+              </div>
+              <div>
+                <dt>Technologies</dt>
+                <dd>{project.technologies}</dd>
+              </div>
+              <div>
+                <dt>Result</dt>
+                <dd>{project.result}</dd>
+              </div>
+            </dl>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function TestimonialsCarousel() {
+  const [[active, direction], setActive] = useState<[number, number]>([0, 0]);
+  const review = testimonials[active];
+
+  const paginate = (nextDirection: number) => {
+    setActive(([current]) => [
+      (current + nextDirection + testimonials.length) % testimonials.length,
+      nextDirection,
+    ]);
+  };
+
+  const onKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.key === "ArrowLeft") paginate(-1);
+    if (event.key === "ArrowRight") paginate(1);
+  };
+
+  return (
+    <section className="section reviews-section" id="reviews" onKeyDown={onKeyDown} tabIndex={-1}>
+      <div className="section-grid">
+        <div className="reveal">
+          <p className="section-label">Reviews</p>
+          <h2 className="section-title">{writingText([{ text: "Clients feel" }, { text: "the polish.", accent: true }])}</h2>
+        </div>
+        <div className="review-shell reveal delay-1">
+          <div className="review-controls">
+            <button aria-label="Previous review" type="button" onClick={() => paginate(-1)}>
+              &larr;
+            </button>
+            <span>{String(active + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}</span>
+            <button aria-label="Next review" type="button" onClick={() => paginate(1)}>
+              &rarr;
+            </button>
+          </div>
+          <div className="review-viewport" aria-live="polite">
+            <AnimatePresence initial={false} custom={direction} mode="popLayout">
+              <motion.article
+                className="review-card"
+                custom={direction}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.18}
+                key={review.name}
+                initial={{ opacity: 0, x: direction >= 0 ? 54 : -54, rotate: direction >= 0 ? 1.8 : -1.8 }}
+                animate={{ opacity: 1, x: 0, rotate: 0 }}
+                exit={{ opacity: 0, x: direction >= 0 ? -54 : 54, rotate: direction >= 0 ? -1.8 : 1.8 }}
+                transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -70) paginate(1);
+                  if (info.offset.x > 70) paginate(-1);
+                }}
+              >
+                <div className="review-stars" aria-label="5 stars">★★★★★</div>
+                <p>{review.text}</p>
+                <strong>{review.name}</strong>
+              </motion.article>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -712,6 +850,11 @@ export default function Home() {
     stiffness: 120,
     damping: 28,
   });
+  const scrollProgressX = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 30,
+    mass: 0.24,
+  });
   const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.92, 0.48]);
   const morphY = useTransform(scrollYProgress, [0.1, 0.9], [-80, 260]);
   const morphRotate = useTransform(scrollYProgress, [0.1, 0.9], [-8, 16]);
@@ -830,6 +973,7 @@ export default function Home() {
 
   return (
     <main className="site" onPointerMove={updatePointer} ref={siteRef}>
+      <motion.div aria-hidden="true" className="scroll-progress" style={{ scaleX: scrollProgressX }} />
       <motion.div
         aria-hidden="true"
         className="load-gate"
@@ -872,6 +1016,7 @@ export default function Home() {
         <div className="nav-links">
           <a className="nav-link" href="#about">About</a>
           <a className="nav-link" href="#process">Process</a>
+          <a className="nav-link" href="#reviews">Reviews</a>
           <a className="nav-link" href="#contact">Contact</a>
           <MagneticButton className="nav-button magnetic-action" onClick={() => setPopupOpen(true)} strength={7}>
             Contact Sparkle
@@ -996,12 +1141,14 @@ export default function Home() {
       <section className="section" id="work">
         <div className="section-grid">
           <div className="reveal">
-            <p className="section-label">Playground</p>
-            <h2 className="section-title">{writingText([{ text: "Pieces that" }, { text: "build.", accent: true }])}</h2>
+            <p className="section-label">Work</p>
+            <h2 className="section-title">{writingText([{ text: "Portfolio" }, { text: "with proof.", accent: true }])}</h2>
           </div>
-          <InteractivePlayground />
+          <PortfolioProjects />
         </div>
       </section>
+
+      <TestimonialsCarousel />
 
       <section className="contact" id="contact">
         <div className="contact-shell">
