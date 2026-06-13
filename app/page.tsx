@@ -16,7 +16,7 @@ import {
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
-const primaryEmail = "info@sw8tx.lol";
+const primaryEmail = "info@tylerosthoff.xyz";
 const discordHandle = "ylhj";
 const tiktokUrl = "https://www.tiktok.com/@sw8tx";
 const emails = [primaryEmail];
