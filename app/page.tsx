@@ -6,12 +6,12 @@ import {
   AnimatePresence,
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
   type MotionStyle,
-  type MotionValue,
 } from "framer-motion";
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -214,6 +214,24 @@ const proofStats = [
   { value: "3", label: "Contact routes", color: "#4db6e5" },
 ];
 
+type PreviewShot = {
+  label: string;
+  note: string;
+  accent: string;
+};
+
+type StudioProject = {
+  code: string;
+  title: string;
+  category: string;
+  summary: string;
+  outcome: string;
+  duration: string;
+  accent: string;
+  accentSoft: string;
+  screens: PreviewShot[];
+};
+
 const heroLines = [
   ["Building", "websites"],
   ["people", "remember."],
@@ -221,31 +239,58 @@ const heroLines = [
 
 const marqueeWords = [...services, ...services, ...services];
 
-const portfolioProjects = [
+const studioProjects: StudioProject[] = [
   {
-    name: "Nova Studio",
-    industry: "Creative Agency",
-    goal: "Turn a quiet service page into a premium conversion flow.",
-    technologies: "Next.js, Framer Motion, Motion System",
-    result: "Higher trust, sharper CTAs and a launch-ready agency presence.",
-    color: "#0050d8",
+    code: "PORTFOLIO_CO_01",
+    title: "Nova Studio",
+    category: "Creative Agency",
+    summary: "Premium service website with a calmer structure, stronger trust and cleaner calls to action.",
+    outcome: "A sharper conversion flow with motion that feels expensive instead of noisy.",
+    duration: "Strategy, design, build and QA need real time so the result feels deliberate.",
+    accent: "#0050d8",
+    accentSoft: "#dcecff",
+    screens: [
+      { label: "Hero", note: "high-impact intro", accent: "#0050d8" },
+      { label: "Services", note: "clear selling blocks", accent: "#4db6e5" },
+      { label: "Contact", note: "strong close", accent: "#18bfa5" },
+    ],
   },
   {
-    name: "Aura Commerce",
-    industry: "Beauty Ecommerce",
-    goal: "Present product lines with fast browsing and polished hover states.",
-    technologies: "Next.js, Responsive UI, Performance QA",
-    result: "Cleaner product discovery with a more confident brand feel.",
-    color: "#18bfa5",
+    code: "PORTFOLIO_CO_02",
+    title: "Aura Commerce",
+    category: "Beauty Ecommerce",
+    summary: "Storefront concept with faster browsing, cleaner product hierarchy and more premium atmosphere.",
+    outcome: "Customers move from first impression to product discovery with less friction.",
+    duration: "Good ecommerce takes careful layout work, performance cleanup and responsive passes.",
+    accent: "#18bfa5",
+    accentSoft: "#def8f1",
+    screens: [
+      { label: "Collection", note: "elevated browsing", accent: "#18bfa5" },
+      { label: "Product", note: "conversion detail", accent: "#4db6e5" },
+      { label: "Cart", note: "clean checkout feel", accent: "#0050d8" },
+    ],
   },
   {
-    name: "Vertex SaaS",
-    industry: "B2B Software",
-    goal: "Make complex features feel simple, modern and demo-focused.",
-    technologies: "React, Component Systems, Interaction Design",
-    result: "A clearer funnel from first scroll to booked call.",
-    color: "#4db6e5",
+    code: "PORTFOLIO_CO_03",
+    title: "Vertex SaaS",
+    category: "B2B Software",
+    summary: "SaaS website system that makes technical products feel clearer, lighter and easier to trust.",
+    outcome: "A more readable product story that guides visitors toward demos and calls.",
+    duration: "Professional builds take planning, revisions and polish across desktop and mobile.",
+    accent: "#4db6e5",
+    accentSoft: "#e7f6ff",
+    screens: [
+      { label: "Overview", note: "simple product story", accent: "#4db6e5" },
+      { label: "Features", note: "modular sections", accent: "#0050d8" },
+      { label: "Demo CTA", note: "conversion finish", accent: "#18bfa5" },
+    ],
   },
+];
+
+const studioFacts = [
+  "Any website: portfolio, landing page, ecommerce or company site.",
+  "Professional process from direction and design to build and launch.",
+  "Quality needs time, so I work carefully instead of rushing details.",
 ];
 
 const testimonials = [
@@ -383,71 +428,19 @@ function MagneticButton({
   );
 }
 
-function ProcessStackCard({
-  index,
-  item,
-  scrollYProgress,
-  total,
-}: {
-  index: number;
-  item: ProcessStep;
-  scrollYProgress: MotionValue<number>;
-  total: number;
-}) {
-  const segment = 1 / total;
-  const enterStart = Math.max(0, index * segment - 0.1);
-  const enterEnd = Math.min(1, index * segment + 0.12);
-  const nextStart = Math.min(1, (index + 1) * segment - 0.07);
-  const nextEnd = Math.min(1, (index + 1) * segment + 0.1);
-  const scaleInput = index === total - 1 ? [0, 1] : [nextStart, nextEnd];
-  const scaleOutput = index === total - 1 ? [1, 1] : [1, 0.95];
-  const y = useTransform(scrollYProgress, [enterStart, enterEnd], [index === 0 ? 0 : 92, 0]);
-  const scale = useTransform(scrollYProgress, scaleInput, scaleOutput);
-  const opacity = useTransform(scrollYProgress, [enterStart, enterEnd], [index === 0 ? 1 : 0.74, 1]);
-
-  return (
-    <motion.article
-      className="process-stack-card"
-      key={item.title}
-      style={{
-        "--process-color": item.color,
-        "--process-soft": item.soft,
-        "--stack-offset": `${index * 14}px`,
-        opacity,
-        scale,
-        y,
-      } as MotionStyle}
-    >
-      <span className="process-num">{item.num}</span>
-      <div>
-        <h3>{item.title}</h3>
-        <p>{item.body}</p>
-      </div>
-    </motion.article>
-  );
-}
-
 function ProcessStack({ items }: { items: ProcessStep[] }) {
-  const stackRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: stackRef,
-    offset: ["start 78%", "end 18%"],
-  });
-
   return (
-    <div
-      className="process-stack reveal delay-1"
-      ref={stackRef}
-      style={{ "--stack-count": items.length } as CSSProperties}
-    >
+    <div className="process-line reveal delay-1">
       {items.map((item, index) => (
-        <ProcessStackCard
-          index={index}
-          item={item}
+        <article
+          className="process-line-card"
           key={item.title}
-          scrollYProgress={scrollYProgress}
-          total={items.length}
-        />
+          style={{ "--process-color": item.color, "--process-soft": item.soft, "--process-index": index + 1 } as CSSProperties}
+        >
+          <span className="process-line-num">{item.num}</span>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+        </article>
       ))}
     </div>
   );
@@ -626,40 +619,187 @@ function PortfolioProjects() {
 
   return (
     <div className="portfolio-grid reveal delay-1">
-      {portfolioProjects.map((project, index) => (
+      {studioProjects.map((project, index) => (
         <article
           className="project-card"
-          key={project.name}
+          key={project.title}
           onPointerLeave={resetTilt}
           onPointerMove={handlePointerMove}
-          style={{ "--project-color": project.color, "--project-delay": `${index * 90}ms` } as CSSProperties}
+          style={{ "--project-color": project.accent, "--project-delay": `${index * 90}ms` } as CSSProperties}
         >
-          <div className="project-mockup" aria-hidden="true">
-            <span />
-            <span />
-            <span />
+          <div className="project-media" aria-hidden="true">
+            {project.screens.map((screen) => (
+              <div
+                className="project-shot"
+                key={`${project.title}-${screen.label}`}
+                style={{ "--shot-accent": screen.accent } as CSSProperties}
+              >
+                <span className="project-shot-bar" />
+                <span className="project-shot-chip">{screen.label}</span>
+                <span className="project-shot-pane" />
+                <span className="project-shot-caption">{screen.note}</span>
+              </div>
+            ))}
           </div>
           <div className="project-copy">
-            <p>{project.industry}</p>
-            <h3>{project.name}</h3>
+            <p>{project.category}</p>
+            <h3>{project.title}</h3>
             <dl>
               <div>
-                <dt>Goal</dt>
-                <dd>{project.goal}</dd>
+                <dt>Summary</dt>
+                <dd>{project.summary}</dd>
               </div>
               <div>
-                <dt>Technologies</dt>
-                <dd>{project.technologies}</dd>
+                <dt>Outcome</dt>
+                <dd>{project.outcome}</dd>
               </div>
               <div>
-                <dt>Result</dt>
-                <dd>{project.result}</dd>
+                <dt>Timing</dt>
+                <dd>{project.duration}</dd>
               </div>
             </dl>
           </div>
         </article>
       ))}
     </div>
+  );
+}
+
+function StarRating() {
+  return (
+    <div className="review-stars" aria-label="5 stars">
+      {Array.from({ length: 5 }, (_, index) => (
+        <svg key={index} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="m12 2.7 2.83 5.74 6.34.92-4.59 4.47 1.08 6.31L12 17.15 6.34 20.14l1.08-6.31-4.59-4.47 6.34-.92L12 2.7Z" />
+        </svg>
+      ))}
+    </div>
+  );
+}
+
+function StudioCenterpiece() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 80%", "end 20%"],
+  });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const rotateX = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [16, 4, -12]), {
+    stiffness: 120,
+    damping: 24,
+  });
+  const rotateY = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [-28, 0, 28]), {
+    stiffness: 120,
+    damping: 24,
+  });
+  const translateY = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [48, 0, -52]), {
+    stiffness: 120,
+    damping: 24,
+  });
+  const glowScale = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [0.94, 1.04, 0.98]), {
+    stiffness: 120,
+    damping: 24,
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setActiveIndex(clamp(Math.floor(latest * studioProjects.length), 0, studioProjects.length - 1));
+  });
+
+  const activeProject = studioProjects[activeIndex];
+
+  return (
+    <section className="section studio-section" id="studio">
+      <div className="studio-scroll" ref={sectionRef}>
+        <div className="studio-sticky">
+          <div className="studio-copy reveal">
+            <p className="section-label">Centerpiece</p>
+            <h2 className="section-title">
+              {writingText([{ text: "A scroll-led" }, { text: "3D middle.", accent: true }])}
+            </h2>
+            <p className="section-text soft-copy">
+              The center stays alive while you scroll on phone or desktop. It gives the page a
+              stronger identity and shows that the work is not just pretty, but carefully built.
+            </p>
+            <div className="studio-facts">
+              {studioFacts.map((fact) => (
+                <div className="studio-fact" key={fact}>
+                  {fact}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="studio-stage reveal delay-1">
+            <div className="studio-overlay studio-overlay-left">
+              <p>{activeProject.code}</p>
+              <strong>{activeProject.title}</strong>
+              <span>{activeProject.category}</span>
+            </div>
+
+            <motion.div className="studio-aura" style={{ scale: glowScale }} />
+
+            <motion.div
+              className="studio-crystal-wrap"
+              style={
+                {
+                  rotateX,
+                  rotateY,
+                  y: translateY,
+                  "--studio-accent": activeProject.accent,
+                  "--studio-soft": activeProject.accentSoft,
+                } as MotionStyle
+              }
+            >
+              <div className="studio-crystal">
+                <span className="studio-crystal-edge edge-one" />
+                <span className="studio-crystal-edge edge-two" />
+                <span className="studio-crystal-edge edge-three" />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    animate={{ opacity: 1, y: 0 }}
+                    className="studio-screen"
+                    exit={{ opacity: 0, y: 18 }}
+                    initial={{ opacity: 0, y: 18 }}
+                    key={activeProject.code}
+                    transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <span className="studio-screen-kicker">{activeProject.category}</span>
+                    <strong>{activeProject.title}</strong>
+                    <p>{activeProject.summary}</p>
+                    <div className="studio-screen-links">
+                      <span>custom build</span>
+                      <span>responsive</span>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.div>
+
+            <div className="studio-overlay studio-overlay-right">
+              <p>SCROLL / DRAG FEEL</p>
+              <strong>Professional websites</strong>
+              <span>{activeProject.duration}</span>
+            </div>
+
+            <div className="studio-bottom">
+              <div className="studio-bottom-copy">
+                <span className="studio-bottom-label">Outcome</span>
+                <p>{activeProject.outcome}</p>
+              </div>
+              <div className="studio-progress" aria-hidden="true">
+                {studioProjects.map((project, index) => (
+                  <span
+                    className={`studio-progress-dot${index === activeIndex ? " active" : ""}`}
+                    key={project.code}
+                    style={{ "--dot-color": project.accent } as CSSProperties}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -714,7 +854,10 @@ function TestimonialsCarousel() {
                   if (info.offset.x > 70) paginate(-1);
                 }}
               >
-                <div className="review-stars" aria-label="5 stars">★★★★★</div>
+                <div className="review-head">
+                  <StarRating />
+                  <span className="review-score">5.0 / 5</span>
+                </div>
                 <p>{review.text}</p>
                 <strong>{review.name}</strong>
               </motion.article>
@@ -1138,8 +1281,10 @@ export default function Home() {
         </div>
       </section>
 
+      <StudioCenterpiece />
+
       <section className="section" id="work">
-        <div className="section-grid">
+        <div className="section-grid work-grid">
           <div className="reveal">
             <p className="section-label">Work</p>
             <h2 className="section-title">{writingText([{ text: "Portfolio" }, { text: "with proof.", accent: true }])}</h2>

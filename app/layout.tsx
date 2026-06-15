@@ -2,25 +2,25 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Sparkle's Portfolio & Shop",
-  description: "Hey, my name is Sparkle (sw8tx) — Rocket League freestyler, Roblox trader & limited seller, and Discord marketplace vendor. This is my official site where you can find everything I offer.",
+  title: "Sparkle Web Design",
+  description: "Custom websites, portfolio systems and polished frontend development by Sparkle (sw8tx).",
   openGraph: {
-    title: "Sparkle's Portfolio & Shop",
-    description: "Hey, my name is Sparkle (sw8tx) — Rocket League freestyler, Roblox trader & limited seller, and Discord marketplace vendor. This is my official site.",
+    title: "Sparkle Web Design",
+    description: "Custom websites, portfolio systems and polished frontend development by Sparkle (sw8tx).",
     url: "https://sw8tx.lol",
     siteName: "Sparkle",
-    images: [{ url: "https://sw8tx.lol/logo.png", width: 1024, height: 1024, alt: "Sparkle Logo" }],
+    images: [{ url: "https://sw8tx.lol/logo-transparent.png", width: 1024, height: 1024, alt: "Sparkle Logo" }],
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Sparkle's Portfolio & Shop",
-    description: "Rocket League freestyler · Roblox trader · Discord seller. Official site.",
-    images: ["https://sw8tx.lol/logo.png"],
+    title: "Sparkle Web Design",
+    description: "Custom websites and polished frontend development by Sparkle (sw8tx).",
+    images: ["https://sw8tx.lol/logo-transparent.png"],
   },
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/logo-transparent.png",
+    apple: "/logo-transparent.png",
   },
 };
 
