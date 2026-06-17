@@ -54,25 +54,20 @@ export function FrozenCoreExperience() {
   const glowOpacity = useTransform(progress, [0, 0.3, 1], [0.48, 0.9, 0.38]);
 
   return (
-    <section className="spark-section frozen-core" id="centerpiece" ref={sectionRef}>
-      <div className="frozen-core-sticky">
-        <motion.div className="frozen-core-copy" style={{ opacity: copyOpacity, y: reduceMotion ? 0 : copyY }}>
-          <p className="spark-section-label">Centerpiece</p>
-          <h2>Frozen Core Experience</h2>
-          <p>
-            A scroll-led ice cube that keeps the page memorable without fighting the copy. It stays
-            calm on desktop, behaves on iPad, and lightens up on smaller devices.
+    <section className="section studio-section frozen-core-section" id="centerpiece" ref={sectionRef}>
+      <div className="section-grid frozen-core-grid">
+        <motion.div className="reveal frozen-core-copy" style={{ opacity: copyOpacity, y: reduceMotion ? 0 : copyY }}>
+          <p className="section-label">Centerpiece</p>
+          <h2 className="section-title">A frozen core, centered.</h2>
+          <p className="section-text soft-copy">
+            The cube sits in the middle, the old site stays readable around it, and the motion stays
+            calm instead of taking over the whole page.
           </p>
-          <div className="frozen-core-facts">
-            <div>Dark navy atmosphere</div>
-            <div>Transparent ice / glass feel</div>
-            <div>Subtle motion, no chaos</div>
-          </div>
         </motion.div>
 
-        <motion.div className="frozen-core-stage-shell" style={{ scale: stageScale, y: reduceMotion ? 0 : stageY }}>
+        <motion.div className="frozen-core-stage-shell reveal delay-1" style={{ scale: stageScale, y: reduceMotion ? 0 : stageY }}>
           <motion.div className="frozen-core-glow" style={{ opacity: glowOpacity }} />
-          <div className="frozen-core-stage">
+          <div className="frozen-core-stage light-core-stage">
             <IceCubeScene progress={progress} />
             <IceCubeCallouts callouts={callouts} progress={progress} />
             <ScrollProgressRail progress={progress} />
