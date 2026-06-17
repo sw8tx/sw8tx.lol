@@ -49,9 +49,9 @@ export function FrozenCoreExperience() {
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 24, mass: 0.22 });
   const copyY = useSpring(useTransform(progress, [0, 0.6], [0, -28]), { stiffness: 110, damping: 24 });
   const copyOpacity = useTransform(progress, [0, 0.12, 0.72], [1, 1, 0.66]);
-  const stageScale = useSpring(useTransform(progress, [0, 0.5, 0.9], [0.96, 1.02, 1.08]), { stiffness: 110, damping: 22 });
-  const stageY = useSpring(useTransform(progress, [0, 1], [24, -24]), { stiffness: 110, damping: 24 });
-  const glowOpacity = useTransform(progress, [0, 0.3, 1], [0.48, 0.9, 0.38]);
+  const stageScale = useSpring(useTransform(progress, [0, 0.25, 0.45, 0.58, 0.78, 1], [0.96, 1, 1.03, 1.12, 1.06, 1.02]), { stiffness: 120, damping: 20 });
+  const stageY = useSpring(useTransform(progress, [0, 0.42, 0.58, 1], [24, 0, -18, -30]), { stiffness: 118, damping: 22 });
+  const glowOpacity = useTransform(progress, [0, 0.3, 0.58, 1], [0.42, 0.72, 1, 0.34]);
 
   return (
     <section className="section studio-section frozen-core-section" id="centerpiece" ref={sectionRef}>

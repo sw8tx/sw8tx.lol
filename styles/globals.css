@@ -4123,6 +4123,7 @@ body > :not(.global-background) {
   box-shadow:
     0 34px 96px rgba(0, 80, 216, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  overflow: hidden;
 }
 
 .light-core-stage::before {
@@ -4144,6 +4145,7 @@ body > :not(.global-background) {
     0 20px 52px rgba(0, 80, 216, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.84);
   backdrop-filter: blur(14px) saturate(1.08);
+  transition: box-shadow 240ms ease, border-color 240ms ease, transform 240ms ease;
 }
 
 .light-core-stage .ice-callout-label {
@@ -4156,6 +4158,14 @@ body > :not(.global-background) {
 
 .light-core-stage .ice-callout-plus {
   color: var(--blue);
+}
+
+.light-core-stage .ice-callout:hover {
+  border-color: rgba(0, 80, 216, 0.3);
+  box-shadow:
+    0 28px 62px rgba(0, 80, 216, 0.16),
+    0 0 30px rgba(77, 182, 229, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
 }
 
 .light-core-stage .ice-callout-lines line {

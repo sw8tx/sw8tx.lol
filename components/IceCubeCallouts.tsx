@@ -27,6 +27,8 @@ export function IceCubeCallouts({
 }) {
   const reduceMotion = useReducedMotion();
   const parallax = useTransform(progress, [0, 0.5, 1], [0, -8, 10]);
+  const popPush = useTransform(progress, [0, 0.42, 0.58, 0.76, 1], [0, 0, 18, 8, 0]);
+  const popPull = useTransform(popPush, (value) => -value);
 
   return (
     <div className="ice-callouts" aria-label="Frozen core modules">
@@ -57,6 +59,12 @@ export function IceCubeCallouts({
               reduceMotion
                 ? undefined
                 : {
+                    x:
+                      callout.position === "right-top"
+                        ? popPush
+                        : callout.position === "left-top" || callout.position === "left-bottom"
+                          ? popPull
+                          : 0,
                     y: parallax,
                     transitionDelay: `${index * 80}ms`,
                   }
