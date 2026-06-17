@@ -13,9 +13,9 @@ type Callout = {
 };
 
 const positionStyles: Record<Callout["position"], { x: string; y: string; w: string; h: string }> = {
-  "left-top": { x: "16%", y: "22%", w: "23%", h: "20%" },
-  "right-top": { x: "72%", y: "24%", w: "-18%", h: "18%" },
-  "left-bottom": { x: "22%", y: "70%", w: "18%", h: "-16%" },
+  "left-top": { x: "22%", y: "28%", w: "16%", h: "12%" },
+  "right-top": { x: "78%", y: "30%", w: "-14%", h: "12%" },
+  "left-bottom": { x: "26%", y: "72%", w: "14%", h: "-12%" },
 };
 
 export function IceCubeCallouts({
@@ -73,8 +73,6 @@ export function IceCubeCallouts({
           >
             <span className="ice-callout-label">{callout.label}</span>
             <strong>{callout.title}</strong>
-            <p>{callout.description}</p>
-            <span className="ice-callout-plus" aria-hidden="true">+</span>
             <span
               aria-hidden="true"
               className="ice-callout-point"

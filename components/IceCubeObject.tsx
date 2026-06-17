@@ -95,6 +95,23 @@ function ProceduralIceCube({ progress, mobile, reducedMotion }: ProceduralIceCub
     }));
   }, [mobile]);
 
+  const shardData = useMemo(() => {
+    const count = mobile ? 8 : 14;
+    return Array.from({ length: count }, (_, index) => {
+      const angle = (index / count) * Math.PI * 2;
+      return {
+        key: `shard-${index}`,
+        position: [
+          Math.cos(angle) * (0.9 + (index % 2) * 0.18),
+          Math.sin(angle * 1.2) * (0.86 + (index % 3) * 0.08),
+          Math.sin(angle) * 0.34,
+        ] as [number, number, number],
+        rotation: [angle * 0.5, angle, angle * 0.24] as [number, number, number],
+        scale: [0.06, 0.38 + (index % 4) * 0.08, 0.03] as [number, number, number],
+      };
+    });
+  }, [mobile]);
+
   useFrame((state, delta) => {
     if (!groupRef.current) return;
 
@@ -104,7 +121,7 @@ function ProceduralIceCube({ progress, mobile, reducedMotion }: ProceduralIceCub
     const targetY = progress * Math.PI * 1.26 + pointerX + popWindow * 0.4;
     const targetX = heroAngle + progress * 0.4 + pointerY;
     const targetZ = Math.sin(state.clock.elapsedTime * 0.24) * 0.1 + popWindow * 0.08;
-    const targetScale = 1.02 + progress * (mobile ? 0.12 : 0.22) + popWindow * (mobile ? 0.1 : 0.18);
+    const targetScale = 1.08 + progress * (mobile ? 0.14 : 0.24) + popWindow * (mobile ? 0.12 : 0.2);
     const floatY = Math.sin(state.clock.elapsedTime * 0.85) * (mobile ? 0.06 : 0.11);
 
     groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, reducedMotion ? 0 : targetY, 4.8, delta);
@@ -125,34 +142,34 @@ function ProceduralIceCube({ progress, mobile, reducedMotion }: ProceduralIceCub
 
   return (
     <group ref={groupRef}>
-      <mesh ref={auraRef} position={[0, 0, -0.2]}>
+      <mesh ref={auraRef} position={[0, 0, -0.24]}>
         <sphereGeometry args={[1.72, 48, 48]} />
         <meshBasicMaterial color="#7cd9ff" opacity={0.1 + popWindow * 0.08} transparent />
       </mesh>
 
-      <RoundedBox args={[2.12, 2.28, 2.04]} castShadow receiveShadow radius={0.34} smoothness={7}>
+      <RoundedBox args={[2.16, 2.34, 2.08]} castShadow receiveShadow radius={0.28} smoothness={6}>
         <MeshTransmissionMaterial
           anisotropy={0.2}
           backside
           backsideThickness={0.28}
-          chromaticAberration={0.035 + popWindow * 0.016}
-          color="#d3f1ff"
-          distortion={0.22}
-          distortionScale={0.42}
+          chromaticAberration={0.05 + popWindow * 0.022}
+          color="#d8f4ff"
+          distortion={0.26}
+          distortionScale={0.48}
           ior={1.31}
-          roughness={0.12}
-          temporalDistortion={0.08}
-          thickness={1.18}
+          roughness={0.1}
+          temporalDistortion={0.12}
+          thickness={1.24}
           transmission={1}
         />
       </RoundedBox>
 
       <mesh ref={shellRef}>
-        <RoundedBox args={[2.22, 2.38, 2.14]} radius={0.38} smoothness={5}>
+        <RoundedBox args={[2.28, 2.44, 2.18]} radius={0.22} smoothness={4}>
           <meshPhysicalMaterial
             color="#ebfaff"
             opacity={0.16 + chargeWindow * 0.06}
-            roughness={0.72}
+            roughness={0.78}
             transparent
           />
         </RoundedBox>
@@ -161,6 +178,17 @@ function ProceduralIceCube({ progress, mobile, reducedMotion }: ProceduralIceCub
       <mesh scale={[0.92, 0.98, 0.92]}>
         <RoundedBox args={[2.08, 2.18, 1.98]} radius={0.28} smoothness={4}>
           <meshPhysicalMaterial color="#63c7ff" opacity={0.08} roughness={0.36} transparent />
+        </RoundedBox>
+      </mesh>
+
+      <mesh scale={[0.8, 0.86, 0.8]}>
+        <RoundedBox args={[1.8, 1.94, 1.72]} radius={0.18} smoothness={4}>
+          <meshPhysicalMaterial
+            color="#f7fdff"
+            opacity={0.08 + popWindow * 0.04}
+            roughness={0.28}
+            transparent
+          />
         </RoundedBox>
       </mesh>
 
@@ -173,6 +201,18 @@ function ProceduralIceCube({ progress, mobile, reducedMotion }: ProceduralIceCub
           points={points}
           transparent
         />
+      ))}
+
+      {shardData.map((shard, index) => (
+        <mesh key={shard.key} position={shard.position} rotation={shard.rotation} scale={shard.scale}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshPhysicalMaterial
+            color={index % 2 === 0 ? "#f5fcff" : "#bfe9ff"}
+            opacity={0.12 + popWindow * 0.06}
+            roughness={0.34}
+            transparent
+          />
+        </mesh>
       ))}
 
       {bubbles.map((bubble, index) => (

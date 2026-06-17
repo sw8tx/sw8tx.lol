@@ -4098,96 +4098,110 @@ body > :not(.global-background) {
 
 .frozen-core-section {
   padding-top: 10px;
+  padding-bottom: 36px;
 }
 
 .frozen-core-grid {
   grid-template-columns: 1fr;
+  gap: 32px;
 }
 
 .frozen-core-section .frozen-core-copy {
-  max-width: 680px;
-}
-
-.frozen-core-section .frozen-core-stage-shell {
-  width: min(100%, 1120px);
+  max-width: 640px;
+  text-align: center;
   margin: 0 auto;
 }
 
+.frozen-core-section .frozen-core-stage-shell {
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  position: relative;
+}
+
 .light-core-stage {
-  min-height: 620px;
-  border: 1px solid rgba(0, 80, 216, 0.14);
-  border-radius: 10px;
+  min-height: min(84vh, 940px);
+  border: 0;
+  border-radius: 28px;
   background:
-    radial-gradient(circle at 50% 14%, rgba(255, 255, 255, 0.9), transparent 22%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(234, 246, 255, 0.48));
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.92), transparent 18%),
+    radial-gradient(circle at 50% 50%, rgba(164, 223, 255, 0.18), transparent 28%),
+    radial-gradient(circle at 22% 76%, rgba(118, 206, 255, 0.15), transparent 26%),
+    radial-gradient(circle at 80% 26%, rgba(121, 238, 222, 0.12), transparent 20%),
+    linear-gradient(180deg, rgba(246, 251, 255, 0.76), rgba(226, 241, 252, 0.56));
   box-shadow:
-    0 34px 96px rgba(0, 80, 216, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+    0 40px 110px rgba(43, 128, 201, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
   overflow: hidden;
 }
 
 .light-core-stage::before {
   content: "";
   position: absolute;
-  inset: 18px;
-  border: 1px solid rgba(77, 182, 229, 0.14);
-  border-radius: 8px;
+  inset: -12%;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(118, 212, 255, 0.12), transparent 20%),
+    radial-gradient(circle at 50% 76%, rgba(255, 255, 255, 0.38), transparent 18%),
+    radial-gradient(circle at 14% 30%, rgba(255, 255, 255, 0.22), transparent 14%),
+    radial-gradient(circle at 85% 34%, rgba(109, 198, 255, 0.12), transparent 14%);
+  filter: blur(28px);
   pointer-events: none;
 }
 
 .light-core-stage .ice-callout {
-  color: var(--ink);
-  border: 1px solid rgba(0, 80, 216, 0.14);
+  width: min(170px, calc(100% - 24px));
+  padding: 12px 14px 13px;
+  color: rgba(9, 24, 49, 0.9);
+  border: 1px solid rgba(7, 53, 116, 0.1);
+  border-radius: 14px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(234, 246, 255, 0.66)),
-    rgba(255, 255, 255, 0.6);
+    linear-gradient(145deg, rgba(244, 250, 255, 0.34), rgba(221, 238, 249, 0.18)),
+    rgba(234, 244, 252, 0.14);
   box-shadow:
-    0 20px 52px rgba(0, 80, 216, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
-  backdrop-filter: blur(14px) saturate(1.08);
-  transition: box-shadow 240ms ease, border-color 240ms ease, transform 240ms ease;
+    0 12px 36px rgba(18, 69, 128, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(18px) saturate(1.06);
+  transition: box-shadow 240ms ease, border-color 240ms ease, transform 240ms ease, background-color 240ms ease;
 }
 
 .light-core-stage .ice-callout-label {
-  color: var(--blue);
+  color: rgba(0, 80, 216, 0.92);
+}
+
+.light-core-stage .ice-callout strong {
+  margin-top: 7px;
+  font-size: 0.98rem;
+  line-height: 1.2;
 }
 
 .light-core-stage .ice-callout p {
-  color: var(--muted);
-}
-
-.light-core-stage .ice-callout-plus {
-  color: var(--blue);
+  display: none;
 }
 
 .light-core-stage .ice-callout:hover {
-  border-color: rgba(0, 80, 216, 0.3);
+  border-color: rgba(0, 80, 216, 0.2);
+  background:
+    linear-gradient(145deg, rgba(248, 252, 255, 0.5), rgba(228, 242, 252, 0.28)),
+    rgba(236, 245, 253, 0.2);
   box-shadow:
-    0 28px 62px rgba(0, 80, 216, 0.16),
-    0 0 30px rgba(77, 182, 229, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    0 18px 42px rgba(18, 74, 138, 0.12),
+    0 0 22px rgba(77, 182, 229, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 .light-core-stage .ice-callout-lines line {
-  stroke: rgba(0, 80, 216, 0.22);
-}
-
-.light-core-stage .scroll-rail-track {
-  background: rgba(0, 80, 216, 0.12);
-}
-
-.light-core-stage .scroll-rail-labels {
-  color: rgba(4, 22, 47, 0.54);
+  stroke: rgba(6, 67, 152, 0.14);
+  stroke-width: 0.14;
 }
 
 @media (max-width: 920px) {
   .light-core-stage {
-    min-height: 580px;
+    min-height: 72vh;
   }
 }
 
 @media (max-width: 680px) {
   .light-core-stage {
-    min-height: 650px;
+    min-height: 620px;
+    border-radius: 20px;
   }
 }
