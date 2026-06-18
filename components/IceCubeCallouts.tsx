@@ -21,9 +21,11 @@ const positionStyles: Record<Callout["position"], { x: string; y: string; w: str
 export function IceCubeCallouts({
   callouts,
   progress,
+  active,
 }: {
-  callouts: Callout[];
+  callouts: readonly Callout[];
   progress: MotionValue<number>;
+  active: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const parallax = useTransform(progress, [0, 0.5, 1], [0, -8, 10]);
@@ -31,7 +33,7 @@ export function IceCubeCallouts({
   const popPull = useTransform(popPush, (value) => -value);
 
   return (
-    <div className="ice-callouts" aria-label="Frozen core modules">
+    <div className={`ice-callouts${active ? " hud-active" : ""}`} aria-label="Frozen core modules">
       <svg className="ice-callout-lines" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none">
         {callouts.map((callout) => {
           const pos = positionStyles[callout.position];
