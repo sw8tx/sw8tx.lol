@@ -2,12 +2,19 @@
 
 import { Detailed, Line, Sparkles, useGLTF, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import type { MotionValue } from "framer-motion";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 type IceCubeObjectProps = {
   hasModel: boolean;
   hovered: boolean;
+  progress: MotionValue<number>;
+  mobile: boolean;
+  reducedMotion: boolean;
+  selected: boolean;
+  onHoverChange: (value: boolean) => void;
+  onSelect: (value: boolean) => void;
 };
 
 type ProceduralIcebergProps = Omit<IceCubeObjectProps, "hasModel">;
