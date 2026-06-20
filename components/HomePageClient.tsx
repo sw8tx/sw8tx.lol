@@ -580,7 +580,7 @@ export function HomePageClient() {
   useEffect(() => {
     if (reduceMotion) return;
 
-    const timer = window.setTimeout(() => setIsLoading(false), 2800);
+    const timer = window.setTimeout(() => setIsLoading(false), 3200);
     return () => window.clearTimeout(timer);
   }, [reduceMotion]);
 

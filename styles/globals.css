@@ -4112,3 +4112,352 @@ body > :not(.global-background) {
     transform: translateY(-6px);
   }
 }
+
+/* Loader polish v2 */
+
+.load-gate {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.06), transparent 18rem),
+    #0e58dc;
+}
+
+.load-stage {
+  gap: 0;
+  padding-top: 0;
+}
+
+.load-logo-build {
+  width: clamp(190px, 18vw, 246px);
+  filter: drop-shadow(0 18px 48px rgba(3, 20, 78, 0.18));
+  animation: loadLogoSettleV2 1.35s cubic-bezier(0.2, 0.9, 0.2, 1) forwards 180ms;
+}
+
+.load-logo-mask {
+  background: #fffdfa;
+}
+
+.load-logo-slice {
+  filter: none;
+  animation: logoSliceInV2 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.load-logo-core {
+  transform: scale(0.96);
+  animation: logoCoreInV2 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 780ms;
+}
+
+.load-logo-core::after {
+  inset: -10%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12), transparent 66%);
+  animation: loadAuraPulseV2 2.4s ease-in-out infinite 1.25s;
+}
+
+.load-orbit {
+  border-color: rgba(255, 255, 255, 0.13);
+  opacity: 0;
+}
+
+.load-orbit-one {
+  width: min(34vw, 430px);
+  height: min(34vw, 430px);
+  animation:
+    loadOrbitInV2 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 420ms,
+    loadSpinV2 11s linear infinite 1.4s;
+}
+
+.load-orbit-two {
+  width: min(42vw, 520px);
+  height: min(25vw, 300px);
+  border-color: rgba(255, 255, 255, 0.1);
+  animation:
+    loadOrbitInV2 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards 560ms,
+    loadSpinReverseV2 14s linear infinite 1.55s;
+}
+
+.load-spark {
+  width: 11px;
+  height: 11px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.22);
+}
+
+.load-spark-one {
+  top: calc(50% - 124px);
+  left: calc(50% + 138px);
+  animation: sparkOrbitOneV2 6s linear infinite 1.2s;
+}
+
+.load-spark-two {
+  top: calc(50% + 120px);
+  left: calc(50% - 140px);
+  animation: sparkOrbitTwoV2 7.2s linear infinite 1.1s;
+}
+
+.load-spark-three {
+  display: none;
+}
+
+.load-footer {
+  gap: 16px;
+  padding-bottom: 0;
+}
+
+.load-word {
+  padding-inline: 18px;
+  font-size: clamp(24px, 2.7vw, 42px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  animation: loadFooterInV2 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.1s;
+}
+
+.load-progress {
+  height: 12px;
+  background: rgba(2, 24, 90, 0.2);
+}
+
+.load-progress-bar {
+  background: linear-gradient(90deg, #f1d268 0%, #f5df91 55%, #fff5cf 100%);
+  animation: loadBarFillV2 2.8s cubic-bezier(0.22, 1, 0.36, 1) forwards 180ms;
+}
+
+.load-gate.is-exiting .load-logo-build {
+  animation: loadZoomThroughV2 1s cubic-bezier(0.14, 0.96, 0.22, 1) forwards;
+}
+
+.load-gate.is-exiting .load-word,
+.load-gate.is-exiting .load-progress,
+.load-gate.is-exiting .load-orbit,
+.load-gate.is-exiting .load-spark {
+  animation: loadFadeAwayV2 0.42s ease forwards;
+}
+
+.site-loading > :not(.load-gate) {
+  opacity: 0;
+  transform: scale(1.035);
+  filter: blur(10px);
+}
+
+.site-entered > :not(.load-gate) {
+  animation: siteRevealInV2 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (max-width: 680px) {
+  .load-logo-build {
+    width: 172px;
+  }
+
+  .load-orbit-one {
+    width: 300px;
+    height: 300px;
+  }
+
+  .load-orbit-two {
+    width: 350px;
+    height: 210px;
+  }
+
+  .load-spark-one {
+    top: calc(50% - 104px);
+    left: calc(50% + 104px);
+  }
+
+  .load-spark-two {
+    top: calc(50% + 102px);
+    left: calc(50% - 108px);
+  }
+}
+
+@keyframes loadLogoSettleV2 {
+  0% {
+    opacity: 0;
+    transform: translateY(34px) scale(0.82) rotate(-5deg);
+  }
+  44% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.04) rotate(1deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(2px) scale(0.992) rotate(-0.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes logoSliceInV2 {
+  0% {
+    opacity: 0;
+    transform: translateY(26px) scale(0.95);
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes logoCoreInV2 {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes loadAuraPulseV2 {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.18;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes loadOrbitInV2 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes loadSpinV2 {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes loadSpinReverseV2 {
+  from {
+    transform: translate(-50%, -50%) rotate(-18deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(-378deg);
+  }
+}
+
+@keyframes sparkOrbitOneV2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.82);
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  25% {
+    transform: translate(18px, 12px) scale(1);
+  }
+  50% {
+    transform: translate(-6px, 22px) scale(0.92);
+  }
+  75% {
+    transform: translate(-18px, -6px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.82);
+  }
+}
+
+@keyframes sparkOrbitTwoV2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.82);
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  30% {
+    transform: translate(-12px, -18px) scale(1);
+  }
+  55% {
+    transform: translate(10px, -24px) scale(0.9);
+  }
+  78% {
+    transform: translate(22px, 2px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.82);
+  }
+}
+
+@keyframes loadFooterInV2 {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes loadBarFillV2 {
+  0% {
+    transform: scaleX(0);
+  }
+  16% {
+    transform: scaleX(0.08);
+  }
+  55% {
+    transform: scaleX(0.58);
+  }
+  82% {
+    transform: scaleX(0.86);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes loadZoomThroughV2 {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(9.5) translateY(0.5vh);
+  }
+}
+
+@keyframes loadFadeAwayV2 {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes siteRevealInV2 {
+  0% {
+    opacity: 0;
+    transform: scale(1.03);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
