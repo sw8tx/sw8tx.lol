@@ -482,6 +482,11 @@ function IntroLoader({ active }: { active: boolean }) {
           />
         </div>
       </div>
+      <div aria-hidden="true" className="load-curtain">
+        <span className="load-curtain-band load-curtain-band-top" />
+        <span className="load-curtain-band load-curtain-band-mid" />
+        <span className="load-curtain-band load-curtain-band-base" />
+      </div>
     </div>
   );
 }
