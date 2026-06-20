@@ -3626,11 +3626,11 @@ body > :not(.global-background) {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
-  -webkit-mask-image: url("/logo-transparent.png");
+  -webkit-mask-image: url("/sparkle-mark.svg");
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
-  mask-image: url("/logo-transparent.png");
+  mask-image: url("/sparkle-mark.svg");
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
@@ -3642,11 +3642,11 @@ body > :not(.global-background) {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  -webkit-mask-image: url("/logo-transparent.png");
+  -webkit-mask-image: url("/sparkle-mark.svg");
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
-  mask-image: url("/logo-transparent.png");
+  mask-image: url("/sparkle-mark.svg");
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
@@ -4484,8 +4484,8 @@ body > :not(.global-background) {
 /* Loader polish v3 */
 
 .load-logo-mask {
-  -webkit-mask-image: url("/logo-transparent.png");
-  mask-image: url("/logo-transparent.png");
+  -webkit-mask-image: url("/sparkle-mark.svg");
+  mask-image: url("/sparkle-mark.svg");
 }
 
 .load-gate {
@@ -4766,5 +4766,133 @@ body > :not(.global-background) {
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
+  }
+}
+
+/* Sparkle mark refresh */
+
+.brand-mark,
+.legal-brand-mark,
+.card-logo {
+  overflow: visible;
+}
+
+.brand-mark img,
+.legal-brand-mark img,
+.card-logo img {
+  filter:
+    drop-shadow(0 10px 22px rgba(0, 80, 216, 0.16))
+    drop-shadow(0 0 18px rgba(155, 211, 255, 0.22));
+}
+
+.load-logo-shell {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.load-logo-shell::before {
+  content: "";
+  position: absolute;
+  inset: 50%;
+  width: min(30vw, 360px);
+  height: min(30vw, 360px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.14), transparent 68%);
+  transform: translate(-50%, -50%);
+}
+
+.load-logo-build {
+  position: relative;
+  width: clamp(168px, 16vw, 224px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  animation: loadLogoSettleV3 1.45s cubic-bezier(0.2, 0.9, 0.2, 1) forwards 200ms;
+}
+
+.load-logo-build img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 18px 36px rgba(7, 28, 90, 0.2))
+    drop-shadow(0 0 20px rgba(255, 255, 255, 0.12));
+}
+
+.load-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.load-percent {
+  min-width: 3ch;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-align: right;
+}
+
+.load-progress {
+  position: relative;
+  height: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(7, 28, 90, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.load-progress-bar {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f7d46f 0%, #fff0b4 44%, #ffffff 100%);
+  box-shadow:
+    0 0 22px rgba(255, 228, 153, 0.38),
+    0 0 42px rgba(255, 255, 255, 0.16);
+  transform-origin: left;
+  animation: none;
+}
+
+.load-progress-glow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 238, 178, 0.24) 42%, transparent 72%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.load-gate.is-exiting .load-status-row,
+.load-gate.is-exiting .load-percent,
+.load-gate.is-exiting .load-progress,
+.load-gate.is-exiting .load-progress-glow {
+  animation: loadFadeAwayV3 0.28s ease forwards;
+}
+
+@media (max-width: 680px) {
+  .load-logo-build {
+    width: 154px;
+  }
+
+  .load-status-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .load-percent {
+    text-align: left;
   }
 }

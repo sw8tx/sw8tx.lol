@@ -353,7 +353,7 @@ function HeroShowcaseCard({
       <span className="card-lift">
         {card.image && (
           <span className="card-logo">
-            <Image src="/logo-transparent.png" alt="" width={58} height={58} />
+            <Image src="/sparkle-mark.svg" alt="" width={58} height={58} />
           </span>
         )}
         <span className="card-top">
@@ -450,7 +450,7 @@ function PortfolioProjects() {
   );
 }
 
-function IntroLoader({ active }: { active: boolean }) {
+function IntroLoader({ active, progress }: { active: boolean; progress: number }) {
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
       <div className="load-stage" role="presentation">
@@ -459,27 +459,27 @@ function IntroLoader({ active }: { active: boolean }) {
         <span className="load-spark load-spark-one" />
         <span className="load-spark load-spark-two" />
         <span className="load-spark load-spark-three" />
-        <div className="load-logo-build">
-          {Array.from({ length: 5 }, (_, index) => (
-            <span
-              className={`load-logo-slice load-logo-slice-${index + 1}`}
-              key={index}
-              style={{ "--slice-delay": `${index * 110}ms` } as CSSProperties}
-            >
-              <span className="load-logo-mask" />
-            </span>
-          ))}
-          <span className="load-logo-core">
-            <span className="load-logo-mask" />
-          </span>
+        <div className="load-logo-shell">
+          <div className="load-logo-build">
+            <Image src="/sparkle-mark.svg" alt="" width={272} height={272} priority />
+          </div>
         </div>
       </div>
       <div className="load-footer">
-        <p className="load-word">Preparing The Sparkle Masterpiece!</p>
-        <div className="load-progress" aria-hidden="true">
-          <span
-            className="load-progress-bar"
-          />
+        <div className="load-status-row">
+          <p className="load-word">Preparing The Sparkle Masterpiece!</p>
+          <span className="load-percent">{progress}%</span>
+        </div>
+        <div
+          aria-label={`Loading progress ${progress} percent`}
+          aria-valuemax={100}
+          aria-valuemin={0}
+          aria-valuenow={progress}
+          className="load-progress"
+          role="progressbar"
+        >
+          <span className="load-progress-bar" style={{ transform: `scaleX(${progress / 100})` }} />
+          <span className="load-progress-glow" style={{ left: `${progress}%` }} />
         </div>
       </div>
       <div aria-hidden="true" className="load-curtain">
@@ -549,6 +549,7 @@ export function HomePageClient() {
   const reduceMotion = useReducedMotion();
   const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
   const [navScrolled, setNavScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
   const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -54]);
@@ -583,10 +584,38 @@ export function HomePageClient() {
   }, []);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion) {
+      const reducedMotionTimer = window.setTimeout(() => {
+        setLoadProgress(100);
+        setIsLoading(false);
+      }, 0);
 
-    const timer = window.setTimeout(() => setIsLoading(false), 3200);
-    return () => window.clearTimeout(timer);
+      return () => window.clearTimeout(reducedMotionTimer);
+    }
+
+    const durationMs = 3200;
+    const start = window.performance.now();
+    let frame = 0;
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const raw = elapsed / durationMs;
+      const eased = 1 - Math.pow(1 - Math.min(raw, 1), 2.2);
+      const nextProgress = Math.min(100, Math.round(eased * 100));
+      setLoadProgress(nextProgress);
+
+      if (raw < 1) {
+        frame = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      setLoadProgress(100);
+      window.setTimeout(() => setIsLoading(false), 80);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+
+    return () => window.cancelAnimationFrame(frame);
   }, [reduceMotion]);
 
   useEffect(() => {
@@ -613,13 +642,13 @@ export function HomePageClient() {
 
   return (
     <main className={`site${isLoading ? " site-loading" : " site-entered"}`}>
-      <IntroLoader active={!reduceMotion && isLoading} />
+      <IntroLoader active={!reduceMotion && isLoading} progress={loadProgress} />
       <motion.div aria-hidden="true" className="scroll-progress" style={{ scaleX: scrollProgressX }} />
 
       <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
         <Link className="brand" href="/" aria-label="Sparkle home">
           <span className="brand-mark">
-            <Image src="/logo-transparent.png" alt="" width={38} height={38} priority />
+            <Image src="/sparkle-mark.svg" alt="" width={38} height={38} priority />
           </span>
           <span className="brand-name">Sparkle</span>
         </Link>
