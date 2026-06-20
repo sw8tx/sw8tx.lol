@@ -3534,6 +3534,9 @@ body > :not(.global-background) {
 .load-gate.is-exiting {
   opacity: 0;
   visibility: hidden;
+  transition:
+    opacity 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 760ms step-end;
 }
 
 .load-stage {
@@ -3619,9 +3622,18 @@ body > :not(.global-background) {
   inset: 0;
 }
 
-.load-logo-slice img,
-.load-logo-core img {
-  object-fit: contain;
+.load-logo-mask {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  -webkit-mask-image: url("/logo-transparent.png");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: url("/logo-transparent.png");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 }
 
 .load-logo-slice {
@@ -3670,6 +3682,17 @@ body > :not(.global-background) {
   background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 62%);
   opacity: 0;
   animation: loadAuraPulse 1.8s ease-in-out infinite 1.1s;
+}
+
+.load-gate.is-exiting .load-logo-build {
+  animation: loadZoomThrough 820ms cubic-bezier(0.12, 0.9, 0.2, 1) forwards;
+}
+
+.load-gate.is-exiting .load-word,
+.load-gate.is-exiting .load-progress,
+.load-gate.is-exiting .load-orbit,
+.load-gate.is-exiting .load-spark {
+  animation: loadFadeAway 340ms ease forwards;
 }
 
 .load-footer {
@@ -3829,6 +3852,15 @@ body > :not(.global-background) {
   padding-top: 18px;
 }
 
+.site-loading > :not(.load-gate) {
+  opacity: 0;
+  transform: scale(1.02);
+}
+
+.site-entered > :not(.load-gate) {
+  animation: siteRevealIn 760ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (max-width: 920px) {
   .hero {
     padding-top: 98px;
@@ -3958,6 +3990,28 @@ body > :not(.global-background) {
   }
 }
 
+@keyframes loadZoomThrough {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: drop-shadow(0 18px 38px rgba(0, 28, 96, 0.22));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(7.8) translateY(1vh);
+    filter: drop-shadow(0 0 0 rgba(0, 28, 96, 0));
+  }
+}
+
+@keyframes loadFadeAway {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes loadSpin {
   from {
     rotate: 0deg;
@@ -4033,6 +4087,19 @@ body > :not(.global-background) {
   50% {
     opacity: 0.9;
     transform: translate3d(-14px, -14px, 0) scale(1);
+  }
+}
+
+@keyframes siteRevealIn {
+  0% {
+    opacity: 0;
+    transform: scale(1.02);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
   }
 }
 

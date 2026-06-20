@@ -466,11 +466,11 @@ function IntroLoader({ active }: { active: boolean }) {
               key={index}
               style={{ "--slice-delay": `${index * 110}ms` } as CSSProperties}
             >
-              <Image src="/logo-transparent.png" alt="" fill priority sizes="220px" />
+              <span className="load-logo-mask" />
             </span>
           ))}
           <span className="load-logo-core">
-            <Image src="/logo-transparent.png" alt="Sparkle logo" fill priority sizes="220px" />
+            <span className="load-logo-mask" />
           </span>
         </div>
       </div>
@@ -607,7 +607,7 @@ export function HomePageClient() {
   }, []);
 
   return (
-    <main className="site">
+    <main className={`site${isLoading ? " site-loading" : " site-entered"}`}>
       <IntroLoader active={!reduceMotion && isLoading} />
       <motion.div aria-hidden="true" className="scroll-progress" style={{ scaleX: scrollProgressX }} />
 
