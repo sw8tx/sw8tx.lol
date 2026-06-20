@@ -10,13 +10,12 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  type MotionStyle,
 } from "framer-motion";
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
-import { FrozenCoreExperience } from "./FrozenCoreExperience";
+import { useEffect, useState } from "react";
 
 const primaryEmail = "info@tylerosthoff.xyz";
+
 type ShowcaseCard = {
   id: string;
   kicker: string;
@@ -43,10 +42,10 @@ const showcase: ShowcaseCard[] = [
     body: "Polished portfolio, shop and SaaS surfaces built around fast flows.",
     category: "Web",
     left: 7,
-    top: 20,
-    mobileLeft: 4,
+    top: 18,
+    mobileLeft: 2,
     mobileTop: 6,
-    rotate: -7,
+    rotate: -6,
     color: "#0050d8",
     color2: "#4db6e5",
     soft: "#dbefff",
@@ -58,11 +57,11 @@ const showcase: ShowcaseCard[] = [
     title: "Brand Identity Kits",
     body: "Logos, palettes, type systems and launch-ready social assets.",
     category: "Brand",
-    left: 69,
-    top: 15,
+    left: 64,
+    top: 10,
     mobileLeft: 52,
-    mobileTop: 11,
-    rotate: 6,
+    mobileTop: 12,
+    rotate: 5,
     color: "#1aaed8",
     color2: "#9bd3ff",
     soft: "#e7f8ff",
@@ -73,11 +72,11 @@ const showcase: ShowcaseCard[] = [
     title: "Animated Details",
     body: "Micro-interactions, reveal systems, hover energy and page rhythm.",
     category: "Motion",
-    left: 18,
-    top: 67,
-    mobileLeft: 6,
-    mobileTop: 42,
-    rotate: 5,
+    left: 12,
+    top: 58,
+    mobileLeft: 5,
+    mobileTop: 46,
+    rotate: 4,
     color: "#18bfa5",
     color2: "#9bf1ff",
     soft: "#dffbf2",
@@ -88,11 +87,11 @@ const showcase: ShowcaseCard[] = [
     title: "Next.js Builds",
     body: "Responsive components with crisp implementation and clean handoff.",
     category: "Code",
-    left: 73,
-    top: 64,
-    mobileLeft: 52,
-    mobileTop: 49,
-    rotate: -6,
+    left: 61,
+    top: 55,
+    mobileLeft: 51,
+    mobileTop: 52,
+    rotate: -5,
     color: "#0076f5",
     color2: "#0050d8",
     soft: "#e7ecff",
@@ -104,11 +103,11 @@ const showcase: ShowcaseCard[] = [
     title: "Visual Identity",
     body: "A compact design language for sites that need to feel memorable.",
     category: "Look",
-    left: 42,
-    top: 9,
-    mobileLeft: 27,
-    mobileTop: 74,
-    rotate: 3,
+    left: 35,
+    top: 2,
+    mobileLeft: 25,
+    mobileTop: 75,
+    rotate: 2,
     color: "#4db6e5",
     color2: "#9bd3ff",
     soft: "#eaf6ff",
@@ -224,7 +223,6 @@ const testimonials = [
 ];
 
 type ProcessStep = (typeof process)[number];
-type DragOffset = { x: number; y: number };
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -234,8 +232,8 @@ function useMagnetic(strength = 8) {
   const reduceMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 420, damping: 28, mass: 0.22 });
-  const springY = useSpring(y, { stiffness: 420, damping: 28, mass: 0.22 });
+  const springX = useSpring(x, { stiffness: 360, damping: 26, mass: 0.22 });
+  const springY = useSpring(y, { stiffness: 360, damping: 26, mass: 0.22 });
 
   const onPointerMove = <T extends HTMLElement>(event: ReactPointerEvent<T>) => {
     if (reduceMotion || event.pointerType !== "mouse") return;
@@ -306,98 +304,40 @@ function ProcessStack({ items }: { items: ProcessStep[] }) {
 function HeroShowcaseCard({
   active,
   card,
-  dragging,
   index,
-  offset,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
+  onActivate,
 }: {
   active: boolean;
   card: ShowcaseCard;
-  dragging: boolean;
   index: number;
-  offset: DragOffset;
-  onPointerDown: (event: ReactPointerEvent<HTMLButtonElement>, id: string) => void;
-  onPointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => void;
-  onPointerUp: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+  onActivate: (id: string) => void;
 }) {
-  const reduceMotion = useReducedMotion();
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
-  const shineX = useMotionValue(50);
-  const shineY = useMotionValue(50);
-  const shadowX = useMotionValue(0);
-  const shadowY = useMotionValue(0);
-  const smoothRotateX = useSpring(rotateX, { stiffness: 260, damping: 24, mass: 0.34 });
-  const smoothRotateY = useSpring(rotateY, { stiffness: 260, damping: 24, mass: 0.34 });
-  const smoothShadowX = useSpring(shadowX, { stiffness: 260, damping: 24, mass: 0.34 });
-  const smoothShadowY = useSpring(shadowY, { stiffness: 260, damping: 24, mass: 0.34 });
-  const shineXPercent = useTransform(shineX, (value) => `${value}%`);
-  const shineYPercent = useTransform(shineY, (value) => `${value}%`);
-  const shadowXPx = useTransform(smoothShadowX, (value) => `${value}px`);
-  const shadowYPx = useTransform(smoothShadowY, (value) => `${value}px`);
-
-  const resetTilt = () => {
-    rotateX.set(0);
-    rotateY.set(0);
-    shineX.set(50);
-    shineY.set(50);
-    shadowX.set(0);
-    shadowY.set(0);
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    onPointerMove(event);
-    if (reduceMotion || event.pointerType !== "mouse") return;
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    const percentX = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-    const percentY = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-
-    rotateX.set((0.5 - percentY) * 11);
-    rotateY.set((percentX - 0.5) * 13);
-    shineX.set(percentX * 100);
-    shineY.set(percentY * 100);
-    shadowX.set((percentX - 0.5) * 18);
-    shadowY.set((percentY - 0.5) * 14);
-  };
-
   return (
-    <button
+    <motion.button
       aria-label={`${card.category}: ${card.title}`}
-      className={`hero-card${active ? " active" : ""}${dragging ? " dragging" : ""}${card.dark ? " dark" : ""}`}
-      onPointerCancel={onPointerUp}
-      onPointerDown={(event) => onPointerDown(event, card.id)}
-      onPointerLeave={resetTilt}
-      onPointerMove={handlePointerMove}
-      onPointerUp={onPointerUp}
+      className={`hero-card${active ? " active" : ""}${card.dark ? " dark" : ""}`}
+      onFocus={() => onActivate(card.id)}
+      onMouseEnter={() => onActivate(card.id)}
+      onTouchStart={() => onActivate(card.id)}
       style={{
         "--left": card.left,
         "--top": card.top,
         "--mobile-left": card.mobileLeft,
         "--mobile-top": card.mobileTop,
         "--rotate": `${card.rotate}deg`,
-        "--drag-x": `${offset.x}px`,
-        "--drag-y": `${offset.y}px`,
+        "--drag-x": "0px",
+        "--drag-y": "0px",
         "--card-color": card.color,
         "--card-color-2": card.color2,
         "--card-soft": card.soft,
         "--delay": `${220 + index * 90}ms`,
       } as CSSProperties}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       type="button"
+      whileHover={{ y: -10, scale: 1.02 }}
+      whileTap={{ scale: 0.99 }}
     >
-      <motion.span
-        className="card-lift"
-        style={{
-          "--shine-x": shineXPercent,
-          "--shine-y": shineYPercent,
-          "--tilt-shadow-x": shadowXPx,
-          "--tilt-shadow-y": shadowYPx,
-          rotateX: smoothRotateX,
-          rotateY: smoothRotateY,
-        } as MotionStyle}
-      >
+      <span className="card-lift">
         {card.image && (
           <span className="card-logo">
             <Image src="/logo-transparent.png" alt="" width={58} height={58} />
@@ -417,8 +357,8 @@ function HeroShowcaseCard({
         <span className="card-category">{card.category}</span>
         <span className="card-title">{card.title}</span>
         <span className="card-body">{card.body}</span>
-      </motion.span>
-    </button>
+      </span>
+    </motion.button>
   );
 }
 
@@ -451,36 +391,12 @@ function MarqueeLine({
 }
 
 function PortfolioProjects() {
-  const reduceMotion = useReducedMotion();
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLElement>) => {
-    if (reduceMotion || event.pointerType !== "mouse") return;
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
-    const y = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
-
-    event.currentTarget.style.setProperty("--project-x", `${x}%`);
-    event.currentTarget.style.setProperty("--project-y", `${y}%`);
-    event.currentTarget.style.setProperty("--project-tilt-x", `${(50 - y) / 7}deg`);
-    event.currentTarget.style.setProperty("--project-tilt-y", `${(x - 50) / 6}deg`);
-  };
-
-  const resetTilt = (event: ReactPointerEvent<HTMLElement>) => {
-    event.currentTarget.style.setProperty("--project-x", "50%");
-    event.currentTarget.style.setProperty("--project-y", "50%");
-    event.currentTarget.style.setProperty("--project-tilt-x", "0deg");
-    event.currentTarget.style.setProperty("--project-tilt-y", "0deg");
-  };
-
   return (
     <div className="portfolio-grid reveal delay-1">
       {studioProjects.map((project, index) => (
         <article
           className="project-card"
           key={project.title}
-          onPointerLeave={resetTilt}
-          onPointerMove={handlePointerMove}
           style={{ "--project-color": project.accent, "--project-delay": `${index * 90}ms` } as CSSProperties}
         >
           <div className="project-media" aria-hidden="true">
@@ -517,6 +433,29 @@ function PortfolioProjects() {
           </div>
         </article>
       ))}
+    </div>
+  );
+}
+
+function IntroLoader({ active }: { active: boolean }) {
+  return (
+    <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
+      <div className="load-logo-build" role="presentation">
+        {Array.from({ length: 5 }, (_, index) => (
+          <span
+            className={`load-logo-slice load-logo-slice-${index + 1}`}
+            key={index}
+            style={{ "--slice-delay": `${index * 90}ms` } as CSSProperties}
+          >
+            <Image src="/logo-transparent.png" alt="" fill priority sizes="180px" />
+          </span>
+        ))}
+        <span className="load-logo-core">
+          <Image src="/logo-transparent.png" alt="Sparkle logo" fill priority sizes="180px" />
+        </span>
+      </div>
+      <p className="load-word">Sparkle</p>
+      <span className="load-subline">crafting the reveal</span>
     </div>
   );
 }
@@ -576,30 +515,19 @@ function TestimonialsCarousel() {
 }
 
 export function HomePageClient() {
+  const reduceMotion = useReducedMotion();
   const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
-  const [draggingCard, setDraggingCard] = useState("");
-  const [cardOffsets, setCardOffsets] = useState<Record<string, DragOffset>>({});
-  const siteRef = useRef<HTMLElement | null>(null);
-  const pointerFrameRef = useRef<number | null>(null);
-  const pointerRef = useRef({ x: 0, y: 0 });
-  const dragRef = useRef<{
-    id: string;
-    startX: number;
-    startY: number;
-    origin: DragOffset;
-  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [navScrolled, setNavScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
-  const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -66]);
-  const heroFieldTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 110]);
-  const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.2]);
+  const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -54]);
+  const heroFieldTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 70]);
+  const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.12]);
   const heroCopyY = useSpring(heroCopyTargetY, { stiffness: 120, damping: 28 });
-  const heroFieldY = useSpring(heroFieldTargetY, { stiffness: 120, damping: 28 });
+  const heroFieldY = useSpring(heroFieldTargetY, { stiffness: 120, damping: 30 });
   const heroGlowScale = useSpring(heroGlowTargetScale, { stiffness: 120, damping: 28 });
   const scrollProgressX = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.24 });
-  const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.92, 0.48]);
-  const morphY = useTransform(scrollYProgress, [0.1, 0.9], [-80, 260]);
-  const morphRotate = useTransform(scrollYProgress, [0.1, 0.9], [-8, 16]);
-  const morphScaleX = useTransform(scrollYProgress, [0.1, 0.5, 0.9], [0.95, 1.18, 0.9]);
+  const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.92, 0.54]);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -619,63 +547,30 @@ export function HomePageClient() {
     });
 
     return () => {
-      if (pointerFrameRef.current !== null) window.cancelAnimationFrame(pointerFrameRef.current);
       observer.disconnect();
     };
   }, []);
 
-  const updatePointer = (event: ReactPointerEvent<HTMLElement>) => {
-    if (event.pointerType !== "mouse") return;
+  useEffect(() => {
+    if (reduceMotion) return;
 
-    pointerRef.current = { x: event.clientX, y: event.clientY };
-    if (pointerFrameRef.current !== null) return;
+    const timer = window.setTimeout(() => setIsLoading(false), 1800);
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion]);
 
-    pointerFrameRef.current = window.requestAnimationFrame(() => {
-      pointerFrameRef.current = null;
-      siteRef.current?.style.setProperty("--mx", `${pointerRef.current.x}px`);
-      siteRef.current?.style.setProperty("--my", `${pointerRef.current.y}px`);
-    });
-  };
-
-  const startDrag = (event: ReactPointerEvent<HTMLButtonElement>, id: string) => {
-    event.preventDefault();
-    const origin = cardOffsets[id] ?? { x: 0, y: 0 };
-
-    setActiveShowcase(id);
-    setDraggingCard(id);
-    dragRef.current = { id, startX: event.clientX, startY: event.clientY, origin };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
-
-  const moveDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    const drag = dragRef.current;
-    if (!drag) return;
-
-    setCardOffsets((current) => ({
-      ...current,
-      [drag.id]: {
-        x: drag.origin.x + event.clientX - drag.startX,
-        y: drag.origin.y + event.clientY - drag.startY,
-      },
-    }));
-  };
-
-  const endDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    if (!dragRef.current) return;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-    dragRef.current = null;
-    setDraggingCard("");
-  };
+  useEffect(() => {
+    const onScroll = () => setNavScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <main className="site" onPointerMove={updatePointer} ref={siteRef}>
+    <main className="site">
+      <IntroLoader active={!reduceMotion && isLoading} />
       <motion.div aria-hidden="true" className="scroll-progress" style={{ scaleX: scrollProgressX }} />
-      <motion.div aria-hidden="true" className="section-morpher" style={{ rotate: morphRotate, scaleX: morphScaleX, y: morphY }} />
-      <div aria-hidden="true" className="noise-layer" />
 
-      <nav className="nav">
+      <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
         <Link className="brand" href="/" aria-label="Sparkle home">
           <span className="brand-mark">
             <Image src="/logo-transparent.png" alt="" width={38} height={38} priority />
@@ -743,22 +638,18 @@ export function HomePageClient() {
             <HeroShowcaseCard
               active={activeShowcase === card.id}
               card={card}
-              dragging={draggingCard === card.id}
               index={index}
               key={card.id}
-              offset={cardOffsets[card.id] ?? { x: 0, y: 0 }}
-              onPointerDown={startDrag}
-              onPointerMove={moveDrag}
-              onPointerUp={endDrag}
+              onActivate={setActiveShowcase}
             />
           ))}
         </div>
       </section>
 
       <div className="marquee-field" aria-hidden="true">
-        <MarqueeLine row="near" speed={32} />
-        <MarqueeLine direction="reverse" row="mid" speed={42} />
-        <MarqueeLine row="far" speed={54} />
+        <MarqueeLine row="near" speed={34} />
+        <MarqueeLine direction="reverse" row="mid" speed={44} />
+        <MarqueeLine row="far" speed={56} />
       </div>
 
       <section className="section" id="about">
@@ -794,8 +685,6 @@ export function HomePageClient() {
           <ProcessStack items={[...process]} />
         </div>
       </section>
-
-      <FrozenCoreExperience />
 
       <section className="section" id="work">
         <div className="section-grid work-grid">
