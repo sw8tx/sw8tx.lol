@@ -451,6 +451,8 @@ function PortfolioProjects() {
 }
 
 function IntroLoader({ active, progress }: { active: boolean; progress: number }) {
+  const glowPosition = Math.min(96, Math.max(4, progress));
+
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
       <div className="load-stage" role="presentation">
@@ -479,7 +481,7 @@ function IntroLoader({ active, progress }: { active: boolean; progress: number }
           role="progressbar"
         >
           <span className="load-progress-bar" style={{ transform: `scaleX(${progress / 100})` }} />
-          <span className="load-progress-glow" style={{ left: `${progress}%` }} />
+          <span className="load-progress-glow" style={{ left: `${glowPosition}%` }} />
         </div>
       </div>
       <div aria-hidden="true" className="load-curtain">
