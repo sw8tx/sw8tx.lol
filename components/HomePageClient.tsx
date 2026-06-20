@@ -12,7 +12,7 @@ import {
   useTransform,
 } from "framer-motion";
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const primaryEmail = "info@tylerosthoff.xyz";
 
@@ -249,6 +249,30 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+function setCardSurfaceState(element: HTMLElement, clientX: number, clientY: number) {
+  const rect = element.getBoundingClientRect();
+  const ratioX = (clientX - rect.left) / rect.width;
+  const ratioY = (clientY - rect.top) / rect.height;
+  const centeredX = ratioX - 0.5;
+  const centeredY = ratioY - 0.5;
+
+  element.style.setProperty("--shine-x", `${Math.round(ratioX * 100)}%`);
+  element.style.setProperty("--shine-y", `${Math.round(ratioY * 100)}%`);
+  element.style.setProperty("--tilt-shadow-x", `${Math.round(centeredX * 18)}px`);
+  element.style.setProperty("--tilt-shadow-y", `${Math.round(centeredY * 14)}px`);
+  element.style.setProperty("--tilt-rotate-x", `${Number(-centeredY * 8).toFixed(2)}deg`);
+  element.style.setProperty("--tilt-rotate-y", `${Number(centeredX * 10).toFixed(2)}deg`);
+}
+
+function resetCardSurfaceState(element: HTMLElement) {
+  element.style.setProperty("--shine-x", "50%");
+  element.style.setProperty("--shine-y", "50%");
+  element.style.setProperty("--tilt-shadow-x", "0px");
+  element.style.setProperty("--tilt-shadow-y", "0px");
+  element.style.setProperty("--tilt-rotate-x", "0deg");
+  element.style.setProperty("--tilt-rotate-y", "0deg");
+}
+
 function useMagnetic(strength = 8) {
   const reduceMotion = useReducedMotion();
   const x = useMotionValue(0);
@@ -283,12 +307,14 @@ function MagneticAnchor({
   children,
   className,
   href,
+  strength = 8,
 }: {
   children: ReactNode;
   className: string;
   href: string;
+  strength?: number;
 }) {
-  const magnetic = useMagnetic(8);
+  const magnetic = useMagnetic(strength);
 
   return (
     <motion.a
@@ -333,24 +359,88 @@ function HeroShowcaseCard({
   index: number;
   onActivate: (id: string) => void;
 }) {
+  const cardRef = useRef<HTMLButtonElement>(null);
+  const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const element = cardRef.current;
+    if (!element) return;
+
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: dragOffset.x,
+      originY: dragOffset.y,
+    };
+
+    setIsDragging(true);
+    element.setPointerCapture(event.pointerId);
+    onActivate(card.id);
+    setCardSurfaceState(element, event.clientX, event.clientY);
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const element = cardRef.current;
+    if (!element) return;
+
+    setCardSurfaceState(element, event.clientX, event.clientY);
+
+    const dragState = dragStateRef.current;
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+    const nextX = clamp(dragState.originX + (event.clientX - dragState.startX), -120, 120);
+    const nextY = clamp(dragState.originY + (event.clientY - dragState.startY), -96, 96);
+    setDragOffset({ x: nextX, y: nextY });
+  };
+
+  const handlePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (dragStateRef.current?.pointerId !== event.pointerId) return;
+    dragStateRef.current = null;
+    setIsDragging(false);
+  };
+
+  const handlePointerLeave = () => {
+    const element = cardRef.current;
+    if (!element || dragStateRef.current) return;
+    resetCardSurfaceState(element);
+  };
+
   return (
     <motion.button
       aria-label={`${card.category}: ${card.title}`}
-      className={`hero-card${active ? " active" : ""}${card.dark ? " dark" : ""}`}
+      className={`hero-card${active ? " active" : ""}${card.dark ? " dark" : ""}${isDragging ? " dragging" : ""}`}
+      onDoubleClick={() => setDragOffset({ x: 0, y: 0 })}
       onFocus={() => onActivate(card.id)}
       onMouseEnter={() => onActivate(card.id)}
-      onTouchStart={() => onActivate(card.id)}
+      onLostPointerCapture={() => setIsDragging(false)}
+      onPointerCancel={handlePointerUp}
+      onPointerDown={handlePointerDown}
+      onPointerLeave={handlePointerLeave}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      ref={cardRef}
       style={{
         "--left": card.left,
         "--top": card.top,
         "--mobile-left": card.mobileLeft,
         "--mobile-top": card.mobileTop,
         "--rotate": `${card.rotate}deg`,
-        "--drag-x": "0px",
-        "--drag-y": "0px",
+        "--drag-x": `${dragOffset.x}px`,
+        "--drag-y": `${dragOffset.y}px`,
+        "--magnet-x": "0px",
+        "--magnet-y": "0px",
         "--card-color": card.color,
         "--card-color-2": card.color2,
         "--card-soft": card.soft,
+        "--shine-x": "50%",
+        "--shine-y": "50%",
+        "--tilt-shadow-x": "0px",
+        "--tilt-shadow-y": "0px",
+        "--tilt-rotate-x": "0deg",
+        "--tilt-rotate-y": "0deg",
         "--delay": `${220 + index * 90}ms`,
       } as CSSProperties}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -488,7 +578,9 @@ function IntroLoader({ active, progress }: { active: boolean; progress: number }
           className="load-progress"
           role="progressbar"
         >
-          <span className="load-progress-bar" style={{ transform: `scaleX(${progress / 100})` }} />
+          <span className="load-progress-bar" style={{ transform: `scaleX(${progress / 100})` }}>
+            <span className="load-progress-liquid" />
+          </span>
           <span className="load-progress-glow" style={{ left: `${glowPosition}%` }} />
         </div>
       </div>
@@ -557,11 +649,16 @@ function TestimonialsCarousel() {
 
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
+  const siteRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
   const [navScrolled, setNavScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
+  const cursorAuraTargetX = useMotionValue(0);
+  const cursorAuraTargetY = useMotionValue(0);
+  const cursorAuraTargetOpacity = useMotionValue(0);
   const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -54]);
   const heroFieldTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 70]);
   const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.12]);
@@ -569,6 +666,9 @@ export function HomePageClient() {
   const heroFieldY = useSpring(heroFieldTargetY, { stiffness: 120, damping: 30 });
   const heroGlowScale = useSpring(heroGlowTargetScale, { stiffness: 120, damping: 28 });
   const scrollProgressX = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.24 });
+  const cursorAuraX = useSpring(cursorAuraTargetX, { stiffness: 180, damping: 24, mass: 0.3 });
+  const cursorAuraY = useSpring(cursorAuraTargetY, { stiffness: 180, damping: 24, mass: 0.3 });
+  const cursorAuraOpacity = useSpring(cursorAuraTargetOpacity, { stiffness: 180, damping: 26, mass: 0.32 });
   const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.92, 0.54]);
   const year = new Date().getFullYear();
 
@@ -636,6 +736,84 @@ export function HomePageClient() {
   }, []);
 
   useEffect(() => {
+    if (reduceMotion) return;
+
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const cards = Array.from(stage.querySelectorAll(".hero-card")) as HTMLElement[];
+
+    const handlePointerMove = (event: PointerEvent) => {
+      cards.forEach((card) => {
+        if (card.classList.contains("dragging")) return;
+
+        const rect = card.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = event.clientX - centerX;
+        const deltaY = event.clientY - centerY;
+        const distance = Math.hypot(deltaX, deltaY);
+        const radius = 260;
+
+        if (distance > radius) {
+          card.style.setProperty("--magnet-x", "0px");
+          card.style.setProperty("--magnet-y", "0px");
+          return;
+        }
+
+        const pull = (1 - distance / radius) ** 1.6;
+        const magnetX = clamp(deltaX * 0.14 * pull, -26, 26);
+        const magnetY = clamp(deltaY * 0.14 * pull, -20, 20);
+        card.style.setProperty("--magnet-x", `${magnetX.toFixed(2)}px`);
+        card.style.setProperty("--magnet-y", `${magnetY.toFixed(2)}px`);
+      });
+    };
+
+    const resetCards = () => {
+      cards.forEach((card) => {
+        if (card.classList.contains("dragging")) return;
+        card.style.setProperty("--magnet-x", "0px");
+        card.style.setProperty("--magnet-y", "0px");
+      });
+    };
+
+    stage.addEventListener("pointermove", handlePointerMove);
+    stage.addEventListener("pointerleave", resetCards);
+
+    return () => {
+      stage.removeEventListener("pointermove", handlePointerMove);
+      stage.removeEventListener("pointerleave", resetCards);
+      resetCards();
+    };
+  }, [reduceMotion]);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const updatePointer = (event: PointerEvent) => {
+      cursorAuraTargetX.set(event.clientX);
+      cursorAuraTargetY.set(event.clientY);
+      cursorAuraTargetOpacity.set(0.72);
+      siteRef.current?.style.setProperty("--mx", `${event.clientX}px`);
+      siteRef.current?.style.setProperty("--my", `${event.clientY}px`);
+    };
+
+    const resetPointer = () => {
+      cursorAuraTargetOpacity.set(0);
+      siteRef.current?.style.setProperty("--mx", "50vw");
+      siteRef.current?.style.setProperty("--my", "40vh");
+    };
+
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    window.addEventListener("pointerleave", resetPointer);
+
+    return () => {
+      window.removeEventListener("pointermove", updatePointer);
+      window.removeEventListener("pointerleave", resetPointer);
+    };
+  }, [cursorAuraTargetOpacity, cursorAuraTargetX, cursorAuraTargetY, reduceMotion]);
+
+  useEffect(() => {
     let titleIndex = 0;
     document.title = rotatingTitles[titleIndex];
 
@@ -651,9 +829,16 @@ export function HomePageClient() {
   }, []);
 
   return (
-    <main className={`site${isLoading ? " site-loading" : " site-entered"}`}>
+    <main className={`site${isLoading ? " site-loading" : " site-entered"}`} ref={siteRef}>
       <IntroLoader active={!reduceMotion && isLoading} progress={loadProgress} />
       <motion.div aria-hidden="true" className="scroll-progress" style={{ scaleX: scrollProgressX }} />
+      {!reduceMotion && (
+        <motion.div
+          aria-hidden="true"
+          className="cursor-aura"
+          style={{ x: cursorAuraX, y: cursorAuraY, opacity: cursorAuraOpacity }}
+        />
+      )}
 
       <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
         <Link className="brand" href="/" aria-label="Sparkle home">
@@ -667,7 +852,7 @@ export function HomePageClient() {
           <a className="nav-link" href="#process">Process</a>
           <a className="nav-link" href="#work">Work</a>
           <a className="nav-link" href="#reviews">Reviews</a>
-          <MagneticAnchor className="nav-button magnetic-action" href="#contact">
+          <MagneticAnchor className="nav-button magnetic-action" href="#contact" strength={14}>
             Contact Sparkle
           </MagneticAnchor>
         </div>
@@ -709,16 +894,16 @@ export function HomePageClient() {
             clean Next.js experiences for brands that need their own look.
           </p>
           <div className="hero-actions">
-            <MagneticAnchor className="button primary magnetic-action" href={`mailto:${primaryEmail}`}>
+            <MagneticAnchor className="button primary magnetic-action" href={`mailto:${primaryEmail}`} strength={18}>
               <span>Email Sparkle</span>
             </MagneticAnchor>
-            <MagneticAnchor className="button magnetic-action" href="#work">
+            <MagneticAnchor className="button magnetic-action" href="#work" strength={18}>
               <span>View Playground</span>
             </MagneticAnchor>
           </div>
         </motion.div>
 
-        <div className="card-stage" aria-label="Sparkle service cards">
+        <div className="card-stage" aria-label="Sparkle service cards" ref={stageRef}>
           {showcase.map((card, index) => (
             <HeroShowcaseCard
               active={activeShowcase === card.id}

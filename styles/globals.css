@@ -5228,6 +5228,172 @@ body > :not(.global-background) {
   }
 }
 
+/* Main page motion + loader fixes */
+
+.cursor-aura {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.28) 0%, rgba(155, 211, 255, 0.2) 28%, rgba(24, 191, 165, 0.1) 48%, transparent 74%);
+  filter: blur(28px) saturate(1.06);
+  pointer-events: none;
+  translate: -50% -50%;
+  mix-blend-mode: screen;
+}
+
+.hero-card {
+  cursor: grab;
+  touch-action: none;
+  transform: translate3d(calc(var(--drag-x) + var(--magnet-x)), calc(var(--drag-y) + var(--magnet-y)), 0) rotate(var(--rotate));
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-card.dragging {
+  cursor: grabbing;
+  transition-duration: 60ms;
+}
+
+.card-lift {
+  transform: rotateX(var(--tilt-rotate-x)) rotateY(var(--tilt-rotate-y));
+  transition:
+    transform 220ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    filter 260ms ease,
+    scale 260ms ease,
+    translate 260ms ease;
+}
+
+.hero-card:hover .card-lift,
+.hero-card.active .card-lift,
+.hero-card:focus-visible .card-lift {
+  translate: 0 -12px;
+  scale: 1.04;
+}
+
+.hero-card.dragging .card-lift {
+  translate: 0 -16px;
+  scale: 1.06;
+}
+
+.card-lift::before {
+  animation: cardGlowDrift 5.4s ease-in-out infinite;
+}
+
+.nav-button,
+.button,
+.email-row {
+  transition:
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 230ms ease,
+    border-color 230ms ease,
+    box-shadow 230ms ease;
+}
+
+.nav-button:hover,
+.button:hover,
+.email-row:hover {
+  box-shadow:
+    0 24px 48px rgba(0, 80, 216, 0.22),
+    0 0 34px rgba(77, 182, 229, 0.26);
+}
+
+.hero-copy {
+  filter: drop-shadow(0 24px 40px rgba(255, 255, 255, 0.14));
+}
+
+.load-progress {
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 249, 222, 0.9), rgba(255, 232, 145, 0.64)),
+    rgba(188, 128, 22, 0.12);
+}
+
+.load-progress-bar {
+  display: block;
+  height: 100%;
+  overflow: visible;
+}
+
+.load-progress-liquid {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px 22px 0 0;
+  background:
+    linear-gradient(180deg, #fffce5 0%, #ffe96f 30%, #ffc520 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.56),
+    inset 0 -1px 0 rgba(214, 151, 17, 0.32),
+    0 0 22px rgba(255, 221, 113, 0.34);
+}
+
+.load-progress-liquid::before {
+  content: "";
+  position: absolute;
+  left: -6%;
+  right: -10%;
+  top: -18px;
+  height: 54px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 56' preserveAspectRatio='none'%3E%3Cpath d='M0 36 C20 36 22 8 44 8 S68 36 92 36 116 50 138 50 162 30 184 30 206 8 228 8 238 26 240 26 V56 H0 Z' fill='%23ffd53d'/%3E%3Cpath d='M0 36 C20 36 22 8 44 8 S68 36 92 36 116 50 138 50 162 30 184 30 206 8 228 8 238 26 240 26' fill='none' stroke='%23fff8d6' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 240px 54px;
+  background-repeat: repeat-x;
+  filter:
+    drop-shadow(0 -2px 0 rgba(255, 255, 255, 0.18))
+    drop-shadow(0 0 18px rgba(255, 233, 138, 0.24));
+  animation:
+    loadSnakeWave 0.9s linear infinite,
+    loadSnakeBob 0.44s ease-in-out infinite alternate;
+}
+
+.load-progress-liquid::after {
+  content: "";
+  position: absolute;
+  inset: 2px 0 0;
+  border-radius: 20px 20px 0 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.26) 0 12px,
+      rgba(255, 238, 166, 0.16) 12px 20px,
+      transparent 20px 34px
+    );
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.load-progress-glow {
+  top: 18%;
+}
+
+.load-progress-glow::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 136px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 250, 221, 0.9), rgba(255, 225, 98, 0.42) 34%, rgba(255, 225, 98, 0.08) 72%, transparent 100%);
+  transform: translate(-96%, -50%);
+  filter: blur(5px);
+  opacity: 0.95;
+}
+
+@keyframes cardGlowDrift {
+  0%,
+  100% {
+    transform: rotate(18deg) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: rotate(12deg) translate3d(-8px, 8px, 0);
+  }
+}
+
 @keyframes chipFloat {
   0%,
   100% {
