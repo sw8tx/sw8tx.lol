@@ -185,6 +185,14 @@ const rotatingTitles = [
   "Sparkle | Design Cleanup",
 ];
 
+const loaderMessages = [
+  "READY TO SPARK!",
+  "LOADING THE VISION!",
+  "SHAPING THE DETAILS!",
+  "POLISHING THE MOTION!",
+  "PREPARING THE DROP!",
+] as const;
+
 const marqueeWords = [...services, ...services, ...services];
 
 const studioProjects = [
@@ -452,6 +460,7 @@ function PortfolioProjects() {
 
 function IntroLoader({ active, progress }: { active: boolean; progress: number }) {
   const glowPosition = Math.min(96, Math.max(4, progress));
+  const loaderMessage = loaderMessages[Math.min(loaderMessages.length - 1, Math.floor(progress / 22))];
 
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
@@ -468,10 +477,9 @@ function IntroLoader({ active, progress }: { active: boolean; progress: number }
         </div>
       </div>
       <div className="load-footer">
-        <div className="load-status-row">
-          <p className="load-word">Preparing The Sparkle Masterpiece!</p>
-          <span className="load-percent">{progress}%</span>
-        </div>
+        <p className="load-word" key={loaderMessage}>
+          {loaderMessage}
+        </p>
         <div
           aria-label={`Loading progress ${progress} percent`}
           aria-valuemax={100}

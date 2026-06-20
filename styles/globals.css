@@ -4820,42 +4820,31 @@ body > :not(.global-background) {
     drop-shadow(0 0 20px rgba(255, 255, 255, 0.12));
 }
 
-.load-status-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
 .load-footer {
-  width: min(78vw, 440px);
-  margin-inline: auto;
-  padding-inline: 8px;
-}
-
-.load-percent {
-  min-width: 3ch;
-  color: rgba(255, 255, 255, 0.88);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-align: right;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+  padding: 0 0 0;
 }
 
 .load-progress {
   position: relative;
   width: 100%;
-  height: 12px;
+  height: 16px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, rgba(255, 240, 186, 0.96), rgba(245, 210, 111, 0.98)),
     rgba(7, 28, 90, 0.24);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 -10px 28px rgba(255, 216, 111, 0.12);
 }
 
 .load-progress-bar {
@@ -4864,11 +4853,11 @@ body > :not(.global-background) {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #f7d46f 0%, #fff0b4 44%, #ffffff 100%);
+  border-radius: 0;
+  background: linear-gradient(90deg, #fff7cf 0%, #ffffff 30%, #fff0b4 100%);
   box-shadow:
-    0 0 22px rgba(255, 228, 153, 0.38),
-    0 0 42px rgba(255, 255, 255, 0.16);
+    0 0 22px rgba(255, 245, 204, 0.45),
+    0 0 46px rgba(255, 255, 255, 0.18);
   transform-origin: left;
   animation: none;
 }
@@ -4884,15 +4873,14 @@ body > :not(.global-background) {
 .load-progress::before {
   content: "";
   position: absolute;
-  inset: 2px;
-  border-radius: inherit;
+  inset: 0;
   background:
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.08) 0 18px,
-      transparent 18px 30px
+      rgba(255, 255, 255, 0.12) 0 20px,
+      transparent 20px 34px
     );
-  opacity: 0.32;
+  opacity: 0.22;
   pointer-events: none;
 }
 
@@ -4900,16 +4888,31 @@ body > :not(.global-background) {
   position: absolute;
   top: 50%;
   z-index: 2;
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 238, 178, 0.24) 42%, transparent 72%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.98), rgba(255, 248, 212, 0.38) 44%, transparent 72%);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
-.load-gate.is-exiting .load-status-row,
-.load-gate.is-exiting .load-percent,
+.load-word {
+  margin: 0;
+  padding: 0 24px 6px;
+  color: #fff6f1;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(34px, 4vw, 64px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 0.92;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 4px 0 rgba(95, 18, 18, 0.22);
+  animation:
+    loadFooterInV3 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    loaderWordPulse 0.9s ease-in-out infinite;
+}
+
 .load-gate.is-exiting .load-progress,
 .load-gate.is-exiting .load-progress-glow {
   animation: loadFadeAwayV3 0.28s ease forwards;
@@ -4921,18 +4924,12 @@ body > :not(.global-background) {
   }
 
   .load-footer {
-    width: min(86vw, 360px);
-    padding-inline: 0;
+    gap: 14px;
   }
 
-  .load-status-row {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .load-percent {
-    text-align: left;
+  .load-word {
+    padding-inline: 18px;
+    font-size: clamp(28px, 9vw, 44px);
   }
 }
 
@@ -4942,5 +4939,17 @@ body > :not(.global-background) {
   }
   to {
     transform: translateX(180%);
+  }
+}
+
+@keyframes loaderWordPulse {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.94;
+  }
+  50% {
+    transform: translateY(-2px);
+    opacity: 1;
   }
 }
