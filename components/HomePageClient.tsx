@@ -172,6 +172,19 @@ const heroLines = [
   ["people", "remember."],
 ];
 
+const rotatingTitles = [
+  "Sparkle | Websites",
+  "Sparkle | Coding",
+  "Sparkle | Frontend",
+  "Sparkle | Web Design",
+  "Sparkle | UI/UX",
+  "Sparkle | Brand Identity",
+  "Sparkle | Landing Pages",
+  "Sparkle | Motion Design",
+  "Sparkle | Portfolio Systems",
+  "Sparkle | Design Cleanup",
+];
+
 const marqueeWords = [...services, ...services, ...services];
 
 const studioProjects = [
@@ -441,11 +454,11 @@ function IntroLoader({ active }: { active: boolean }) {
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
       <div className="load-stage" role="presentation">
-        <div className="load-logo-top">
-          <span className="load-logo-top-piece">
-            <Image src="/logo-transparent.png" alt="" fill priority sizes="160px" />
-          </span>
-        </div>
+        <span className="load-orbit load-orbit-one" />
+        <span className="load-orbit load-orbit-two" />
+        <span className="load-spark load-spark-one" />
+        <span className="load-spark load-spark-two" />
+        <span className="load-spark load-spark-three" />
         <div className="load-logo-build">
           {Array.from({ length: 5 }, (_, index) => (
             <span
@@ -567,7 +580,7 @@ export function HomePageClient() {
   useEffect(() => {
     if (reduceMotion) return;
 
-    const timer = window.setTimeout(() => setIsLoading(false), 1800);
+    const timer = window.setTimeout(() => setIsLoading(false), 2800);
     return () => window.clearTimeout(timer);
   }, [reduceMotion]);
 
@@ -576,6 +589,21 @@ export function HomePageClient() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    let titleIndex = 0;
+    document.title = rotatingTitles[titleIndex];
+
+    const interval = window.setInterval(() => {
+      titleIndex = (titleIndex + 1) % rotatingTitles.length;
+      document.title = rotatingTitles[titleIndex];
+    }, 1000);
+
+    return () => {
+      window.clearInterval(interval);
+      document.title = "Sparkle Web Design";
+    };
   }, []);
 
   return (
