@@ -353,7 +353,7 @@ function HeroShowcaseCard({
       <span className="card-lift">
         {card.image && (
           <span className="card-logo">
-            <Image src="/sparkle-mark.svg" alt="" width={58} height={58} />
+            <Image src="/logo-transparent.png" alt="" width={58} height={58} />
           </span>
         )}
         <span className="card-top">
@@ -461,7 +461,7 @@ function IntroLoader({ active, progress }: { active: boolean; progress: number }
         <span className="load-spark load-spark-three" />
         <div className="load-logo-shell">
           <div className="load-logo-build">
-            <Image src="/sparkle-mark.svg" alt="" width={272} height={272} priority />
+            <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
           </div>
         </div>
       </div>
@@ -648,7 +648,7 @@ export function HomePageClient() {
       <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
         <Link className="brand" href="/" aria-label="Sparkle home">
           <span className="brand-mark">
-            <Image src="/sparkle-mark.svg" alt="" width={38} height={38} priority />
+            <Image src="/logo-transparent.png" alt="" width={38} height={38} priority />
           </span>
           <span className="brand-name">Sparkle</span>
         </Link>

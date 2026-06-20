@@ -3626,11 +3626,11 @@ body > :not(.global-background) {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
-  -webkit-mask-image: url("/sparkle-mark.svg");
+  -webkit-mask-image: url("/logo-transparent.png");
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
-  mask-image: url("/sparkle-mark.svg");
+  mask-image: url("/logo-transparent.png");
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
@@ -3642,11 +3642,11 @@ body > :not(.global-background) {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  -webkit-mask-image: url("/sparkle-mark.svg");
+  -webkit-mask-image: url("/logo-transparent.png");
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
-  mask-image: url("/sparkle-mark.svg");
+  mask-image: url("/logo-transparent.png");
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
@@ -4484,8 +4484,8 @@ body > :not(.global-background) {
 /* Loader polish v3 */
 
 .load-logo-mask {
-  -webkit-mask-image: url("/sparkle-mark.svg");
-  mask-image: url("/sparkle-mark.svg");
+  -webkit-mask-image: url("/logo-transparent.png");
+  mask-image: url("/logo-transparent.png");
 }
 
 .load-gate {

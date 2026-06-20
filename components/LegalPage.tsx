@@ -30,7 +30,7 @@ export function LegalPage({ tone, label, title, updated, intro, sections }: Lega
       <nav className="legal-nav">
         <Link href="/" className="legal-brand" aria-label="Sparkle home">
           <span className="legal-brand-mark">
-            <Image src="/sparkle-mark.svg" alt="" width={40} height={40} />
+            <Image src="/logo-transparent.png" alt="" width={40} height={40} />
           </span>
           <span className="legal-brand-name">Sparkle</span>
         </Link>
