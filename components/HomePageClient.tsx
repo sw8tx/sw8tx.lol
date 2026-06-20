@@ -172,6 +172,12 @@ const heroLines = [
   ["people", "remember."],
 ];
 
+const heroChips = [
+  { label: "Awwwards Energy", left: "8%", top: "17%", rotate: "-8deg" },
+  { label: "Motion First", left: "76%", top: "14%", rotate: "7deg" },
+  { label: "Drag The Cards", left: "70%", top: "78%", rotate: "-6deg" },
+] as const;
+
 const rotatingTitles = [
   "Sparkle | Websites",
   "Sparkle | Coding",
@@ -191,6 +197,27 @@ const loaderMessages = [
   "SHAPING THE DETAILS!",
   "POLISHING THE MOTION!",
   "PREPARING THE DROP!",
+] as const;
+
+const aboutSignals = [
+  { label: "Clarity", value: "Structured layouts" },
+  { label: "Motion", value: "Human rhythm" },
+  { label: "Polish", value: "Premium finish" },
+] as const;
+
+const workSignals = [
+  { label: "Depth", x: "10%", y: "16%" },
+  { label: "Flow", x: "82%", y: "22%" },
+  { label: "Trust", x: "72%", y: "78%" },
+  { label: "Energy", x: "18%", y: "74%" },
+] as const;
+
+const contactNodes = [
+  { x: "12%", y: "24%" },
+  { x: "34%", y: "12%" },
+  { x: "56%", y: "28%" },
+  { x: "74%", y: "18%" },
+  { x: "88%", y: "34%" },
 ] as const;
 
 const marqueeWords = [...services, ...services, ...services];
@@ -364,9 +391,45 @@ function HeroShowcaseCard({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
 
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleWindowPointerMove = (event: PointerEvent) => {
+      const element = cardRef.current;
+      const dragState = dragStateRef.current;
+      if (!element || !dragState) return;
+      if (dragState.pointerId !== event.pointerId) return;
+
+      setCardSurfaceState(element, event.clientX, event.clientY);
+
+      const nextX = clamp(dragState.originX + (event.clientX - dragState.startX), -160, 160);
+      const nextY = clamp(dragState.originY + (event.clientY - dragState.startY), -120, 120);
+      setDragOffset({ x: nextX, y: nextY });
+    };
+
+    const finishDrag = (event: PointerEvent) => {
+      const dragState = dragStateRef.current;
+      if (!dragState || dragState.pointerId !== event.pointerId) return;
+      dragStateRef.current = null;
+      setIsDragging(false);
+    };
+
+    window.addEventListener("pointermove", handleWindowPointerMove);
+    window.addEventListener("pointerup", finishDrag);
+    window.addEventListener("pointercancel", finishDrag);
+
+    return () => {
+      window.removeEventListener("pointermove", handleWindowPointerMove);
+      window.removeEventListener("pointerup", finishDrag);
+      window.removeEventListener("pointercancel", finishDrag);
+    };
+  }, [isDragging]);
+
   const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     const element = cardRef.current;
     if (!element) return;
+
+    event.preventDefault();
 
     dragStateRef.current = {
       pointerId: event.pointerId,
@@ -377,7 +440,6 @@ function HeroShowcaseCard({
     };
 
     setIsDragging(true);
-    element.setPointerCapture(event.pointerId);
     onActivate(card.id);
     setCardSurfaceState(element, event.clientX, event.clientY);
   };
@@ -387,13 +449,6 @@ function HeroShowcaseCard({
     if (!element) return;
 
     setCardSurfaceState(element, event.clientX, event.clientY);
-
-    const dragState = dragStateRef.current;
-    if (!dragState || dragState.pointerId !== event.pointerId) return;
-
-    const nextX = clamp(dragState.originX + (event.clientX - dragState.startX), -120, 120);
-    const nextY = clamp(dragState.originY + (event.clientY - dragState.startY), -96, 96);
-    setDragOffset({ x: nextX, y: nextY });
   };
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -415,7 +470,6 @@ function HeroShowcaseCard({
       onDoubleClick={() => setDragOffset({ x: 0, y: 0 })}
       onFocus={() => onActivate(card.id)}
       onMouseEnter={() => onActivate(card.id)}
-      onLostPointerCapture={() => setIsDragging(false)}
       onPointerCancel={handlePointerUp}
       onPointerDown={handlePointerDown}
       onPointerLeave={handlePointerLeave}
@@ -501,14 +555,79 @@ function MarqueeLine({
   );
 }
 
+function AboutSignalStrip() {
+  return (
+    <div className="about-signal-strip reveal delay-2" aria-hidden="true">
+      {aboutSignals.map((signal) => (
+        <div className="about-signal-card" key={signal.label}>
+          <span>{signal.label}</span>
+          <strong>{signal.value}</strong>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WorkSignalField() {
+  return (
+    <div className="work-signal-field" aria-hidden="true">
+      {workSignals.map((signal, index) => (
+        <span
+          className="work-signal-dot"
+          key={signal.label}
+          style={{ left: signal.x, top: signal.y, "--signal-delay": `${index * 0.8}s` } as CSSProperties}
+        >
+          <span>{signal.label}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function ContactConstellation() {
+  return (
+    <div className="contact-constellation" aria-hidden="true">
+      {contactNodes.map((node, index) => (
+        <span
+          className="contact-node"
+          key={`${node.x}-${node.y}`}
+          style={{ left: node.x, top: node.y, "--node-delay": `${index * 0.6}s` } as CSSProperties}
+        />
+      ))}
+      <span className="contact-link contact-link-one" />
+      <span className="contact-link contact-link-two" />
+      <span className="contact-link contact-link-three" />
+    </div>
+  );
+}
+
 function PortfolioProjects() {
   return (
     <div className="portfolio-grid reveal delay-1">
       {studioProjects.map((project, index) => (
-        <article
+        <motion.article
           className="project-card"
           key={project.title}
+          onPointerLeave={(event) => {
+            event.currentTarget.style.setProperty("--project-x", "50%");
+            event.currentTarget.style.setProperty("--project-y", "50%");
+            event.currentTarget.style.setProperty("--project-tilt-x", "0deg");
+            event.currentTarget.style.setProperty("--project-tilt-y", "0deg");
+          }}
+          onPointerMove={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const ratioX = (event.clientX - rect.left) / rect.width;
+            const ratioY = (event.clientY - rect.top) / rect.height;
+            const centeredX = ratioX - 0.5;
+            const centeredY = ratioY - 0.5;
+
+            event.currentTarget.style.setProperty("--project-x", `${Math.round(ratioX * 100)}%`);
+            event.currentTarget.style.setProperty("--project-y", `${Math.round(ratioY * 100)}%`);
+            event.currentTarget.style.setProperty("--project-tilt-x", `${Number(-centeredY * 6).toFixed(2)}deg`);
+            event.currentTarget.style.setProperty("--project-tilt-y", `${Number(centeredX * 8).toFixed(2)}deg`);
+          }}
           style={{ "--project-color": project.accent, "--project-delay": `${index * 90}ms` } as CSSProperties}
+          whileHover={{ y: -10 }}
         >
           <div className="project-media" aria-hidden="true">
             {project.screens.map((screen) => (
@@ -542,7 +661,7 @@ function PortfolioProjects() {
               </div>
             </dl>
           </div>
-        </article>
+        </motion.article>
       ))}
     </div>
   );
@@ -604,6 +723,11 @@ function TestimonialsCarousel() {
     ]);
   };
 
+  useEffect(() => {
+    const interval = window.setInterval(() => paginate(1), 4800);
+    return () => window.clearInterval(interval);
+  }, []);
+
   return (
     <section className="section reviews-section" id="reviews">
       <div className="section-grid">
@@ -622,6 +746,8 @@ function TestimonialsCarousel() {
             </button>
           </div>
           <div className="review-viewport" aria-live="polite">
+            <div className="review-orbit review-orbit-one" />
+            <div className="review-orbit review-orbit-two" />
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
               <motion.article
                 className="review-card"
@@ -662,9 +788,15 @@ export function HomePageClient() {
   const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -54]);
   const heroFieldTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 70]);
   const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.12]);
+  const heroBackdropTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 48]);
+  const heroOrbitTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -86]);
+  const heroStageTargetRotate = useTransform(scrollYProgress, [0, 0.28], ["0deg", "5deg"]);
   const heroCopyY = useSpring(heroCopyTargetY, { stiffness: 120, damping: 28 });
   const heroFieldY = useSpring(heroFieldTargetY, { stiffness: 120, damping: 30 });
   const heroGlowScale = useSpring(heroGlowTargetScale, { stiffness: 120, damping: 28 });
+  const heroBackdropY = useSpring(heroBackdropTargetY, { stiffness: 110, damping: 28 });
+  const heroOrbitY = useSpring(heroOrbitTargetY, { stiffness: 120, damping: 30 });
+  const heroStageRotate = useSpring(heroStageTargetRotate, { stiffness: 120, damping: 30 });
   const scrollProgressX = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.24 });
   const cursorAuraX = useSpring(cursorAuraTargetX, { stiffness: 180, damping: 24, mass: 0.3 });
   const cursorAuraY = useSpring(cursorAuraTargetY, { stiffness: 180, damping: 24, mass: 0.3 });
@@ -859,9 +991,36 @@ export function HomePageClient() {
       </nav>
 
       <section className="hero" aria-label="Sparkle web designer portfolio">
+        <motion.div aria-hidden="true" className="hero-backdrop-grid" style={{ y: heroBackdropY }} />
         <motion.div aria-hidden="true" className="hero-parallax-field" style={{ opacity: heroGlowOpacity, scale: heroGlowScale, y: heroFieldY }} />
+        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-one" style={{ y: heroOrbitY }} />
+        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-two" style={{ y: heroBackdropY }} />
+        <motion.div aria-hidden="true" className="hero-orbit-shell" style={{ y: heroOrbitY, rotate: heroStageRotate }}>
+          <span className="hero-orbit hero-orbit-one" />
+          <span className="hero-orbit hero-orbit-two" />
+          <span className="hero-orbit hero-orbit-three" />
+        </motion.div>
+        {heroChips.map((chip, index) => (
+          <motion.div
+            aria-hidden="true"
+            className="hero-chip"
+            key={chip.label}
+            style={{
+              left: chip.left,
+              top: chip.top,
+              rotate: chip.rotate,
+              y: index % 2 === 0 ? heroBackdropY : heroOrbitY,
+            }}
+          >
+            {chip.label}
+          </motion.div>
+        ))}
         <motion.div className="hero-copy" style={{ y: heroCopyY }}>
           <p className="eyebrow">Web Designer and Frontend Developer</p>
+          <div aria-hidden="true" className="hero-title-ghost">
+            <span>SPARKLE</span>
+            <span>SPARKLE</span>
+          </div>
           <h1 className="hero-title">
             {heroLines.map((line, lineIndex) => (
               <span className="title-line" key={line.join("-")}>
@@ -903,7 +1062,7 @@ export function HomePageClient() {
           </div>
         </motion.div>
 
-        <div className="card-stage" aria-label="Sparkle service cards" ref={stageRef}>
+        <motion.div className="card-stage" aria-label="Sparkle service cards" ref={stageRef} style={{ y: heroFieldY, rotate: heroStageRotate }}>
           {showcase.map((card, index) => (
             <HeroShowcaseCard
               active={activeShowcase === card.id}
@@ -913,7 +1072,7 @@ export function HomePageClient() {
               onActivate={setActiveShowcase}
             />
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <div className="marquee-field" aria-hidden="true">
@@ -934,6 +1093,7 @@ export function HomePageClient() {
               and a strong first impression. The style is sharp and playful, but the code stays
               practical enough to ship.
             </p>
+            <AboutSignalStrip />
             <div className="proof-grid">
               {proofStats.map((proof) => (
                 <div className="proof" key={proof.label} style={{ "--proof-color": proof.color } as CSSProperties}>
@@ -952,7 +1112,11 @@ export function HomePageClient() {
             <p className="section-label">Process</p>
             <h2 className="section-title">From idea to live site.</h2>
           </div>
-          <ProcessStack items={[...process]} />
+          <div className="process-shell">
+            <div className="process-ambient process-ambient-one" aria-hidden="true" />
+            <div className="process-ambient process-ambient-two" aria-hidden="true" />
+            <ProcessStack items={[...process]} />
+          </div>
         </div>
       </section>
 
@@ -962,7 +1126,12 @@ export function HomePageClient() {
             <p className="section-label">Work</p>
             <h2 className="section-title">Portfolio with proof.</h2>
           </div>
-          <PortfolioProjects />
+          <div className="work-shell">
+            <div className="work-aurora work-aurora-one" aria-hidden="true" />
+            <div className="work-aurora work-aurora-two" aria-hidden="true" />
+            <WorkSignalField />
+            <PortfolioProjects />
+          </div>
         </div>
       </section>
 
@@ -970,6 +1139,7 @@ export function HomePageClient() {
 
       <section className="contact" id="contact">
         <div className="contact-shell">
+          <ContactConstellation />
           <div className="reveal">
             <p className="section-label">Contact</p>
             <h2 className="contact-title">Let&apos;s build.</h2>
