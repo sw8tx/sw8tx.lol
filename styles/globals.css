@@ -4835,16 +4835,17 @@ body > :not(.global-background) {
 .load-progress {
   position: relative;
   width: 100%;
-  height: 16px;
+  height: 22px;
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 0;
+  border: 1px solid rgba(255, 248, 214, 0.34);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
   background:
-    linear-gradient(180deg, rgba(255, 240, 186, 0.96), rgba(245, 210, 111, 0.98)),
-    rgba(7, 28, 90, 0.24);
+    linear-gradient(180deg, rgba(255, 247, 216, 0.2), rgba(229, 174, 44, 0.16)),
+    rgba(113, 60, 0, 0.16);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.26),
-    0 -10px 28px rgba(255, 216, 111, 0.12);
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 -12px 30px rgba(255, 216, 111, 0.18);
 }
 
 .load-progress-bar {
@@ -4853,11 +4854,14 @@ body > :not(.global-background) {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 0;
-  background: linear-gradient(90deg, #fff7cf 0%, #ffffff 30%, #fff0b4 100%);
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  background:
+    linear-gradient(180deg, #fff9da 0%, #ffe680 34%, #f7c93d 100%);
   box-shadow:
-    0 0 22px rgba(255, 245, 204, 0.45),
-    0 0 46px rgba(255, 255, 255, 0.18);
+    0 0 24px rgba(255, 225, 121, 0.42),
+    0 -4px 18px rgba(255, 247, 205, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transform-origin: left;
   animation: none;
 }
@@ -4866,8 +4870,36 @@ body > :not(.global-background) {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
-  animation: loadProgressSheen 1.5s linear infinite;
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.72) 24%, rgba(255, 255, 255, 0.14) 48%, transparent 70%),
+    linear-gradient(180deg, rgba(255, 248, 212, 0.34), transparent 62%);
+  mix-blend-mode: screen;
+  animation: loadProgressSheen 0.95s linear infinite;
+}
+
+.load-progress-bar::before {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  top: -14px;
+  height: 32px;
+  background:
+    radial-gradient(circle at 10px 22px, rgba(255, 251, 233, 0.98) 0 10px, transparent 10.5px),
+    radial-gradient(circle at 34px 12px, rgba(255, 236, 151, 0.98) 0 12px, transparent 12.5px),
+    radial-gradient(circle at 60px 23px, rgba(255, 247, 205, 0.98) 0 10px, transparent 10.5px),
+    radial-gradient(circle at 88px 10px, rgba(255, 223, 102, 0.96) 0 14px, transparent 14.5px),
+    radial-gradient(circle at 118px 22px, rgba(255, 247, 205, 0.98) 0 11px, transparent 11.5px),
+    radial-gradient(circle at 148px 11px, rgba(255, 234, 136, 0.96) 0 13px, transparent 13.5px),
+    radial-gradient(circle at 178px 21px, rgba(255, 250, 227, 0.98) 0 10px, transparent 10.5px);
+  background-size: 188px 32px;
+  background-repeat: repeat-x;
+  filter:
+    drop-shadow(0 -2px 0 rgba(255, 255, 255, 0.2))
+    drop-shadow(0 0 14px rgba(255, 241, 179, 0.2));
+  animation:
+    loadLiquidWave 0.72s linear infinite,
+    loadLiquidBob 0.42s ease-in-out infinite alternate;
 }
 
 .load-progress::before {
@@ -4877,10 +4909,10 @@ body > :not(.global-background) {
   background:
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.12) 0 20px,
-      transparent 20px 34px
+      rgba(255, 255, 255, 0.12) 0 24px,
+      transparent 24px 40px
     );
-  opacity: 0.22;
+  opacity: 0.14;
   pointer-events: none;
 }
 
@@ -4888,17 +4920,22 @@ body > :not(.global-background) {
   position: absolute;
   top: 50%;
   z-index: 2;
-  width: 34px;
-  height: 34px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.98), rgba(255, 248, 212, 0.38) 44%, transparent 72%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.96), rgba(255, 238, 146, 0.52) 34%, rgba(255, 220, 82, 0.14) 58%, transparent 74%);
   transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  box-shadow:
+    -22px 0 28px rgba(255, 222, 101, 0.18),
+    -46px 0 44px rgba(255, 232, 142, 0.12);
   pointer-events: none;
+  animation: loadGlowBob 0.45s ease-in-out infinite alternate;
 }
 
 .load-word {
   margin: 0;
-  padding: 0 24px 6px;
+  padding: 0 24px 10px;
   color: #fff6f1;
   font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
   font-size: clamp(34px, 4vw, 64px);
@@ -4939,6 +4976,35 @@ body > :not(.global-background) {
   }
   to {
     transform: translateX(180%);
+  }
+}
+
+@keyframes loadLiquidWave {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-188px);
+  }
+}
+
+@keyframes loadLiquidBob {
+  0% {
+    transform: translateY(2px) scaleY(0.96);
+  }
+  100% {
+    transform: translateY(-2px) scaleY(1.08);
+  }
+}
+
+@keyframes loadGlowBob {
+  0% {
+    transform: translate(-50%, -44%);
+    opacity: 0.88;
+  }
+  100% {
+    transform: translate(-50%, -58%);
+    opacity: 1;
   }
 }
 

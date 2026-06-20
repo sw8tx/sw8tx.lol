@@ -603,7 +603,7 @@ export function HomePageClient() {
       return () => window.clearTimeout(reducedMotionTimer);
     }
 
-    const durationMs = 3200;
+    const durationMs = 4400;
     const start = window.performance.now();
     let frame = 0;
 
