@@ -440,22 +440,35 @@ function PortfolioProjects() {
 function IntroLoader({ active }: { active: boolean }) {
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
-      <div className="load-logo-build" role="presentation">
-        {Array.from({ length: 5 }, (_, index) => (
-          <span
-            className={`load-logo-slice load-logo-slice-${index + 1}`}
-            key={index}
-            style={{ "--slice-delay": `${index * 90}ms` } as CSSProperties}
-          >
-            <Image src="/logo-transparent.png" alt="" fill priority sizes="180px" />
+      <div className="load-stage" role="presentation">
+        <div className="load-logo-top">
+          <span className="load-logo-top-piece">
+            <Image src="/logo-transparent.png" alt="" fill priority sizes="160px" />
           </span>
-        ))}
-        <span className="load-logo-core">
-          <Image src="/logo-transparent.png" alt="Sparkle logo" fill priority sizes="180px" />
-        </span>
+        </div>
+        <div className="load-logo-build">
+          {Array.from({ length: 5 }, (_, index) => (
+            <span
+              className={`load-logo-slice load-logo-slice-${index + 1}`}
+              key={index}
+              style={{ "--slice-delay": `${index * 110}ms` } as CSSProperties}
+            >
+              <Image src="/logo-transparent.png" alt="" fill priority sizes="220px" />
+            </span>
+          ))}
+          <span className="load-logo-core">
+            <Image src="/logo-transparent.png" alt="Sparkle logo" fill priority sizes="220px" />
+          </span>
+        </div>
       </div>
-      <p className="load-word">Sparkle</p>
-      <span className="load-subline">crafting the reveal</span>
+      <div className="load-footer">
+        <p className="load-word">Preparing The Sparkle Masterpiece!</p>
+        <div className="load-progress" aria-hidden="true">
+          <span
+            className="load-progress-bar"
+          />
+        </div>
+      </div>
     </div>
   );
 }
