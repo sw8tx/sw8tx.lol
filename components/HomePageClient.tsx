@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   AnimatePresence,
   motion,
+  type MotionStyle,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -178,6 +179,16 @@ const heroChips = [
   { label: "Drag The Cards", left: "70%", top: "78%", rotate: "-6deg" },
 ] as const;
 
+const heroParticles = [
+  { size: 12, left: "14%", top: "24%", depth: 0.4, delay: "0s" },
+  { size: 8, left: "22%", top: "68%", depth: 0.65, delay: "-1.2s" },
+  { size: 16, left: "68%", top: "18%", depth: 0.35, delay: "-2.4s" },
+  { size: 10, left: "82%", top: "38%", depth: 0.7, delay: "-0.8s" },
+  { size: 14, left: "76%", top: "72%", depth: 0.5, delay: "-1.9s" },
+  { size: 6, left: "42%", top: "14%", depth: 0.85, delay: "-2.8s" },
+  { size: 9, left: "56%", top: "82%", depth: 0.58, delay: "-1.5s" },
+] as const;
+
 const rotatingTitles = [
   "Sparkle | Websites",
   "Sparkle | Coding",
@@ -192,11 +203,11 @@ const rotatingTitles = [
 ];
 
 const loaderMessages = [
-  "READY TO SPARK!",
-  "LOADING THE VISION!",
-  "SHAPING THE DETAILS!",
-  "POLISHING THE MOTION!",
-  "PREPARING THE DROP!",
+  "CALIBRATING THE CANVAS",
+  "SCULPTING DEPTH AND LIGHT",
+  "TUNING THE INTERACTIONS",
+  "POLISHING THE FINAL PASS",
+  "READY FOR THE REVEAL",
 ] as const;
 
 const aboutSignals = [
@@ -371,6 +382,16 @@ function ProcessStack({ items }: { items: ProcessStep[] }) {
           <p>{item.body}</p>
         </article>
       ))}
+    </div>
+  );
+}
+
+function SectionDivider({ label }: { label: string }) {
+  return (
+    <div aria-hidden="true" className="section-divider reveal">
+      <span className="section-divider-line" />
+      <span className="section-divider-label">{label}</span>
+      <span className="section-divider-line" />
     </div>
   );
 }
@@ -670,6 +691,7 @@ function PortfolioProjects() {
 function IntroLoader({ active, progress }: { active: boolean; progress: number }) {
   const glowPosition = Math.min(96, Math.max(4, progress));
   const loaderMessage = loaderMessages[Math.min(loaderMessages.length - 1, Math.floor(progress / 22))];
+  const progressLabel = `${String(Math.round(progress)).padStart(2, "0")}%`;
 
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
@@ -686,9 +708,11 @@ function IntroLoader({ active, progress }: { active: boolean; progress: number }
         </div>
       </div>
       <div className="load-footer">
-        <p className="load-word" key={loaderMessage}>
-          {loaderMessage}
-        </p>
+        <p className="load-kicker">Sparkle experience</p>
+        <div className="load-meta" aria-hidden="true">
+          <span>{loaderMessage}</span>
+          <span>{progressLabel}</span>
+        </div>
         <div
           aria-label={`Loading progress ${progress} percent`}
           aria-valuemax={100}
@@ -702,6 +726,9 @@ function IntroLoader({ active, progress }: { active: boolean; progress: number }
           </span>
           <span className="load-progress-glow" style={{ left: `${glowPosition}%` }} />
         </div>
+        <p className="load-word" key={loaderMessage}>
+          {loaderMessage}
+        </p>
       </div>
       <div aria-hidden="true" className="load-curtain">
         <span className="load-curtain-band load-curtain-band-top" />
@@ -776,6 +803,7 @@ function TestimonialsCarousel() {
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
   const siteRef = useRef<HTMLElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
   const [isLoading, setIsLoading] = useState(true);
@@ -785,12 +813,16 @@ export function HomePageClient() {
   const cursorAuraTargetX = useMotionValue(0);
   const cursorAuraTargetY = useMotionValue(0);
   const cursorAuraTargetOpacity = useMotionValue(0);
+  const heroPointerX = useMotionValue(0);
+  const heroPointerY = useMotionValue(0);
   const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -54]);
   const heroFieldTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 70]);
   const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.12]);
   const heroBackdropTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 48]);
   const heroOrbitTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -86]);
   const heroStageTargetRotate = useTransform(scrollYProgress, [0, 0.28], ["0deg", "5deg"]);
+  const heroPointerXSmooth = useSpring(heroPointerX, { stiffness: 110, damping: 18, mass: 0.5 });
+  const heroPointerYSmooth = useSpring(heroPointerY, { stiffness: 110, damping: 18, mass: 0.5 });
   const heroCopyY = useSpring(heroCopyTargetY, { stiffness: 120, damping: 28 });
   const heroFieldY = useSpring(heroFieldTargetY, { stiffness: 120, damping: 30 });
   const heroGlowScale = useSpring(heroGlowTargetScale, { stiffness: 120, damping: 28 });
@@ -802,6 +834,16 @@ export function HomePageClient() {
   const cursorAuraY = useSpring(cursorAuraTargetY, { stiffness: 180, damping: 24, mass: 0.3 });
   const cursorAuraOpacity = useSpring(cursorAuraTargetOpacity, { stiffness: 180, damping: 26, mass: 0.32 });
   const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.92, 0.54]);
+  const heroRibbonShift = useTransform(heroPointerXSmooth, [-1, 1], [-28, 28]);
+  const heroRibbonLift = useTransform(heroPointerYSmooth, [-1, 1], [16, -16]);
+  const heroCopyTiltX = useTransform(heroPointerYSmooth, [-1, 1], [4, -4]);
+  const heroCopyTiltY = useTransform(heroPointerXSmooth, [-1, 1], [-6, 6]);
+  const heroChipDriftX = useTransform(heroPointerXSmooth, [-1, 1], [-18, 18]);
+  const heroChipDriftY = useTransform(heroPointerYSmooth, [-1, 1], [14, -14]);
+  const heroStageShift = useTransform(heroPointerXSmooth, [-1, 1], [-20, 20]);
+  const heroParticleX = useTransform(heroPointerXSmooth, [-1, 1], [-30, 30]);
+  const heroParticleY = useTransform(heroPointerYSmooth, [-1, 1], [20, -20]);
+  const heroHaloRotate = useTransform(heroPointerXSmooth, [-1, 1], [-8, 8]);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -835,14 +877,19 @@ export function HomePageClient() {
       return () => window.clearTimeout(reducedMotionTimer);
     }
 
-    const durationMs = 4400;
+    const durationMs = 3200;
     const start = window.performance.now();
     let frame = 0;
+    let exitTimer = 0;
 
     const tick = (now: number) => {
       const elapsed = now - start;
       const raw = elapsed / durationMs;
-      const eased = 1 - Math.pow(1 - Math.min(raw, 1), 2.2);
+      const clamped = Math.min(raw, 1);
+      const eased =
+        clamped < 0.68
+          ? 0.72 * (1 - Math.pow(1 - clamped / 0.68, 2.35))
+          : 0.72 + 0.28 * (1 - Math.pow(1 - (clamped - 0.68) / 0.32, 1.45));
       const nextProgress = Math.min(100, Math.round(eased * 100));
       setLoadProgress(nextProgress);
 
@@ -852,12 +899,15 @@ export function HomePageClient() {
       }
 
       setLoadProgress(100);
-      window.setTimeout(() => setIsLoading(false), 80);
+      exitTimer = window.setTimeout(() => setIsLoading(false), 420);
     };
 
     frame = window.requestAnimationFrame(tick);
 
-    return () => window.cancelAnimationFrame(frame);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(exitTimer);
+    };
   }, [reduceMotion]);
 
   useEffect(() => {
@@ -866,6 +916,36 @@ export function HomePageClient() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const updateHeroPointer = (event: PointerEvent) => {
+      const rect = hero.getBoundingClientRect();
+      const withinX = (event.clientX - rect.left) / rect.width;
+      const withinY = (event.clientY - rect.top) / rect.height;
+
+      heroPointerX.set(clamp(withinX * 2 - 1, -1, 1));
+      heroPointerY.set(clamp(withinY * 2 - 1, -1, 1));
+    };
+
+    const resetHeroPointer = () => {
+      heroPointerX.set(0);
+      heroPointerY.set(0);
+    };
+
+    hero.addEventListener("pointermove", updateHeroPointer);
+    hero.addEventListener("pointerleave", resetHeroPointer);
+
+    return () => {
+      hero.removeEventListener("pointermove", updateHeroPointer);
+      hero.removeEventListener("pointerleave", resetHeroPointer);
+      resetHeroPointer();
+    };
+  }, [heroPointerX, heroPointerY, reduceMotion]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -952,7 +1032,7 @@ export function HomePageClient() {
     const interval = window.setInterval(() => {
       titleIndex = (titleIndex + 1) % rotatingTitles.length;
       document.title = rotatingTitles[titleIndex];
-    }, 1000);
+    }, 1800);
 
     return () => {
       window.clearInterval(interval);
@@ -990,16 +1070,37 @@ export function HomePageClient() {
         </div>
       </nav>
 
-      <section className="hero" aria-label="Sparkle web designer portfolio">
+      <section className="hero" aria-label="Sparkle web designer portfolio" ref={heroRef}>
         <motion.div aria-hidden="true" className="hero-backdrop-grid" style={{ y: heroBackdropY }} />
         <motion.div aria-hidden="true" className="hero-parallax-field" style={{ opacity: heroGlowOpacity, scale: heroGlowScale, y: heroFieldY }} />
-        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-one" style={{ y: heroOrbitY }} />
-        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-two" style={{ y: heroBackdropY }} />
-        <motion.div aria-hidden="true" className="hero-orbit-shell" style={{ y: heroOrbitY, rotate: heroStageRotate }}>
+        <motion.div aria-hidden="true" className="hero-light-column" style={{ x: heroRibbonShift, y: heroRibbonLift, rotate: heroHaloRotate }} />
+        <motion.div aria-hidden="true" className="hero-halo hero-halo-one" style={{ x: heroParticleX, y: heroParticleY, rotate: heroHaloRotate }} />
+        <motion.div aria-hidden="true" className="hero-halo hero-halo-two" style={{ x: heroRibbonShift, y: heroRibbonLift, rotate: heroHaloRotate }} />
+        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-one" style={{ x: heroRibbonShift, y: heroOrbitY }} />
+        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-two" style={{ x: heroRibbonShift, y: heroBackdropY }} />
+        <motion.div aria-hidden="true" className="hero-orbit-shell" style={{ x: heroRibbonShift, y: heroOrbitY, rotate: heroStageRotate }}>
           <span className="hero-orbit hero-orbit-one" />
           <span className="hero-orbit hero-orbit-two" />
           <span className="hero-orbit hero-orbit-three" />
         </motion.div>
+        <div aria-hidden="true" className="hero-particle-field">
+          {heroParticles.map((particle, index) => (
+            <motion.span
+              className="hero-particle"
+              key={`${particle.left}-${particle.top}`}
+              style={{
+                width: particle.size,
+                height: particle.size,
+                left: particle.left,
+                top: particle.top,
+                x: index % 2 === 0 ? heroParticleX : heroRibbonShift,
+                y: index % 2 === 0 ? heroParticleY : heroRibbonLift,
+                "--particle-depth": particle.depth,
+                "--particle-delay": particle.delay,
+              } as MotionStyle}
+            />
+          ))}
+        </div>
         {heroChips.map((chip, index) => (
           <motion.div
             aria-hidden="true"
@@ -1009,13 +1110,14 @@ export function HomePageClient() {
               left: chip.left,
               top: chip.top,
               rotate: chip.rotate,
-              y: index % 2 === 0 ? heroBackdropY : heroOrbitY,
+              x: index % 2 === 0 ? heroChipDriftX : heroRibbonShift,
+              y: index % 2 === 0 ? heroChipDriftY : heroRibbonLift,
             }}
           >
             {chip.label}
           </motion.div>
         ))}
-        <motion.div className="hero-copy" style={{ y: heroCopyY }}>
+        <motion.div className="hero-copy" style={{ rotateX: heroCopyTiltX, rotateY: heroCopyTiltY, y: heroCopyY }}>
           <p className="eyebrow">Web Designer and Frontend Developer</p>
           <div aria-hidden="true" className="hero-title-ghost">
             <span>SPARKLE</span>
@@ -1062,7 +1164,12 @@ export function HomePageClient() {
           </div>
         </motion.div>
 
-        <motion.div className="card-stage" aria-label="Sparkle service cards" ref={stageRef} style={{ y: heroFieldY, rotate: heroStageRotate }}>
+        <motion.div
+          className="card-stage"
+          aria-label="Sparkle service cards"
+          ref={stageRef}
+          style={{ x: heroStageShift, y: heroFieldY, rotate: heroStageRotate }}
+        >
           {showcase.map((card, index) => (
             <HeroShowcaseCard
               active={activeShowcase === card.id}
@@ -1081,6 +1188,7 @@ export function HomePageClient() {
         <MarqueeLine row="far" speed={56} />
       </div>
 
+      <SectionDivider label="About Sparkle" />
       <section className="section" id="about">
         <div className="section-grid">
           <div className="reveal">
@@ -1106,6 +1214,7 @@ export function HomePageClient() {
         </div>
       </section>
 
+      <SectionDivider label="Process" />
       <section className="section" id="process">
         <div className="section-grid">
           <div className="reveal">
@@ -1120,6 +1229,7 @@ export function HomePageClient() {
         </div>
       </section>
 
+      <SectionDivider label="Selected Work" />
       <section className="section" id="work">
         <div className="section-grid work-grid">
           <div className="reveal">
@@ -1137,6 +1247,7 @@ export function HomePageClient() {
 
       <TestimonialsCarousel />
 
+      <SectionDivider label="Contact" />
       <section className="contact" id="contact">
         <div className="contact-shell">
           <ContactConstellation />
