@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   AnimatePresence,
   motion,
-  type MotionStyle,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -179,16 +178,6 @@ const heroChips = [
   { label: "Drag The Cards", left: "70%", top: "78%", rotate: "-6deg" },
 ] as const;
 
-const heroParticles = [
-  { size: 12, left: "14%", top: "24%", depth: 0.4, delay: "0s" },
-  { size: 8, left: "22%", top: "68%", depth: 0.65, delay: "-1.2s" },
-  { size: 16, left: "68%", top: "18%", depth: 0.35, delay: "-2.4s" },
-  { size: 10, left: "82%", top: "38%", depth: 0.7, delay: "-0.8s" },
-  { size: 14, left: "76%", top: "72%", depth: 0.5, delay: "-1.9s" },
-  { size: 6, left: "42%", top: "14%", depth: 0.85, delay: "-2.8s" },
-  { size: 9, left: "56%", top: "82%", depth: 0.58, delay: "-1.5s" },
-] as const;
-
 const rotatingTitles = [
   "Sparkle | Websites",
   "Sparkle | Coding",
@@ -201,14 +190,6 @@ const rotatingTitles = [
   "Sparkle | Portfolio Systems",
   "Sparkle | Design Cleanup",
 ];
-
-const loaderMessages = [
-  "CALIBRATING THE CANVAS",
-  "SCULPTING DEPTH AND LIGHT",
-  "TUNING THE INTERACTIONS",
-  "POLISHING THE FINAL PASS",
-  "READY FOR THE REVEAL",
-] as const;
 
 const aboutSignals = [
   { label: "Clarity", value: "Structured layouts" },
@@ -386,16 +367,6 @@ function ProcessStack({ items }: { items: ProcessStep[] }) {
   );
 }
 
-function SectionDivider({ label }: { label: string }) {
-  return (
-    <div aria-hidden="true" className="section-divider reveal">
-      <span className="section-divider-line" />
-      <span className="section-divider-label">{label}</span>
-      <span className="section-divider-line" />
-    </div>
-  );
-}
-
 function HeroShowcaseCard({
   active,
   card,
@@ -408,9 +379,28 @@ function HeroShowcaseCard({
   onActivate: (id: string) => void;
 }) {
   const cardRef = useRef<HTMLButtonElement>(null);
+  const dragOffsetRef = useRef({ x: 0, y: 0 });
   const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    dragOffsetRef.current = dragOffset;
+  }, [dragOffset]);
+
+  const finishDrag = (pointerId?: number) => {
+    const element = cardRef.current;
+    const dragState = dragStateRef.current;
+    if (!dragState) return;
+    if (typeof pointerId === "number" && dragState.pointerId !== pointerId) return;
+
+    if (element?.hasPointerCapture(dragState.pointerId)) {
+      element.releasePointerCapture(dragState.pointerId);
+    }
+
+    dragStateRef.current = null;
+    setIsDragging(false);
+  };
 
   useEffect(() => {
     if (!isDragging) return;
@@ -428,21 +418,16 @@ function HeroShowcaseCard({
       setDragOffset({ x: nextX, y: nextY });
     };
 
-    const finishDrag = (event: PointerEvent) => {
-      const dragState = dragStateRef.current;
-      if (!dragState || dragState.pointerId !== event.pointerId) return;
-      dragStateRef.current = null;
-      setIsDragging(false);
-    };
+    const handleWindowPointerUp = (event: PointerEvent) => finishDrag(event.pointerId);
 
     window.addEventListener("pointermove", handleWindowPointerMove);
-    window.addEventListener("pointerup", finishDrag);
-    window.addEventListener("pointercancel", finishDrag);
+    window.addEventListener("pointerup", handleWindowPointerUp);
+    window.addEventListener("pointercancel", handleWindowPointerUp);
 
     return () => {
       window.removeEventListener("pointermove", handleWindowPointerMove);
-      window.removeEventListener("pointerup", finishDrag);
-      window.removeEventListener("pointercancel", finishDrag);
+      window.removeEventListener("pointerup", handleWindowPointerUp);
+      window.removeEventListener("pointercancel", handleWindowPointerUp);
     };
   }, [isDragging]);
 
@@ -451,15 +436,17 @@ function HeroShowcaseCard({
     if (!element) return;
 
     event.preventDefault();
+    event.stopPropagation();
 
     dragStateRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      originX: dragOffset.x,
-      originY: dragOffset.y,
+      originX: dragOffsetRef.current.x,
+      originY: dragOffsetRef.current.y,
     };
 
+    element.setPointerCapture(event.pointerId);
     setIsDragging(true);
     onActivate(card.id);
     setCardSurfaceState(element, event.clientX, event.clientY);
@@ -473,9 +460,7 @@ function HeroShowcaseCard({
   };
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    if (dragStateRef.current?.pointerId !== event.pointerId) return;
-    dragStateRef.current = null;
-    setIsDragging(false);
+    finishDrag(event.pointerId);
   };
 
   const handlePointerLeave = () => {
@@ -491,6 +476,7 @@ function HeroShowcaseCard({
       onDoubleClick={() => setDragOffset({ x: 0, y: 0 })}
       onFocus={() => onActivate(card.id)}
       onMouseEnter={() => onActivate(card.id)}
+      onLostPointerCapture={() => finishDrag()}
       onPointerCancel={handlePointerUp}
       onPointerDown={handlePointerDown}
       onPointerLeave={handlePointerLeave}
@@ -518,10 +504,10 @@ function HeroShowcaseCard({
         "--tilt-rotate-y": "0deg",
         "--delay": `${220 + index * 90}ms`,
       } as CSSProperties}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      transition={isDragging ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       type="button"
-      whileHover={{ y: -10, scale: 1.02 }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={isDragging ? undefined : { y: -10, scale: 1.02 }}
+      whileTap={isDragging ? undefined : { scale: 0.99 }}
     >
       <span className="card-lift">
         {card.image && (
@@ -690,50 +676,28 @@ function PortfolioProjects() {
 
 function IntroLoader({ active, progress }: { active: boolean; progress: number }) {
   const glowPosition = Math.min(96, Math.max(4, progress));
-  const loaderMessage = loaderMessages[Math.min(loaderMessages.length - 1, Math.floor(progress / 22))];
-  const progressLabel = `${String(Math.round(progress)).padStart(2, "0")}%`;
 
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
       <div className="load-stage" role="presentation">
-        <span className="load-orbit load-orbit-one" />
-        <span className="load-orbit load-orbit-two" />
-        <span className="load-spark load-spark-one" />
-        <span className="load-spark load-spark-two" />
-        <span className="load-spark load-spark-three" />
-        <div className="load-logo-shell">
-          <div className="load-logo-build">
-            <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
+        <div className="load-logo-build">
+          <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
+        </div>
+        <div className="load-footer">
+          <div
+            aria-label={`Loading progress ${progress} percent`}
+            aria-valuemax={100}
+            aria-valuemin={0}
+            aria-valuenow={progress}
+            className="load-progress"
+            role="progressbar"
+          >
+            <span className="load-progress-bar" style={{ transform: `scaleX(${progress / 100})` }}>
+              <span className="load-progress-liquid" />
+            </span>
+            <span className="load-progress-glow" style={{ left: `${glowPosition}%` }} />
           </div>
         </div>
-      </div>
-      <div className="load-footer">
-        <p className="load-kicker">Sparkle experience</p>
-        <div className="load-meta" aria-hidden="true">
-          <span>{loaderMessage}</span>
-          <span>{progressLabel}</span>
-        </div>
-        <div
-          aria-label={`Loading progress ${progress} percent`}
-          aria-valuemax={100}
-          aria-valuemin={0}
-          aria-valuenow={progress}
-          className="load-progress"
-          role="progressbar"
-        >
-          <span className="load-progress-bar" style={{ transform: `scaleX(${progress / 100})` }}>
-            <span className="load-progress-liquid" />
-          </span>
-          <span className="load-progress-glow" style={{ left: `${glowPosition}%` }} />
-        </div>
-        <p className="load-word" key={loaderMessage}>
-          {loaderMessage}
-        </p>
-      </div>
-      <div aria-hidden="true" className="load-curtain">
-        <span className="load-curtain-band load-curtain-band-top" />
-        <span className="load-curtain-band load-curtain-band-mid" />
-        <span className="load-curtain-band load-curtain-band-base" />
       </div>
     </div>
   );
@@ -841,9 +805,6 @@ export function HomePageClient() {
   const heroChipDriftX = useTransform(heroPointerXSmooth, [-1, 1], [-18, 18]);
   const heroChipDriftY = useTransform(heroPointerYSmooth, [-1, 1], [14, -14]);
   const heroStageShift = useTransform(heroPointerXSmooth, [-1, 1], [-20, 20]);
-  const heroParticleX = useTransform(heroPointerXSmooth, [-1, 1], [-30, 30]);
-  const heroParticleY = useTransform(heroPointerYSmooth, [-1, 1], [20, -20]);
-  const heroHaloRotate = useTransform(heroPointerXSmooth, [-1, 1], [-8, 8]);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -1073,9 +1034,6 @@ export function HomePageClient() {
       <section className="hero" aria-label="Sparkle web designer portfolio" ref={heroRef}>
         <motion.div aria-hidden="true" className="hero-backdrop-grid" style={{ y: heroBackdropY }} />
         <motion.div aria-hidden="true" className="hero-parallax-field" style={{ opacity: heroGlowOpacity, scale: heroGlowScale, y: heroFieldY }} />
-        <motion.div aria-hidden="true" className="hero-light-column" style={{ x: heroRibbonShift, y: heroRibbonLift, rotate: heroHaloRotate }} />
-        <motion.div aria-hidden="true" className="hero-halo hero-halo-one" style={{ x: heroParticleX, y: heroParticleY, rotate: heroHaloRotate }} />
-        <motion.div aria-hidden="true" className="hero-halo hero-halo-two" style={{ x: heroRibbonShift, y: heroRibbonLift, rotate: heroHaloRotate }} />
         <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-one" style={{ x: heroRibbonShift, y: heroOrbitY }} />
         <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-two" style={{ x: heroRibbonShift, y: heroBackdropY }} />
         <motion.div aria-hidden="true" className="hero-orbit-shell" style={{ x: heroRibbonShift, y: heroOrbitY, rotate: heroStageRotate }}>
@@ -1083,24 +1041,6 @@ export function HomePageClient() {
           <span className="hero-orbit hero-orbit-two" />
           <span className="hero-orbit hero-orbit-three" />
         </motion.div>
-        <div aria-hidden="true" className="hero-particle-field">
-          {heroParticles.map((particle, index) => (
-            <motion.span
-              className="hero-particle"
-              key={`${particle.left}-${particle.top}`}
-              style={{
-                width: particle.size,
-                height: particle.size,
-                left: particle.left,
-                top: particle.top,
-                x: index % 2 === 0 ? heroParticleX : heroRibbonShift,
-                y: index % 2 === 0 ? heroParticleY : heroRibbonLift,
-                "--particle-depth": particle.depth,
-                "--particle-delay": particle.delay,
-              } as MotionStyle}
-            />
-          ))}
-        </div>
         {heroChips.map((chip, index) => (
           <motion.div
             aria-hidden="true"
@@ -1188,7 +1128,6 @@ export function HomePageClient() {
         <MarqueeLine row="far" speed={56} />
       </div>
 
-      <SectionDivider label="About Sparkle" />
       <section className="section" id="about">
         <div className="section-grid">
           <div className="reveal">
@@ -1214,7 +1153,6 @@ export function HomePageClient() {
         </div>
       </section>
 
-      <SectionDivider label="Process" />
       <section className="section" id="process">
         <div className="section-grid">
           <div className="reveal">
@@ -1229,7 +1167,6 @@ export function HomePageClient() {
         </div>
       </section>
 
-      <SectionDivider label="Selected Work" />
       <section className="section" id="work">
         <div className="section-grid work-grid">
           <div className="reveal">
@@ -1247,7 +1184,6 @@ export function HomePageClient() {
 
       <TestimonialsCarousel />
 
-      <SectionDivider label="Contact" />
       <section className="contact" id="contact">
         <div className="contact-shell">
           <ContactConstellation />

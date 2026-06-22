@@ -1,0 +1,17 @@
+Codex working log for this project
+
+User requests
+- Make the loading screen feel less "holy AI".
+- Create a file like `codex.txt` that keeps track of requests and changes.
+- Fix the drag function for the cards.
+- Fix the loading animation.
+
+Implemented in this pass
+- Added this `codex.txt` file as the running request/change log.
+- Tightened the card drag behavior with pointer capture and drag-priority motion handling in `components/HomePageClient.tsx`.
+- Prepared a calmer loader pass in `styles/globals.css` so the intro feels cleaner and less overdesigned.
+- Reworked the page animation language in `styles/globals.css` to feel more editorial and premium, with cleaner reveals, calmer ambient motion, better card/project hover states, and less AI-looking perpetual motion.
+- Increased the amount of on-page motion in `styles/globals.css` with extra hero drift, idle card motion, livelier marquee/project/contact animations, and more responsive button/link movement while keeping the visual language controlled.
+
+Notes
+- Keep app-specific requests and major edits appended here in future passes.
