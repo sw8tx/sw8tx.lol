@@ -135,8 +135,8 @@ const process = [
     num: "01",
     title: "Direction",
     body: "Mood, structure, colors and the exact feel of the site.",
-    color: "#0050d8",
-    soft: "#e0f1ff",
+    color: "#ffbf1f",
+    soft: "#fff3bf",
   },
   {
     num: "02",
@@ -162,7 +162,7 @@ const process = [
 ] as const;
 
 const proofStats = [
-  { value: "20+", label: "Digital surfaces", color: "#0050d8" },
+  { value: "20+", label: "Digital surfaces", color: "#ffbf1f" },
   { value: "3+", label: "Years designing", color: "#18bfa5" },
   { value: "3", label: "Contact routes", color: "#4db6e5" },
 ];
@@ -210,6 +210,38 @@ const contactNodes = [
   { x: "56%", y: "28%" },
   { x: "74%", y: "18%" },
   { x: "88%", y: "34%" },
+] as const;
+
+const loaderShards = [
+  { x: "8%", y: "18%", w: 72, r: -12, d: "0ms", tone: "sun" },
+  { x: "18%", y: "64%", w: 118, r: 9, d: "120ms", tone: "white" },
+  { x: "28%", y: "28%", w: 46, r: 18, d: "240ms", tone: "blue" },
+  { x: "36%", y: "78%", w: 88, r: -8, d: "360ms", tone: "sun" },
+  { x: "48%", y: "16%", w: 132, r: 5, d: "480ms", tone: "white" },
+  { x: "58%", y: "68%", w: 64, r: -18, d: "600ms", tone: "blue" },
+  { x: "70%", y: "26%", w: 104, r: 12, d: "720ms", tone: "sun" },
+  { x: "82%", y: "58%", w: 76, r: -6, d: "840ms", tone: "white" },
+  { x: "88%", y: "14%", w: 52, r: 22, d: "960ms", tone: "blue" },
+  { x: "12%", y: "84%", w: 56, r: 14, d: "1080ms", tone: "sun" },
+  { x: "44%", y: "44%", w: 158, r: -10, d: "1260ms", tone: "white" },
+  { x: "76%", y: "82%", w: 126, r: 8, d: "1440ms", tone: "sun" },
+] as const;
+
+const loaderSlashes = [
+  { x: "4%", delay: "0ms" },
+  { x: "18%", delay: "110ms" },
+  { x: "32%", delay: "220ms" },
+  { x: "46%", delay: "330ms" },
+  { x: "60%", delay: "440ms" },
+  { x: "74%", delay: "550ms" },
+  { x: "88%", delay: "660ms" },
+] as const;
+
+const loaderPhases = [
+  { label: "Wake", word: "BOOT", detail: "Signal found" },
+  { label: "Sync", word: "SYNC", detail: "Motion locked" },
+  { label: "Heat", word: "HEAT", detail: "Visual core" },
+  { label: "Launch", word: "LIVE", detail: "Sparkle online" },
 ] as const;
 
 const marqueeWords = [...services, ...services, ...services];
@@ -676,14 +708,83 @@ function PortfolioProjects() {
 
 function IntroLoader({ active, progress }: { active: boolean; progress: number }) {
   const glowPosition = Math.min(96, Math.max(4, progress));
+  const progressTens = Math.min(99, Math.max(0, Math.floor(progress)));
+  const phaseIndex = Math.min(loaderPhases.length - 1, Math.floor(progress / 25));
+  const phase = loaderPhases[phaseIndex];
 
   return (
-    <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
+    <div aria-hidden={!active} className={`load-gate load-phase-${phaseIndex}${active ? " is-active" : " is-exiting"}`}>
+      <span className="load-noise" />
+      <span className="load-impact-grid" />
+      <span className="load-impact-burst load-impact-burst-one" />
+      <span className="load-impact-burst load-impact-burst-two" />
+      <span className="load-impact-burst load-impact-burst-three" />
+      <span className="load-final-flash" />
+      <span className="load-pop load-pop-one" />
+      <span className="load-pop load-pop-two" />
+      <span className="load-pop load-pop-three" />
+      <div className="load-shard-field">
+        {loaderShards.map((shard, index) => (
+          <span
+            className={`load-shard load-shard-${shard.tone}`}
+            key={`${shard.x}-${shard.y}-${index}`}
+            style={{
+              "--shard-delay": shard.d,
+              "--shard-rotate": `${shard.r}deg`,
+              "--shard-width": `${shard.w}px`,
+              left: shard.x,
+              top: shard.y,
+            } as CSSProperties}
+          />
+        ))}
+      </div>
+      <div className="load-slash-field">
+        {loaderSlashes.map((slash, index) => (
+          <span
+            className="load-slash"
+            key={`${slash.x}-${index}`}
+            style={{ "--slash-delay": slash.delay, left: slash.x } as CSSProperties}
+          />
+        ))}
+      </div>
+      <div className="load-count-stack" aria-hidden="true">
+        <span>{String(progressTens).padStart(2, "0")}</span>
+        <span>{phase.label}</span>
+      </div>
       <div className="load-stage" role="presentation">
-        <div className="load-logo-build">
-          <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
+        <div className="load-phase-board" aria-hidden="true">
+          {loaderPhases.map((item, index) => (
+            <span className={index === phaseIndex ? "is-active" : ""} key={item.label}>
+              {item.label}
+            </span>
+          ))}
+        </div>
+        <div className="load-logo-shell">
+          <span className="load-stamp load-stamp-one">LIVE</span>
+          <span className="load-stamp load-stamp-two">SPARK</span>
+          <span className="load-stamp load-stamp-three">BOOT</span>
+          <span className="load-smear" />
+          <span className="load-hard-ring load-hard-ring-one" />
+          <span className="load-hard-ring load-hard-ring-two" />
+          <div className="load-logo-build">
+            <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
+          </div>
+          <div className="load-logo-echo load-logo-echo-one">
+            <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
+          </div>
+          <div className="load-logo-echo load-logo-echo-two">
+            <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
+          </div>
         </div>
         <div className="load-footer">
+          <div className="load-ticker" aria-hidden="true">
+            <span>SPARKLE SYSTEM / MOTION CORE / FRONTEND HEAT / SHIP MODE /</span>
+            <span>SPARKLE SYSTEM / MOTION CORE / FRONTEND HEAT / SHIP MODE /</span>
+          </div>
+          <div className="load-word" aria-hidden="true">
+            <span>{phase.word}</span>
+            <span>{String(progressTens).padStart(2, "0")}</span>
+          </div>
           <div
             aria-label={`Loading progress ${progress} percent`}
             aria-valuemax={100}
@@ -696,6 +797,20 @@ function IntroLoader({ active, progress }: { active: boolean; progress: number }
               <span className="load-progress-liquid" />
             </span>
             <span className="load-progress-glow" style={{ left: `${glowPosition}%` }} />
+            <span className="load-progress-impact" style={{ left: `${glowPosition}%` }} />
+          </div>
+          <div className="load-meter" aria-hidden="true">
+            {Array.from({ length: 18 }).map((_, index) => (
+              <span
+                className={index <= Math.round(progress / 6) ? "is-hot" : ""}
+                key={index}
+                style={{ "--tick-delay": `${index * 36}ms` } as CSSProperties}
+              />
+            ))}
+          </div>
+          <div className="load-meta" aria-hidden="true">
+            <span>{phase.detail}</span>
+            <span>{progress}%</span>
           </div>
         </div>
       </div>
@@ -838,7 +953,7 @@ export function HomePageClient() {
       return () => window.clearTimeout(reducedMotionTimer);
     }
 
-    const durationMs = 3200;
+    const durationMs = 5600;
     const start = window.performance.now();
     let frame = 0;
     let exitTimer = 0;
@@ -860,7 +975,7 @@ export function HomePageClient() {
       }
 
       setLoadProgress(100);
-      exitTimer = window.setTimeout(() => setIsLoading(false), 420);
+      exitTimer = window.setTimeout(() => setIsLoading(false), 560);
     };
 
     frame = window.requestAnimationFrame(tick);

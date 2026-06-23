@@ -15,3 +15,18 @@ Implemented in this pass
 
 Notes
 - Keep app-specific requests and major edits appended here in future passes.
+
+Update 2026-06-23
+- User requested a much more aggressive loading screen with screen shake, repeated pop-up impacts, and a more intense feel that still avoids a generic AI-looking motion style.
+- Rebuilt the loader in `components/HomePageClient.tsx` with extra visual layers like impact bursts, pop elements, stamped labels, and a stronger status footer.
+- Added a final high-energy loader override at the end of `styles/globals.css` with screen shake, snap-grid motion, burst rings, punchy logo timing, stronger progress-bar behavior, and more editorial graphic motion.
+
+Update 2026-06-23, escalation pass
+- User asked for "MEHR" and a substantially more intense loading screen.
+- Extended the loader duration and added structured loader data in `components/HomePageClient.tsx` for animated shards, slash sweeps, a progress count stack, logo echoes, hard rings, ticker text, progress impact markers, and meter ticks.
+- Added another final CSS escalation layer in `styles/globals.css` with stronger screen shake, angular background motion, shard snapping, diagonal slash drops, logo hammering, echo flashes, ticker movement, harder progress hits, and a more arcade/editorial boot-screen feel.
+
+Update 2026-06-23, quality pass
+- User asked for the loader to be better, not only bigger.
+- Added phase-based loader direction in `components/HomePageClient.tsx` with Wake, Sync, Heat, and Launch states that change the visible headline, detail line, counter label, and phase board.
+- Added a final direction layer in `styles/globals.css` so each phase changes accent color, timing, active top tabs, logo energy, final flash behavior, and progress emphasis for a more composed intro sequence.
