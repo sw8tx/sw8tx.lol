@@ -30,3 +30,10 @@ Update 2026-06-23, quality pass
 - User asked for the loader to be better, not only bigger.
 - Added phase-based loader direction in `components/HomePageClient.tsx` with Wake, Sync, Heat, and Launch states that change the visible headline, detail line, counter label, and phase board.
 - Added a final direction layer in `styles/globals.css` so each phase changes accent color, timing, active top tabs, logo energy, final flash behavior, and progress emphasis for a more composed intro sequence.
+
+Update 2026-06-23, cleanup and interaction pass
+- User requested removal of the ice cube pieces and unused files that could cause lag.
+- Deleted the unused ice cube / frozen core React components and removed the `@react-three/drei`, `@react-three/fiber`, and `three` dependencies from the project.
+- Removed the unused frozen-core CSS block from `styles/globals.css`.
+- Added hover and timed rewrite animations for selected section titles so letters erase and write back every five seconds, with hover-triggered replay.
+- Updated Next.js and `eslint-config-next` from 16.2.7 to 16.2.9. `npm audit fix --force` was not used because npm reports it would install `next@9.3.3`, which would be a breaking downgrade.

@@ -12,7 +12,7 @@ import {
   useTransform,
 } from "framer-motion";
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const primaryEmail = "info@tylerosthoff.xyz";
 
@@ -378,6 +378,59 @@ function MagneticAnchor({
     >
       {children}
     </motion.a>
+  );
+}
+
+function AnimatedSectionTitle({
+  className = "section-title",
+  delay = 0,
+  text,
+}: {
+  className?: string;
+  delay?: number;
+  text: string;
+}) {
+  const [rewriting, setRewriting] = useState(false);
+  const resetTimerRef = useRef<number | null>(null);
+  const intervalTimerRef = useRef<number | null>(null);
+
+  const triggerRewrite = useCallback(() => {
+    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
+    setRewriting(false);
+
+    window.requestAnimationFrame(() => {
+      setRewriting(true);
+      resetTimerRef.current = window.setTimeout(() => setRewriting(false), 2400);
+    });
+  }, []);
+
+  useEffect(() => {
+    const startTimer = window.setTimeout(() => {
+      triggerRewrite();
+      intervalTimerRef.current = window.setInterval(triggerRewrite, 5000);
+    }, delay);
+
+    return () => {
+      window.clearTimeout(startTimer);
+      if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
+      if (intervalTimerRef.current) window.clearInterval(intervalTimerRef.current);
+    };
+  }, [delay, triggerRewrite]);
+
+  return (
+    <h2 className={`${className} write-loop-title${rewriting ? " is-rewriting" : ""}`} onPointerEnter={triggerRewrite}>
+      {Array.from(text).map((char, index) => (
+        <span
+          aria-hidden="true"
+          className={`write-loop-char${char === " " ? " write-loop-space" : ""}`}
+          key={`${char}-${index}`}
+          style={{ "--char-index": index } as CSSProperties}
+        >
+          {char === " " ? "\u00a0" : char}
+        </span>
+      ))}
+      <span className="sr-only">{text}</span>
+    </h2>
   );
 }
 
@@ -839,7 +892,7 @@ function TestimonialsCarousel() {
       <div className="section-grid">
         <div className="reveal">
           <p className="section-label">Reviews</p>
-          <h2 className="section-title">Clients feel the polish.</h2>
+          <AnimatedSectionTitle delay={1800} text="Clients feel the polish." />
         </div>
         <div className="review-shell reveal delay-1">
           <div className="review-controls">
@@ -1247,7 +1300,7 @@ export function HomePageClient() {
         <div className="section-grid">
           <div className="reveal">
             <p className="section-label">About</p>
-            <h2 className="section-title">Clean, sharp, animated.</h2>
+            <AnimatedSectionTitle text="Clean, sharp, animated." />
           </div>
           <div className="reveal delay-1">
             <p className="section-text soft-copy">
@@ -1272,7 +1325,7 @@ export function HomePageClient() {
         <div className="section-grid">
           <div className="reveal">
             <p className="section-label">Process</p>
-            <h2 className="section-title">From idea to live site.</h2>
+            <AnimatedSectionTitle delay={900} text="From idea to live site." />
           </div>
           <div className="process-shell">
             <div className="process-ambient process-ambient-one" aria-hidden="true" />
@@ -1286,7 +1339,7 @@ export function HomePageClient() {
         <div className="section-grid work-grid">
           <div className="reveal">
             <p className="section-label">Work</p>
-            <h2 className="section-title">Portfolio with proof.</h2>
+            <AnimatedSectionTitle delay={1400} text="Portfolio with proof." />
           </div>
           <div className="work-shell">
             <div className="work-aurora work-aurora-one" aria-hidden="true" />
@@ -1304,7 +1357,7 @@ export function HomePageClient() {
           <ContactConstellation />
           <div className="reveal">
             <p className="section-label">Contact</p>
-            <h2 className="contact-title">Let&apos;s build.</h2>
+            <AnimatedSectionTitle className="contact-title" delay={2200} text="Let's build." />
           </div>
           <div className="contact-panel reveal delay-1">
             <p className="contact-note soft-copy">
