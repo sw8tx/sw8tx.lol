@@ -9527,3 +9527,87 @@ body {
     gap: 8px 12px;
   }
 }
+
+.hero-sticker-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.hero-sticker {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 10px 0 rgba(255, 255, 255, 0.96),
+    0 20px 44px rgba(0, 80, 216, 0.12);
+  transform-origin: center;
+}
+
+.hero-sticker span {
+  display: block;
+  color: #f2b300;
+  font-size: clamp(26px, 4.6vw, 58px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  text-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.95),
+    4px 4px 0 rgba(255, 255, 255, 0.92);
+}
+
+.hero-sticker-one {
+  left: 5%;
+  top: 16%;
+  rotate: -8deg;
+}
+
+.hero-sticker-two {
+  right: 6%;
+  top: 28%;
+  rotate: 9deg;
+}
+
+@media (max-width: 1024px) {
+  .hero-sticker-one {
+    left: 2%;
+    top: 12%;
+  }
+
+  .hero-sticker-two {
+    right: 2%;
+    top: 24%;
+  }
+}
+
+@media (max-width: 820px) {
+  .hero-sticker {
+    padding: 10px 16px;
+  }
+
+  .hero-sticker span {
+    font-size: clamp(22px, 5vw, 38px);
+  }
+
+  .hero-sticker-one {
+    left: 2%;
+    top: 10%;
+  }
+
+  .hero-sticker-two {
+    right: 2%;
+    top: 21%;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero-sticker-layer {
+    display: none;
+  }
+}

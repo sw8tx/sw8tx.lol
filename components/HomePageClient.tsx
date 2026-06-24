@@ -202,6 +202,11 @@ const floatingFeatures = [
   { label: "Motion Detail", side: "right" },
 ] as const;
 
+const heroStickers = [
+  { text: "BOLD FLAVOR", className: "hero-sticker-one" },
+  { text: "SMASHED FRESH", className: "hero-sticker-two" },
+] as const;
+
 const aboutSignals = [
   { label: "Clarity", value: "Structured layouts" },
   { label: "Motion", value: "Human rhythm" },
@@ -1182,6 +1187,13 @@ export function HomePageClient() {
             {chip.label}
           </motion.div>
         ))}
+        <div aria-hidden="true" className="hero-sticker-layer">
+          {heroStickers.map((sticker) => (
+            <div className={`hero-sticker ${sticker.className}`} key={sticker.text}>
+              <span>{sticker.text}</span>
+            </div>
+          ))}
+        </div>
         <motion.div className="hero-copy" style={{ rotateX: heroCopyTiltX, rotateY: heroCopyTiltY, y: heroCopyY }}>
           <p className="eyebrow">Web Designer and Frontend Developer</p>
           <div aria-hidden="true" className="hero-title-ghost">
