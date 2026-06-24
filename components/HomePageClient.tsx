@@ -189,6 +189,14 @@ const rotatingTitles = [
   "Sparkle | Design Cleanup",
 ];
 
+const menuItems = [
+  { href: "#about", label: "About" },
+  { href: "#process", label: "Process" },
+  { href: "#work", label: "Work" },
+  { href: "#reviews", label: "Reviews" },
+  { href: "#contact", label: "Contact" },
+] as const;
+
 const aboutSignals = [
   { label: "Clarity", value: "Structured layouts" },
   { label: "Motion", value: "Human rhythm" },
@@ -821,6 +829,7 @@ export function HomePageClient() {
   const stageRef = useRef<HTMLDivElement>(null);
   const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
   const [isLoading, setIsLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
   const cursorAuraTargetX = useMotionValue(0);
@@ -896,6 +905,11 @@ export function HomePageClient() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("menu-open", menuOpen);
+    return () => document.body.classList.remove("menu-open");
+  }, [menuOpen]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -1043,16 +1057,77 @@ export function HomePageClient() {
           </span>
           <span className="brand-name">Sparkle</span>
         </Link>
-        <div className="nav-links">
-          <a className="nav-link" href="#about">About</a>
-          <a className="nav-link" href="#process">Process</a>
-          <a className="nav-link" href="#work">Work</a>
-          <a className="nav-link" href="#reviews">Reviews</a>
-          <MagneticAnchor className="nav-button magnetic-action" href="#contact" strength={14}>
-            Contact Sparkle
-          </MagneticAnchor>
-        </div>
+        <motion.button
+          aria-controls="site-menu"
+          aria-expanded={menuOpen}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          className={`menu-toggle${menuOpen ? " is-open" : ""}`}
+          onClick={() => setMenuOpen((open) => !open)}
+          type="button"
+          whileHover={{ scale: 1.03, y: -1 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <span className="menu-toggle-label">{menuOpen ? "Close" : "Menu"}</span>
+          <span className="menu-toggle-icon" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+        </motion.button>
       </nav>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            animate={{ opacity: 1 }}
+            className="menu-overlay"
+            exit={{ opacity: 0 }}
+            id="site-menu"
+            initial={{ opacity: 0 }}
+          >
+            <motion.div
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="menu-film"
+              exit={{ opacity: 0, scale: 0.98, y: 14 }}
+              initial={{ opacity: 0, scale: 0.98, y: 14 }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="menu-topbar">
+                <span className="menu-badge">Sparkle</span>
+                <button
+                  aria-label="Close menu"
+                  className="menu-close"
+                  onClick={() => setMenuOpen(false)}
+                  type="button"
+                >
+                  <span>Close</span>
+                  <span className="menu-close-x" aria-hidden="true">
+                    <span />
+                    <span />
+                  </span>
+                </button>
+              </div>
+              <div className="menu-panel">
+                {menuItems.map((item, index) => (
+                  <motion.a
+                    className="menu-link"
+                    href={item.href}
+                    key={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    transition={{ delay: index * 0.05, duration: 0.28 }}
+                    initial={{ opacity: 0, x: -18 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -12 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+                <div className="menu-footer">web design / frontend / sparkle</div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <section className="hero" aria-label="Sparkle web designer portfolio" ref={heroRef}>
         <motion.div aria-hidden="true" className="hero-backdrop-grid" style={{ y: heroBackdropY }} />
