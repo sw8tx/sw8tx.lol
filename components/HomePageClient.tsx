@@ -731,12 +731,23 @@ function IntroLoader({ active }: { active: boolean }) {
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
       <div className="load-stage" role="status">
+        <div className="load-dot-field" aria-hidden="true">
+          <span className="load-dot load-dot-1" />
+          <span className="load-dot load-dot-2" />
+          <span className="load-dot load-dot-3" />
+          <span className="load-dot load-dot-4" />
+          <span className="load-dot load-dot-5" />
+          <span className="load-dot load-dot-6" />
+          <span className="load-dot load-dot-7" />
+          <span className="load-dot load-dot-8" />
+        </div>
         <div className="load-logo-shell">
           <div className="load-logo-build">
             <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
           </div>
         </div>
       </div>
+      <div className="load-tagline" aria-hidden="true">READY TO SPARK!</div>
       <div className="load-bar" aria-hidden="true">
         <span className="load-bar-fill" />
       </div>
