@@ -9267,7 +9267,7 @@ body {
 }
 
 #work.section {
-  background: #fff6da;
+  background: #f2f9ff;
 }
 
 .reviews-section.section {
@@ -9551,7 +9551,7 @@ body {
 
 .hero-sticker span {
   display: block;
-  color: #f2b300;
+  color: #0f63d8;
   font-size: clamp(26px, 4.6vw, 58px);
   font-weight: 900;
   line-height: 0.9;
@@ -9608,6 +9608,129 @@ body {
 
 @media (max-width: 680px) {
   .hero-sticker-layer {
+    display: none;
+  }
+}
+
+/* Latest cleanup: blue stickers, full-width bands, flat menu */
+
+.section,
+.contact {
+  width: 100%;
+  max-width: none;
+}
+
+.section-grid,
+.contact-shell {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+#work.section {
+  background: #f2f9ff !important;
+}
+
+#about.section {
+  background: #f8fcff !important;
+}
+
+#process.section {
+  background: #dff1ff !important;
+}
+
+.reviews-section.section {
+  background: #ebf7ff !important;
+}
+
+.contact {
+  background: #d8edff !important;
+}
+
+.menu-film {
+  background: #ffffff;
+  border-color: rgba(15, 99, 216, 0.18);
+  box-shadow: 0 22px 54px rgba(5, 51, 142, 0.16);
+}
+
+.menu-panel {
+  background: #e8f5ff !important;
+}
+
+.menu-panel::before {
+  display: none;
+}
+
+.menu-link {
+  color: #0f63d8;
+  letter-spacing: 0;
+}
+
+.menu-link:hover {
+  color: #08234d;
+}
+
+.floating-feature-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 72;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floating-feature {
+  position: absolute;
+  top: 12vh;
+  max-width: min(420px, 42vw);
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #0f63d8;
+  font-family: var(--sans);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  box-shadow:
+    0 8px 0 rgba(255, 255, 255, 0.96),
+    0 18px 38px rgba(0, 80, 216, 0.14);
+  text-shadow: 3px 3px 0 rgba(216, 239, 255, 0.92);
+  will-change: transform;
+}
+
+.floating-feature-left {
+  left: 4vw;
+}
+
+.floating-feature-right {
+  right: 4vw;
+  top: 22vh;
+}
+
+.hero-sticker-layer {
+  display: none !important;
+}
+
+.hero-sticker span {
+  color: #0f63d8;
+  letter-spacing: 0;
+}
+
+@media (max-width: 920px) {
+  .floating-feature {
+    top: 14vh;
+    max-width: 330px;
+    font-size: 22px;
+  }
+
+  .floating-feature-right {
+    top: 30vh;
+  }
+}
+
+@media (max-width: 680px) {
+  .floating-feature-layer {
     display: none;
   }
 }

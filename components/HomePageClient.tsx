@@ -198,13 +198,8 @@ const menuItems = [
 ] as const;
 
 const floatingFeatures = [
-  { label: "Frontend Build", side: "left" },
-  { label: "Motion Detail", side: "right" },
-] as const;
-
-const heroStickers = [
-  { text: "BOLD FLAVOR", className: "hero-sticker-one" },
-  { text: "SMASHED FRESH", className: "hero-sticker-two" },
+  { label: "Web Development", side: "left" },
+  { label: "Easily Customizable", side: "right" },
 ] as const;
 
 const aboutSignals = [
@@ -873,7 +868,12 @@ export function HomePageClient() {
   const heroChipDriftX = useTransform(heroPointerXSmooth, [-1, 1], [-18, 18]);
   const heroChipDriftY = useTransform(heroPointerYSmooth, [-1, 1], [14, -14]);
   const heroStageShift = useTransform(heroPointerXSmooth, [-1, 1], [-20, 20]);
-  const floatingFeatureY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const floatingFeatureLeftX = useTransform(scrollYProgress, [0, 0.16, 0.38, 0.62, 0.82, 1], ["0vw", "18vw", "6vw", "30vw", "12vw", "22vw"]);
+  const floatingFeatureLeftY = useTransform(scrollYProgress, [0, 0.16, 0.38, 0.62, 0.82, 1], ["0vh", "18vh", "42vh", "58vh", "74vh", "84vh"]);
+  const floatingFeatureLeftRotate = useTransform(scrollYProgress, [0, 0.16, 0.38, 0.62, 0.82, 1], ["-7deg", "5deg", "-3deg", "8deg", "-6deg", "4deg"]);
+  const floatingFeatureRightX = useTransform(scrollYProgress, [0, 0.2, 0.42, 0.66, 0.86, 1], ["0vw", "-20vw", "-8vw", "-34vw", "-14vw", "-26vw"]);
+  const floatingFeatureRightY = useTransform(scrollYProgress, [0, 0.2, 0.42, 0.66, 0.86, 1], ["0vh", "24vh", "36vh", "64vh", "52vh", "82vh"]);
+  const floatingFeatureRightRotate = useTransform(scrollYProgress, [0, 0.2, 0.42, 0.66, 0.86, 1], ["7deg", "-5deg", "4deg", "-8deg", "6deg", "-4deg"]);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -1066,7 +1066,11 @@ export function HomePageClient() {
             <motion.div
               className={`floating-feature floating-feature-${feature.side}`}
               key={feature.label}
-              style={{ y: reduceMotion ? 0 : floatingFeatureY }}
+              style={
+                feature.side === "left"
+                  ? { x: reduceMotion ? 0 : floatingFeatureLeftX, y: reduceMotion ? 0 : floatingFeatureLeftY, rotate: reduceMotion ? "-6deg" : floatingFeatureLeftRotate }
+                  : { x: reduceMotion ? 0 : floatingFeatureRightX, y: reduceMotion ? 0 : floatingFeatureRightY, rotate: reduceMotion ? "6deg" : floatingFeatureRightRotate }
+              }
               transition={{ delay: index * 0.08 }}
             >
               {feature.label}
@@ -1187,13 +1191,6 @@ export function HomePageClient() {
             {chip.label}
           </motion.div>
         ))}
-        <div aria-hidden="true" className="hero-sticker-layer">
-          {heroStickers.map((sticker) => (
-            <div className={`hero-sticker ${sticker.className}`} key={sticker.text}>
-              <span>{sticker.text}</span>
-            </div>
-          ))}
-        </div>
         <motion.div className="hero-copy" style={{ rotateX: heroCopyTiltX, rotateY: heroCopyTiltY, y: heroCopyY }}>
           <p className="eyebrow">Web Designer and Frontend Developer</p>
           <div aria-hidden="true" className="hero-title-ghost">
