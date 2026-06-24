@@ -37,3 +37,11 @@ Update 2026-06-23, cleanup and interaction pass
 - Removed the unused frozen-core CSS block from `styles/globals.css`.
 - Added hover and timed rewrite animations for selected section titles so letters erase and write back every five seconds, with hover-triggered replay.
 - Updated Next.js and `eslint-config-next` from 16.2.7 to 16.2.9. `npm audit fix --force` was not used because npm reports it would install `next@9.3.3`, which would be a breaking downgrade.
+
+Update 2026-06-24, premium portfolio refinement
+- User requested a premium cleanup without redesigning the whole Sparkle portfolio from scratch.
+- Rebuilt the loader in `components/HomePageClient.tsx` into a short dark brand intro with the Sparkle logo, subtle grid/grain, "Preparing interface" status, slim progress line, and final wipe.
+- Improved hero card dragging in `components/HomePageClient.tsx` with a click-vs-drag threshold, pointer capture cleanup, touch dragging limited to the card handle, and snap-back after movement.
+- Renamed the project card "Technologies" label to "Approach" so the case-study copy is more honest.
+- Added a final premium CSS layer in `styles/globals.css` that restores the dark blue Sparkle direction, removes visible yellow/light leftovers from the main site, improves menu/card/project styling, adds reusable motion utility classes, and strengthens mobile/tablet layout overrides.
+- Verified `npm run lint` and `npm run build` successfully.

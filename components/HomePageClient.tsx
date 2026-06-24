@@ -444,7 +444,15 @@ function HeroShowcaseCard({
 }) {
   const cardRef = useRef<HTMLButtonElement>(null);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
-  const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(null);
+  const dragStateRef = useRef<{
+    hasMoved: boolean;
+    originX: number;
+    originY: number;
+    pointerId: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const snapBackTimerRef = useRef<number | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
 
@@ -452,11 +460,18 @@ function HeroShowcaseCard({
     dragOffsetRef.current = dragOffset;
   }, [dragOffset]);
 
-  const finishDrag = (pointerId?: number) => {
+  useEffect(() => {
+    return () => {
+      if (snapBackTimerRef.current) window.clearTimeout(snapBackTimerRef.current);
+    };
+  }, []);
+
+  const finishDrag = useCallback((pointerId?: number) => {
     const element = cardRef.current;
     const dragState = dragStateRef.current;
     if (!dragState) return;
     if (typeof pointerId === "number" && dragState.pointerId !== pointerId) return;
+    const shouldSnapBack = dragState.hasMoved;
 
     if (element?.hasPointerCapture(dragState.pointerId)) {
       element.releasePointerCapture(dragState.pointerId);
@@ -464,22 +479,45 @@ function HeroShowcaseCard({
 
     dragStateRef.current = null;
     setIsDragging(false);
-  };
+    if (!shouldSnapBack) return;
+
+    if (snapBackTimerRef.current) window.clearTimeout(snapBackTimerRef.current);
+    snapBackTimerRef.current = window.setTimeout(() => {
+      setDragOffset({ x: 0, y: 0 });
+      snapBackTimerRef.current = null;
+    }, 120);
+  }, []);
+
+  const updateDragFromPointer = useCallback((pointerId: number, clientX: number, clientY: number) => {
+    const element = cardRef.current;
+    const dragState = dragStateRef.current;
+    if (!element || !dragState) return false;
+    if (dragState.pointerId !== pointerId) return false;
+
+    setCardSurfaceState(element, clientX, clientY);
+
+    const deltaX = clientX - dragState.startX;
+    const deltaY = clientY - dragState.startY;
+
+    if (!dragState.hasMoved && Math.hypot(deltaX, deltaY) < 7) return false;
+
+    dragState.hasMoved = true;
+    setIsDragging(true);
+    setDragOffset({
+      x: clamp(dragState.originX + deltaX, -150, 150),
+      y: clamp(dragState.originY + deltaY, -110, 110),
+    });
+
+    return true;
+  }, []);
 
   useEffect(() => {
     if (!isDragging) return;
 
     const handleWindowPointerMove = (event: PointerEvent) => {
-      const element = cardRef.current;
-      const dragState = dragStateRef.current;
-      if (!element || !dragState) return;
-      if (dragState.pointerId !== event.pointerId) return;
-
-      setCardSurfaceState(element, event.clientX, event.clientY);
-
-      const nextX = clamp(dragState.originX + (event.clientX - dragState.startX), -160, 160);
-      const nextY = clamp(dragState.originY + (event.clientY - dragState.startY), -120, 120);
-      setDragOffset({ x: nextX, y: nextY });
+      if (updateDragFromPointer(event.pointerId, event.clientX, event.clientY)) {
+        event.preventDefault();
+      }
     };
 
     const handleWindowPointerUp = (event: PointerEvent) => finishDrag(event.pointerId);
@@ -493,16 +531,24 @@ function HeroShowcaseCard({
       window.removeEventListener("pointerup", handleWindowPointerUp);
       window.removeEventListener("pointercancel", handleWindowPointerUp);
     };
-  }, [isDragging]);
+  }, [finishDrag, isDragging, updateDragFromPointer]);
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     const element = cardRef.current;
     if (!element) return;
+    const target = event.target;
+    const isHandle = target instanceof Element && Boolean(target.closest(".card-handle"));
 
-    event.preventDefault();
     event.stopPropagation();
+    onActivate(card.id);
+    setCardSurfaceState(element, event.clientX, event.clientY);
+
+    if (event.pointerType !== "mouse" && !isHandle) return;
+    if (snapBackTimerRef.current) window.clearTimeout(snapBackTimerRef.current);
+    if (isHandle) event.preventDefault();
 
     dragStateRef.current = {
+      hasMoved: false,
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
@@ -511,14 +557,16 @@ function HeroShowcaseCard({
     };
 
     element.setPointerCapture(event.pointerId);
-    setIsDragging(true);
-    onActivate(card.id);
-    setCardSurfaceState(element, event.clientX, event.clientY);
   };
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
     const element = cardRef.current;
     if (!element) return;
+
+    if (updateDragFromPointer(event.pointerId, event.clientX, event.clientY)) {
+      event.preventDefault();
+      return;
+    }
 
     setCardSurfaceState(element, event.clientX, event.clientY);
   };
@@ -723,7 +771,7 @@ function PortfolioProjects() {
                 <dd>{project.summary}</dd>
               </div>
               <div>
-                <dt>Technologies</dt>
+                <dt>Approach</dt>
                 <dd>{project.duration}</dd>
               </div>
               <div>
@@ -741,27 +789,20 @@ function PortfolioProjects() {
 function IntroLoader({ active }: { active: boolean }) {
   return (
     <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
-      <div className="load-stage" role="status">
-        <div className="load-dot-field" aria-hidden="true">
-          <span className="load-dot load-dot-1" />
-          <span className="load-dot load-dot-2" />
-          <span className="load-dot load-dot-3" />
-          <span className="load-dot load-dot-4" />
-          <span className="load-dot load-dot-5" />
-          <span className="load-dot load-dot-6" />
-          <span className="load-dot load-dot-7" />
-          <span className="load-dot load-dot-8" />
-        </div>
+      <div className="load-grid" aria-hidden="true" />
+      <div className="load-grain" aria-hidden="true" />
+      <div className="load-stage" role="status" aria-label="Preparing Sparkle interface">
         <div className="load-logo-shell">
           <div className="load-logo-build">
-            <Image src="/logo-transparent.png" alt="" width={272} height={272} priority />
+            <Image src="/logo-transparent.png" alt="" width={180} height={180} priority />
           </div>
         </div>
+        <p className="load-status" aria-hidden="true">Preparing interface</p>
+        <div className="load-line" aria-hidden="true">
+          <span className="load-line-fill" />
+        </div>
       </div>
-      <div className="load-tagline" aria-hidden="true">READY TO SPARK!</div>
-      <div className="load-bar" aria-hidden="true">
-        <span className="load-bar-fill" />
-      </div>
+      <span className="load-wipe" aria-hidden="true" />
     </div>
   );
 }
@@ -906,7 +947,7 @@ export function HomePageClient() {
       return () => window.clearTimeout(reducedMotionTimer);
     }
 
-    const timer = window.setTimeout(() => setIsLoading(false), 1500);
+    const timer = window.setTimeout(() => setIsLoading(false), 1200);
     return () => window.clearTimeout(timer);
   }, [reduceMotion]);
 
