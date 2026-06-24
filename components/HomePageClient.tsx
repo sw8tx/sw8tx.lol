@@ -173,9 +173,7 @@ const heroLines = [
 ];
 
 const heroChips = [
-  { label: "Awwwards Energy", left: "8%", top: "17%", rotate: "-8deg" },
-  { label: "Motion First", left: "76%", top: "14%", rotate: "7deg" },
-  { label: "Drag The Cards", left: "70%", top: "78%", rotate: "-6deg" },
+  { label: "Drag The Cards", left: "50%", top: "82%", rotate: "0deg" },
 ] as const;
 
 const rotatingTitles = [
@@ -906,6 +904,8 @@ export function HomePageClient() {
     if (!hero) return;
 
     const updateHeroPointer = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+
       const rect = hero.getBoundingClientRect();
       const withinX = (event.clientX - rect.left) / rect.width;
       const withinY = (event.clientY - rect.top) / rect.height;
@@ -938,6 +938,8 @@ export function HomePageClient() {
     const cards = Array.from(stage.querySelectorAll(".hero-card")) as HTMLElement[];
 
     const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+
       cards.forEach((card) => {
         if (card.classList.contains("dragging")) return;
 
