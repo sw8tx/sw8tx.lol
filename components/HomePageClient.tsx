@@ -197,6 +197,11 @@ const menuItems = [
   { href: "#contact", label: "Contact" },
 ] as const;
 
+const floatingFeatures = [
+  { label: "Frontend Build", side: "left" },
+  { label: "Motion Detail", side: "right" },
+] as const;
+
 const aboutSignals = [
   { label: "Clarity", value: "Structured layouts" },
   { label: "Motion", value: "Human rhythm" },
@@ -863,6 +868,7 @@ export function HomePageClient() {
   const heroChipDriftX = useTransform(heroPointerXSmooth, [-1, 1], [-18, 18]);
   const heroChipDriftY = useTransform(heroPointerYSmooth, [-1, 1], [14, -14]);
   const heroStageShift = useTransform(heroPointerXSmooth, [-1, 1], [-20, 20]);
+  const floatingFeatureY = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -1049,6 +1055,20 @@ export function HomePageClient() {
           style={{ x: cursorAuraX, y: cursorAuraY, opacity: cursorAuraOpacity }}
         />
       )}
+      {!menuOpen && (
+        <div aria-hidden="true" className="floating-feature-layer">
+          {floatingFeatures.map((feature, index) => (
+            <motion.div
+              className={`floating-feature floating-feature-${feature.side}`}
+              key={feature.label}
+              style={{ y: reduceMotion ? 0 : floatingFeatureY }}
+              transition={{ delay: index * 0.08 }}
+            >
+              {feature.label}
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
         <Link className="brand" href="/" aria-label="Sparkle home">
@@ -1093,7 +1113,7 @@ export function HomePageClient() {
               transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="menu-topbar">
-                <span className="menu-badge">Sparkle</span>
+                <span className="menu-badge">Menu</span>
                 <button
                   aria-label="Close menu"
                   className="menu-close"
@@ -1122,7 +1142,14 @@ export function HomePageClient() {
                     {item.label}
                   </motion.a>
                 ))}
-                <div className="menu-footer">web design / frontend / sparkle</div>
+                <div className="menu-footer">
+                  <div className="menu-legal-links">
+                    <Link className="menu-legal-link" href="/tos" onClick={() => setMenuOpen(false)}>Terms of Service</Link>
+                    <Link className="menu-legal-link" href="/privacy" onClick={() => setMenuOpen(false)}>Privacy</Link>
+                    <Link className="menu-legal-link" href="/refund" onClick={() => setMenuOpen(false)}>Refund</Link>
+                  </div>
+                  <div className="menu-footer-note">EST. 2026 - All rights reserved</div>
+                </div>
               </div>
             </motion.div>
           </motion.div>
