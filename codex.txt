@@ -15,6 +15,7 @@ Implemented in this pass
 
 Notes
 - Keep app-specific requests and major edits appended here in future passes.
+- User preference: after requested changes are finished, push the result unless told otherwise.
 
 Update 2026-06-23
 - User requested a much more aggressive loading screen with screen shake, repeated pop-up impacts, and a more intense feel that still avoids a generic AI-looking motion style.
@@ -78,3 +79,9 @@ Update 2026-06-25, menu hover refinement
 - User asked to push the menu-hover work and make it better before shipping.
 - Updated the main overlay links in `components/HomePageClient.tsx` to include a small numbered meta label and arrow reveal so the menu feels more editorial and premium.
 - Refined the hover behavior in `styles/globals.css` so the menu interactions now combine cleaner text movement, a stronger underline sweep, a small meta shift, and a controlled arrow reveal instead of a plain single hover effect.
+
+Update 2026-06-25, language toggle pass
+- User requested a top-left language chooser for English and German that can switch the homepage language on demand.
+- Added a persistent locale switcher in `components/HomePageClient.tsx` with English and German options, browser storage, and dynamic `document.documentElement.lang` updates.
+- Moved the homepage copy in `components/HomePageClient.tsx` into localized content objects so navigation, hero, sections, feedback, contact, loader text, and footer links switch together.
+- Added matching segmented-control styling in `styles/globals.css` so the language picker feels integrated with the premium top navigation.
