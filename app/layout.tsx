@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Sparkle | Web Designer and Frontend Developer",
-  description: "Sparkle is the portfolio of Tyler Osthoff, focused on custom websites, frontend builds and concept-led redesigns with a sharper, more human presentation.",
+  title: "Sparkle | Custom Animated Websites and Portfolios",
+  description: "Sparkle is the portfolio of Tyler Osthoff, focused on custom animated websites, landing pages and portfolios with sharp design, clean code and a stronger first impression.",
   metadataBase: new URL("https://sw8tx.lol"),
   openGraph: {
-    title: "Sparkle | Web Designer and Frontend Developer",
-    description: "Custom websites, frontend builds and concept-led redesigns by Tyler Osthoff.",
+    title: "Sparkle | Custom Animated Websites and Portfolios",
+    description: "Custom animated websites, landing pages and portfolios by Tyler Osthoff.",
     url: "https://sw8tx.lol",
     siteName: "Sparkle",
     images: [{ url: "/logo-transparent.png", width: 1024, height: 1024, alt: "Sparkle Logo" }],
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Sparkle | Web Designer and Frontend Developer",
-    description: "Custom websites and frontend builds by Tyler Osthoff.",
+    title: "Sparkle | Custom Animated Websites and Portfolios",
+    description: "Custom animated websites, landing pages and portfolios by Tyler Osthoff.",
     images: ["/logo-transparent.png"],
   },
   icons: {

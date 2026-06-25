@@ -62,3 +62,9 @@ Update 2026-06-25, menu-button and draggable-card rollback pass
 - User asked to bring back the older homepage direction with the menu button top right, logo top left, a large centered Sparkle wordmark behind the hero, a clean blue-yellow loading screen, and five draggable cards in the spirit of the Crav reference while still feeling professional and clean.
 - Rebuilt `components/HomePageClient.tsx` around that structure: fixed top navigation with only the menu button, oversized hero backdrop typography, short yellow loader with blue accent bar, simplified clean copy, and five draggable hero cards with a five-bar handle treatment.
 - Reworked `styles/globals.css` into a lighter cream-based presentation with blue and yellow accents so the homepage feels closer to the requested reference while staying custom to Sparkle.
+
+Update 2026-06-25, strong-first-impression pass
+- User requested a more professional first impression inspired by the confident feel of the Crav homepage while avoiding copied layout, burger theming, fake-tech wording, random labels, and noisy sci-fi UI effects.
+- Rebuilt `components/HomePageClient.tsx` into a darker Sparkle Studio presentation with a short branded loader, stronger hero headline, cleaner supporting copy, better CTA hierarchy, floating visual notes, and reduced-motion-safe pointer polish for interactive surfaces.
+- Replaced `styles/globals.css` with a coherent dark design system that keeps the Sparkle logo, sparkle mood and core colors while shifting the whole site toward a cleaner premium portfolio look with more controlled motion, stronger spacing, better accessibility, and less template energy.
+- Updated metadata in `app/layout.tsx` so the title and descriptions better match the new positioning around custom animated websites and portfolios.

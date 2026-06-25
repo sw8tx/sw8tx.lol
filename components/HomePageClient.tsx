@@ -11,103 +11,10 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const primaryEmail = "info@tylerosthoff.xyz";
-
-type ShowcaseCard = {
-  id: string;
-  kicker: string;
-  title: string;
-  body: string;
-  category: string;
-  left: number;
-  top: number;
-  mobileLeft: number;
-  mobileTop: number;
-  rotate: number;
-  color: string;
-  color2: string;
-  dark?: boolean;
-  image?: boolean;
-};
-
-const showcase: ShowcaseCard[] = [
-  {
-    id: "branding",
-    kicker: "01",
-    title: "Brand-first hero",
-    body: "A homepage that says what you do immediately and still feels custom.",
-    category: "Direction",
-    left: 6,
-    top: 17,
-    mobileLeft: 4,
-    mobileTop: 4,
-    rotate: -6,
-    color: "#0f5fff",
-    color2: "#76a8ff",
-    dark: true,
-  },
-  {
-    id: "layout",
-    kicker: "02",
-    title: "Better structure",
-    body: "Clear rhythm, better spacing and cleaner section pacing across the page.",
-    category: "Layout",
-    left: 62,
-    top: 14,
-    mobileLeft: 54,
-    mobileTop: 10,
-    rotate: 5,
-    color: "#f4b400",
-    color2: "#ffe188",
-  },
-  {
-    id: "motion",
-    kicker: "03",
-    title: "Controlled motion",
-    body: "Smooth reveals and hover movement that feel expensive instead of loud.",
-    category: "Motion",
-    left: 15,
-    top: 57,
-    mobileLeft: 6,
-    mobileTop: 52,
-    rotate: 4,
-    color: "#ffcf4a",
-    color2: "#fff0b3",
-  },
-  {
-    id: "frontend",
-    kicker: "04",
-    title: "Frontend polish",
-    body: "Responsive implementation that keeps the design sharp on every screen.",
-    category: "Build",
-    left: 63,
-    top: 56,
-    mobileLeft: 52,
-    mobileTop: 56,
-    rotate: -5,
-    color: "#0a49c6",
-    color2: "#1f7dff",
-    dark: true,
-  },
-  {
-    id: "sparkle",
-    kicker: "05",
-    title: "Sparkle identity",
-    body: "The same logo and energy, just cleaner and more intentional.",
-    category: "Signature",
-    left: 34,
-    top: 0,
-    mobileLeft: 24,
-    mobileTop: 76,
-    rotate: 2,
-    color: "#ffd866",
-    color2: "#fff0b5",
-    image: true,
-  },
-];
 
 const menuItems = [
   { href: "#about", label: "About" },
@@ -117,286 +24,75 @@ const menuItems = [
   { href: "#contact", label: "Contact" },
 ] as const;
 
+const proofItems = ["Animated portfolios", "Landing pages", "Brand sites"] as const;
+
+const heroNotes = [
+  {
+    name: "Portfolio Refresh",
+    label: "Sharper hierarchy",
+    body: "Clearer first screens, stronger sections and cleaner pacing across the whole page.",
+  },
+  {
+    name: "Launch Page",
+    label: "Motion direction",
+    body: "Smooth reveals, subtle parallax and hover states that support the brand instead of distracting from it.",
+  },
+] as const;
+
 const process = [
   {
     num: "01",
-    title: "Direction first",
-    body: "We lock the tone, hierarchy and references before adding visual extras.",
+    title: "Direction before decoration",
+    body: "We define the brand feeling, references and visual hierarchy first, so the design has a point of view from the beginning.",
   },
   {
     num: "02",
-    title: "Custom layout",
-    body: "The page is shaped around the brand instead of forcing it into a template.",
+    title: "Design that feels owned",
+    body: "Layouts, type rhythm and supporting visuals are built around the brand instead of looking borrowed from a generic template.",
   },
   {
     num: "03",
-    title: "Build clean",
-    body: "Responsive frontend, calmer motion and details that hold up in production.",
+    title: "Clean build and polish",
+    body: "Responsive frontend, controlled motion and final spacing passes that keep the site sharp on desktop and mobile.",
   },
-  {
-    num: "04",
-    title: "Polish pass",
-    body: "Final copy, spacing and mobile refinement so the whole thing feels finished.",
-  },
-];
+] as const;
 
 const projects = [
   {
     title: "Nova Studio",
-    category: "Selected project",
-    summary: "Creative agency site with a calmer first screen, stronger hierarchy and cleaner sections.",
+    category: "Creative portfolio",
+    summary: "A calmer studio site with bigger type, stronger project framing and motion that feels expensive instead of busy.",
   },
   {
-    title: "Aura Commerce",
-    category: "Concept project",
-    summary: "Storefront concept focused on better product grouping and less clutter between actions.",
+    title: "Orbis Homes",
+    category: "Brand landing page",
+    summary: "A dark launch page focused on clear messaging, cleaner content flow and a more premium conversion path.",
   },
   {
-    title: "Vertex SaaS",
-    category: "Concept project",
-    summary: "Landing page concept for a technical product with simpler messaging and steadier pacing.",
+    title: "Axis Club",
+    category: "Personal brand site",
+    summary: "A custom portfolio system for a creator who needed a stronger online presence without fake tech styling.",
   },
-];
+] as const;
 
 const testimonials = [
-  "It finally felt like our brand instead of a shiny template.",
-  "The site looks cleaner, but more importantly it makes sense faster.",
-  "The motion feels premium now because it knows when to stay quiet.",
-];
+  "The site finally looked custom instead of looking like it came from a trendy template folder.",
+  "What changed most was the first impression. It felt professional before people even started reading.",
+  "The motion added confidence to the brand instead of trying to be the whole brand.",
+] as const;
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
-
-function setCardSurfaceState(element: HTMLElement, clientX: number, clientY: number) {
+function setSurfacePosition(element: HTMLElement, clientX: number, clientY: number) {
   const rect = element.getBoundingClientRect();
-  const ratioX = (clientX - rect.left) / rect.width;
-  const ratioY = (clientY - rect.top) / rect.height;
-  const centeredX = ratioX - 0.5;
-  const centeredY = ratioY - 0.5;
+  const x = ((clientX - rect.left) / rect.width) * 100;
+  const y = ((clientY - rect.top) / rect.height) * 100;
 
-  element.style.setProperty("--shine-x", `${Math.round(ratioX * 100)}%`);
-  element.style.setProperty("--shine-y", `${Math.round(ratioY * 100)}%`);
-  element.style.setProperty("--tilt-rotate-x", `${Number(-centeredY * 6).toFixed(2)}deg`);
-  element.style.setProperty("--tilt-rotate-y", `${Number(centeredX * 7).toFixed(2)}deg`);
+  element.style.setProperty("--pointer-x", `${x.toFixed(2)}%`);
+  element.style.setProperty("--pointer-y", `${y.toFixed(2)}%`);
 }
 
-function resetCardSurfaceState(element: HTMLElement) {
-  element.style.setProperty("--shine-x", "50%");
-  element.style.setProperty("--shine-y", "50%");
-  element.style.setProperty("--tilt-rotate-x", "0deg");
-  element.style.setProperty("--tilt-rotate-y", "0deg");
-}
-
-function HeroShowcaseCard({
-  active,
-  card,
-  index,
-  onActivate,
-}: {
-  active: boolean;
-  card: ShowcaseCard;
-  index: number;
-  onActivate: (id: string) => void;
-}) {
-  const cardRef = useRef<HTMLButtonElement>(null);
-  const dragOffsetRef = useRef({ x: 0, y: 0 });
-  const dragStateRef = useRef<{
-    hasMoved: boolean;
-    originX: number;
-    originY: number;
-    pointerId: number;
-    startX: number;
-    startY: number;
-  } | null>(null);
-  const snapBackTimerRef = useRef<number | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    dragOffsetRef.current = dragOffset;
-  }, [dragOffset]);
-
-  useEffect(() => {
-    return () => {
-      if (snapBackTimerRef.current) window.clearTimeout(snapBackTimerRef.current);
-    };
-  }, []);
-
-  const finishDrag = useCallback((pointerId?: number) => {
-    const element = cardRef.current;
-    const dragState = dragStateRef.current;
-    if (!dragState) return;
-    if (typeof pointerId === "number" && dragState.pointerId !== pointerId) return;
-
-    const shouldSnapBack = dragState.hasMoved;
-
-    if (element?.hasPointerCapture(dragState.pointerId)) {
-      element.releasePointerCapture(dragState.pointerId);
-    }
-
-    dragStateRef.current = null;
-    setIsDragging(false);
-
-    if (!shouldSnapBack) return;
-
-    if (snapBackTimerRef.current) window.clearTimeout(snapBackTimerRef.current);
-    snapBackTimerRef.current = window.setTimeout(() => {
-      setDragOffset({ x: 0, y: 0 });
-      snapBackTimerRef.current = null;
-    }, 140);
-  }, []);
-
-  const updateDragFromPointer = useCallback((pointerId: number, clientX: number, clientY: number) => {
-    const element = cardRef.current;
-    const dragState = dragStateRef.current;
-    if (!element || !dragState || dragState.pointerId !== pointerId) return false;
-
-    setCardSurfaceState(element, clientX, clientY);
-
-    const deltaX = clientX - dragState.startX;
-    const deltaY = clientY - dragState.startY;
-
-    if (!dragState.hasMoved && Math.hypot(deltaX, deltaY) < 7) return false;
-
-    dragState.hasMoved = true;
-    setIsDragging(true);
-    setDragOffset({
-      x: clamp(dragState.originX + deltaX, -138, 138),
-      y: clamp(dragState.originY + deltaY, -104, 104),
-    });
-
-    return true;
-  }, []);
-
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const handleWindowPointerMove = (event: PointerEvent) => {
-      if (updateDragFromPointer(event.pointerId, event.clientX, event.clientY)) {
-        event.preventDefault();
-      }
-    };
-
-    const handleWindowPointerUp = (event: PointerEvent) => finishDrag(event.pointerId);
-
-    window.addEventListener("pointermove", handleWindowPointerMove);
-    window.addEventListener("pointerup", handleWindowPointerUp);
-    window.addEventListener("pointercancel", handleWindowPointerUp);
-
-    return () => {
-      window.removeEventListener("pointermove", handleWindowPointerMove);
-      window.removeEventListener("pointerup", handleWindowPointerUp);
-      window.removeEventListener("pointercancel", handleWindowPointerUp);
-    };
-  }, [finishDrag, isDragging, updateDragFromPointer]);
-
-  const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    const element = cardRef.current;
-    if (!element) return;
-
-    const target = event.target;
-    const isHandle = target instanceof Element && Boolean(target.closest(".card-handle"));
-
-    event.stopPropagation();
-    onActivate(card.id);
-    setCardSurfaceState(element, event.clientX, event.clientY);
-
-    if (event.pointerType !== "mouse" && !isHandle) return;
-    if (snapBackTimerRef.current) window.clearTimeout(snapBackTimerRef.current);
-    if (isHandle) event.preventDefault();
-
-    dragStateRef.current = {
-      hasMoved: false,
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      originX: dragOffsetRef.current.x,
-      originY: dragOffsetRef.current.y,
-    };
-
-    element.setPointerCapture(event.pointerId);
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    const element = cardRef.current;
-    if (!element) return;
-
-    if (updateDragFromPointer(event.pointerId, event.clientX, event.clientY)) {
-      event.preventDefault();
-      return;
-    }
-
-    setCardSurfaceState(element, event.clientX, event.clientY);
-  };
-
-  const handlePointerLeave = () => {
-    const element = cardRef.current;
-    if (!element || dragStateRef.current) return;
-    resetCardSurfaceState(element);
-  };
-
-  return (
-    <motion.button
-      aria-label={`${card.category}: ${card.title}`}
-      className={`hero-card${active ? " active" : ""}${card.dark ? " dark" : ""}${isDragging ? " dragging" : ""}`}
-      onDoubleClick={() => setDragOffset({ x: 0, y: 0 })}
-      onFocus={() => onActivate(card.id)}
-      onMouseEnter={() => onActivate(card.id)}
-      onLostPointerCapture={() => finishDrag()}
-      onPointerCancel={(event) => finishDrag(event.pointerId)}
-      onPointerDown={handlePointerDown}
-      onPointerLeave={handlePointerLeave}
-      onPointerMove={handlePointerMove}
-      onPointerUp={(event) => finishDrag(event.pointerId)}
-      ref={cardRef}
-      style={
-        {
-          "--left": card.left,
-          "--top": card.top,
-          "--mobile-left": card.mobileLeft,
-          "--mobile-top": card.mobileTop,
-          "--rotate": `${card.rotate}deg`,
-          "--drag-x": `${dragOffset.x}px`,
-          "--drag-y": `${dragOffset.y}px`,
-          "--magnet-x": "0px",
-          "--magnet-y": "0px",
-          "--card-color": card.color,
-          "--card-color-2": card.color2,
-          "--shine-x": "50%",
-          "--shine-y": "50%",
-          "--tilt-rotate-x": "0deg",
-          "--tilt-rotate-y": "0deg",
-          "--delay": `${220 + index * 90}ms`,
-        } as CSSProperties
-      }
-      transition={isDragging ? { duration: 0 } : { duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-      type="button"
-      whileHover={isDragging ? undefined : { y: -7, scale: 1.015 }}
-      whileTap={isDragging ? undefined : { scale: 0.99 }}
-    >
-      <span className="card-lift">
-        {card.image ? (
-          <span className="card-logo">
-            <Image src="/logo-transparent.png" alt="" width={42} height={42} />
-          </span>
-        ) : null}
-        <span className="card-top">
-          <span className="card-kicker">{card.kicker}</span>
-          <span className="card-handle" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-          </span>
-        </span>
-        <span className="card-category">{card.category}</span>
-        <span className="card-title">{card.title}</span>
-        <span className="card-body">{card.body}</span>
-      </span>
-    </motion.button>
-  );
+function resetSurfacePosition(element: HTMLElement) {
+  element.style.setProperty("--pointer-x", "50%");
+  element.style.setProperty("--pointer-y", "50%");
 }
 
 function Loader() {
@@ -405,30 +101,37 @@ function Loader() {
       animate={{ opacity: 1 }}
       aria-hidden="true"
       className="load-gate"
-      exit={{ opacity: 0, transition: { duration: 0.32, ease: [0.4, 0, 0.2, 1] } }}
+      exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } }}
       initial={{ opacity: 1 }}
     >
+      <div className="load-noise" />
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="load-shell"
-        initial={{ opacity: 0, y: 16 }}
-        transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 18 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="load-logo">
-          <Image src="/logo-transparent.png" alt="" width={78} height={78} priority />
+        <div className="load-mark">
+          <Image src="/logo-transparent.png" alt="" width={70} height={70} priority />
         </div>
         <div className="load-copy">
-          <span className="load-word">Sparkle</span>
-          <span className="load-note">Web Design</span>
+          <span className="load-title">Sparkle</span>
+          <span className="load-status">Preparing Sparkle Studio...</span>
         </div>
-        <div className="load-line">
+        <div className="load-line" aria-hidden="true">
           <motion.span
             animate={{ scaleX: 1 }}
             initial={{ scaleX: 0 }}
-            transition={{ duration: 0.72, ease: [0.33, 1, 0.68, 1] }}
+            transition={{ duration: 0.88, ease: [0.22, 1, 0.36, 1] }}
           />
         </div>
       </motion.div>
+      <motion.div
+        animate={{ scaleY: 1 }}
+        className="load-wipe"
+        initial={{ scaleY: 0 }}
+        transition={{ delay: 0.82, duration: 0.34, ease: [0.76, 0, 0.24, 1] }}
+      />
     </motion.div>
   );
 }
@@ -436,50 +139,50 @@ function Loader() {
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
-  const [showLoader, setShowLoader] = useState(() => !reduceMotion);
   const [reviewIndex, setReviewIndex] = useState(0);
+  const [showLoader, setShowLoader] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
   const { scrollYProgress } = useScroll();
-  const heroPointerX = useMotionValue(0);
-  const heroPointerY = useMotionValue(0);
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
 
-  const heroTitleY = useSpring(useTransform(scrollYProgress, [0, 0.24], [0, -34]), {
+  const heroCopyY = useSpring(useTransform(scrollYProgress, [0, 0.22], [0, -18]), {
     stiffness: 120,
+    damping: 26,
+  });
+  const visualY = useSpring(useTransform(scrollYProgress, [0, 0.22], [0, 28]), {
+    stiffness: 118,
     damping: 28,
   });
-  const heroStageY = useSpring(useTransform(scrollYProgress, [0, 0.24], [0, 44]), {
-    stiffness: 120,
-    damping: 30,
-  });
-  const heroWordmarkX = useTransform(heroPointerX, [-1, 1], [-18, 18]);
-  const heroWordmarkY = useTransform(heroPointerY, [-1, 1], [12, -12]);
-  const heroCopyTiltX = useTransform(heroPointerY, [-1, 1], [2, -2]);
-  const heroCopyTiltY = useTransform(heroPointerX, [-1, 1], [-2, 2]);
-  const heroStageShift = useTransform(heroPointerX, [-1, 1], [-14, 14]);
+  const visualX = useTransform(pointerX, [-1, 1], [-12, 12]);
+  const visualRotate = useTransform(pointerX, [-1, 1], [-2, 2]);
+  const visualTilt = useTransform(pointerY, [-1, 1], [1.6, -1.6]);
+  const wordmarkY = useTransform(pointerY, [-1, 1], [16, -16]);
+  const wordmarkX = useTransform(pointerX, [-1, 1], [-16, 16]);
   const year = new Date().getFullYear();
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || !showLoader) return;
 
-    const timer = window.setTimeout(() => setShowLoader(false), 1100);
+    const timer = window.setTimeout(() => setShowLoader(false), 1180);
     return () => window.clearTimeout(timer);
-  }, [reduceMotion]);
+  }, [reduceMotion, showLoader]);
 
   useEffect(() => {
-    const revealEls = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    const revealElements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) entry.target.classList.add("visible");
         });
       },
-      { threshold: 0.14, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.16, rootMargin: "0px 0px -48px 0px" },
     );
 
-    revealEls.forEach((el) => observer.observe(el));
-
+    revealElements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
 
@@ -491,7 +194,7 @@ export function HomePageClient() {
   useEffect(() => {
     const interval = window.setInterval(() => {
       setReviewIndex((current) => (current + 1) % testimonials.length);
-    }, 5200);
+    }, 5400);
 
     return () => window.clearInterval(interval);
   }, []);
@@ -502,83 +205,40 @@ export function HomePageClient() {
     const hero = heroRef.current;
     if (!hero) return;
 
-    const updateHeroPointer = (event: PointerEvent) => {
+    const handlePointerMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
 
       const rect = hero.getBoundingClientRect();
       const withinX = (event.clientX - rect.left) / rect.width;
       const withinY = (event.clientY - rect.top) / rect.height;
 
-      heroPointerX.set(clamp(withinX * 2 - 1, -1, 1));
-      heroPointerY.set(clamp(withinY * 2 - 1, -1, 1));
+      pointerX.set(Math.min(1, Math.max(-1, withinX * 2 - 1)));
+      pointerY.set(Math.min(1, Math.max(-1, withinY * 2 - 1)));
     };
 
-    const resetHeroPointer = () => {
-      heroPointerX.set(0);
-      heroPointerY.set(0);
+    const resetPointer = () => {
+      pointerX.set(0);
+      pointerY.set(0);
     };
 
-    hero.addEventListener("pointermove", updateHeroPointer);
-    hero.addEventListener("pointerleave", resetHeroPointer);
+    hero.addEventListener("pointermove", handlePointerMove);
+    hero.addEventListener("pointerleave", resetPointer);
 
     return () => {
-      hero.removeEventListener("pointermove", updateHeroPointer);
-      hero.removeEventListener("pointerleave", resetHeroPointer);
-      resetHeroPointer();
+      hero.removeEventListener("pointermove", handlePointerMove);
+      hero.removeEventListener("pointerleave", resetPointer);
+      resetPointer();
     };
-  }, [heroPointerX, heroPointerY, reduceMotion]);
+  }, [pointerX, pointerY, reduceMotion]);
 
-  useEffect(() => {
+  function handleSurfaceMove(event: ReactPointerEvent<HTMLElement>) {
     if (reduceMotion) return;
+    setSurfacePosition(event.currentTarget, event.clientX, event.clientY);
+  }
 
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const cards = Array.from(stage.querySelectorAll(".hero-card")) as HTMLElement[];
-
-    const handlePointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-
-      cards.forEach((card) => {
-        if (card.classList.contains("dragging")) return;
-
-        const rect = card.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const deltaX = event.clientX - centerX;
-        const deltaY = event.clientY - centerY;
-        const distance = Math.hypot(deltaX, deltaY);
-        const radius = 250;
-
-        if (distance > radius) {
-          card.style.setProperty("--magnet-x", "0px");
-          card.style.setProperty("--magnet-y", "0px");
-          return;
-        }
-
-        const pull = (1 - distance / radius) ** 1.45;
-        card.style.setProperty("--magnet-x", `${clamp(deltaX * 0.12 * pull, -18, 18).toFixed(2)}px`);
-        card.style.setProperty("--magnet-y", `${clamp(deltaY * 0.12 * pull, -16, 16).toFixed(2)}px`);
-      });
-    };
-
-    const resetCards = () => {
-      cards.forEach((card) => {
-        if (card.classList.contains("dragging")) return;
-        card.style.setProperty("--magnet-x", "0px");
-        card.style.setProperty("--magnet-y", "0px");
-      });
-    };
-
-    stage.addEventListener("pointermove", handlePointerMove);
-    stage.addEventListener("pointerleave", resetCards);
-
-    return () => {
-      stage.removeEventListener("pointermove", handlePointerMove);
-      stage.removeEventListener("pointerleave", resetCards);
-      resetCards();
-    };
-  }, [reduceMotion]);
+  function handleSurfaceLeave(event: ReactPointerEvent<HTMLElement>) {
+    resetSurfacePosition(event.currentTarget);
+  }
 
   return (
     <>
@@ -588,7 +248,7 @@ export function HomePageClient() {
         <nav className="nav">
           <Link className="brand" href="/" aria-label="Sparkle home">
             <span className="brand-mark">
-              <Image src="/logo-transparent.png" alt="" width={38} height={38} priority />
+              <Image src="/logo-transparent.png" alt="" width={36} height={36} priority />
             </span>
             <span className="brand-name">Sparkle</span>
           </Link>
@@ -599,13 +259,14 @@ export function HomePageClient() {
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             className={`menu-toggle${menuOpen ? " is-open" : ""}`}
             onClick={() => setMenuOpen((open) => !open)}
+            onPointerLeave={handleSurfaceLeave}
+            onPointerMove={handleSurfaceMove}
             type="button"
-            whileHover={{ scale: 1.02, y: -1 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
+            whileTap={reduceMotion ? undefined : { scale: 0.99 }}
           >
             <span className="menu-toggle-label">{menuOpen ? "Close" : "Menu"}</span>
             <span className="menu-toggle-icon" aria-hidden="true">
-              <span />
               <span />
               <span />
             </span>
@@ -626,12 +287,12 @@ export function HomePageClient() {
                 className="menu-film"
                 exit={{ opacity: 0, scale: 0.98, y: 14 }}
                 initial={{ opacity: 0, scale: 0.98, y: 14 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="menu-topbar">
-                  <span className="menu-badge">Sparkle</span>
+                  <span className="menu-badge">Sparkle Studio</span>
                   <button className="menu-close" onClick={() => setMenuOpen(false)} type="button">
-                    <span>Close</span>
+                    Close
                   </button>
                 </div>
                 <div className="menu-panel">
@@ -640,7 +301,7 @@ export function HomePageClient() {
                       animate={{ opacity: 1, x: 0 }}
                       className="menu-link"
                       href={item.href}
-                      initial={{ opacity: 0, x: -18 }}
+                      initial={{ opacity: 0, x: -14 }}
                       key={item.href}
                       onClick={() => setMenuOpen(false)}
                       transition={{ delay: index * 0.04, duration: 0.22 }}
@@ -666,52 +327,176 @@ export function HomePageClient() {
         </AnimatePresence>
 
         <section className="hero" ref={heroRef}>
-          <motion.div aria-hidden="true" className="hero-wordmark" style={{ x: heroWordmarkX, y: heroWordmarkY }}>
+          <div className="hero-background" aria-hidden="true" />
+          <motion.div
+            aria-hidden="true"
+            className="hero-wordmark"
+            style={{ x: reduceMotion ? 0 : wordmarkX, y: reduceMotion ? 0 : wordmarkY }}
+          >
             <span>SPARKLE</span>
-            <span>WEB DESIGN</span>
+            <span>SPARKLE</span>
           </motion.div>
 
-          <motion.div className="hero-copy" style={{ rotateX: heroCopyTiltX, rotateY: heroCopyTiltY, y: heroTitleY }}>
-            <p className="eyebrow">Web designer and frontend developer</p>
-            <h1 className="hero-title">Clean, custom websites that feel designed on purpose.</h1>
-            <p className="hero-text">
-              Portfolio sites, landing pages and redesign concepts with stronger hierarchy, calmer
-              motion and a more polished first impression.
-            </p>
-            <div className="hero-actions">
-              <a className="button primary" href={`mailto:${primaryEmail}`}>
-                Start a project
-              </a>
-              <a className="button secondary" href="#work">
-                View work
-              </a>
-            </div>
-          </motion.div>
+          <div className="hero-grid">
+            <motion.div
+              className="hero-copy"
+              style={{ y: reduceMotion ? 0 : heroCopyY }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <motion.p
+                animate={{ opacity: 1, y: 0 }}
+                className="eyebrow"
+                initial={{ opacity: 0, y: 16 }}
+                transition={{ delay: showLoader ? 0.1 : 0, duration: 0.45 }}
+              >
+                Sparkle Studio / Web design and frontend
+              </motion.p>
+              <motion.h1
+                animate={{ opacity: 1, y: 0 }}
+                className="hero-title"
+                initial={{ opacity: 0, y: 24 }}
+                transition={{ delay: showLoader ? 0.16 : 0.04, duration: 0.56, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Websites that feel custom from the first second.
+              </motion.h1>
+              <motion.p
+                animate={{ opacity: 1, y: 0 }}
+                className="hero-text"
+                initial={{ opacity: 0, y: 20 }}
+                transition={{ delay: showLoader ? 0.22 : 0.08, duration: 0.5 }}
+              >
+                Animated portfolios, landing pages and brand sites built to stand out. Sharp design,
+                clean code, smooth motion.
+              </motion.p>
+              <motion.p
+                animate={{ opacity: 1, y: 0 }}
+                className="hero-support"
+                initial={{ opacity: 0, y: 20 }}
+                transition={{ delay: showLoader ? 0.28 : 0.12, duration: 0.48 }}
+              >
+                For creators, brands and businesses that need a stronger online presence without the
+                fake futuristic template look.
+              </motion.p>
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                className="hero-actions"
+                initial={{ opacity: 0, y: 18 }}
+                transition={{ delay: showLoader ? 0.32 : 0.14, duration: 0.45 }}
+              >
+                <motion.a
+                  className="button primary"
+                  href={`mailto:${primaryEmail}`}
+                  onPointerLeave={handleSurfaceLeave}
+                  onPointerMove={handleSurfaceMove}
+                  whileHover={reduceMotion ? undefined : { y: -3, scale: 1.01 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.99 }}
+                >
+                  Start a project
+                </motion.a>
+                <motion.a
+                  className="button secondary"
+                  href="#work"
+                  onPointerLeave={handleSurfaceLeave}
+                  onPointerMove={handleSurfaceMove}
+                  whileHover={reduceMotion ? undefined : { y: -3, scale: 1.01 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.99 }}
+                >
+                  View work
+                </motion.a>
+              </motion.div>
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                className="hero-proof"
+                initial={{ opacity: 0, y: 18 }}
+                transition={{ delay: showLoader ? 0.36 : 0.16, duration: 0.45 }}
+              >
+                {proofItems.map((item) => (
+                  <span className="proof-pill" key={item}>
+                    {item}
+                  </span>
+                ))}
+              </motion.div>
+            </motion.div>
 
-          <motion.div className="card-stage" ref={stageRef} style={{ x: heroStageShift, y: heroStageY }}>
-            {showcase.map((card, index) => (
-              <HeroShowcaseCard
-                active={activeShowcase === card.id}
-                card={card}
-                index={index}
-                key={card.id}
-                onActivate={setActiveShowcase}
-              />
-            ))}
-          </motion.div>
+            <motion.div
+              className="hero-visual"
+              style={{
+                x: reduceMotion ? 0 : visualX,
+                y: reduceMotion ? 0 : visualY,
+                rotateZ: reduceMotion ? 0 : visualRotate,
+                rotateX: reduceMotion ? 0 : visualTilt,
+              }}
+            >
+              <div className="visual-orbit orbit-left" aria-hidden="true" />
+              <div className="visual-orbit orbit-right" aria-hidden="true" />
+
+              <motion.article
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="feature-frame"
+                initial={{ opacity: 0, scale: 0.96, y: 22 }}
+                onPointerLeave={handleSurfaceLeave}
+                onPointerMove={handleSurfaceMove}
+                transition={{ delay: showLoader ? 0.22 : 0.06, duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="frame-topbar">
+                  <span className="frame-dot" />
+                  <span className="frame-dot" />
+                  <span className="frame-dot" />
+                </div>
+                <div className="frame-copy">
+                  <span className="frame-kicker">Selected direction</span>
+                  <h2>Dark, bold and polished without looking overproduced.</h2>
+                  <p>
+                    The first screen carries the brand. Motion supports it, visuals frame it and the
+                    layout gives it room to land.
+                  </p>
+                </div>
+                <div className="frame-preview" aria-hidden="true">
+                  <div className="preview-grid">
+                    <span className="preview-block large" />
+                    <span className="preview-block" />
+                    <span className="preview-block" />
+                    <span className="preview-line short" />
+                    <span className="preview-line" />
+                    <span className="preview-line wide" />
+                  </div>
+                </div>
+              </motion.article>
+
+              {heroNotes.map((note, index) => (
+                <motion.article
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className={`floating-note note-${index + 1}`}
+                  initial={{ opacity: 0, y: 20, scale: 0.96 }}
+                  key={note.name}
+                  onPointerLeave={handleSurfaceLeave}
+                  onPointerMove={handleSurfaceMove}
+                  transition={{
+                    delay: showLoader ? 0.3 + index * 0.08 : 0.14 + index * 0.05,
+                    duration: 0.5,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  <span className="note-name">{note.name}</span>
+                  <strong>{note.label}</strong>
+                  <p>{note.body}</p>
+                </motion.article>
+              ))}
+            </motion.div>
+          </div>
         </section>
 
         <section className="section" id="about">
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">About</p>
-              <h2 className="section-title">The goal is a site that looks custom fast, not futuristic loud.</h2>
+              <h2 className="section-title">A stronger first impression starts with design choices that feel intentional.</h2>
             </div>
             <div className="reveal delay-1">
               <p className="section-text">
-                I work between design and frontend, so the visual idea and the actual build stay in
-                sync. That usually means cleaner spacing, clearer sections, better mobile behavior
-                and less filler pretending to be quality.
+                Sparkle sits between design and frontend, so the concept and the actual build stay in
+                sync. The result is cleaner structure, better mobile behavior, smoother motion and a
+                site that feels genuinely custom.
               </p>
             </div>
           </div>
@@ -721,7 +506,7 @@ export function HomePageClient() {
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">Process</p>
-              <h2 className="section-title">Simple process, sharper result.</h2>
+              <h2 className="section-title">Sharp design, clean code, smooth motion.</h2>
             </div>
             <div className="process-grid reveal delay-1">
               {process.map((item) => (
@@ -739,7 +524,7 @@ export function HomePageClient() {
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">Work</p>
-              <h2 className="section-title">Real portfolio framing, not fake case study fluff.</h2>
+              <h2 className="section-title">Selected directions for brands that need more presence online.</h2>
             </div>
             <div className="work-grid reveal delay-1">
               {projects.map((project) => (
@@ -757,10 +542,10 @@ export function HomePageClient() {
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">Reviews</p>
-              <h2 className="section-title">What people usually notice first.</h2>
+              <h2 className="section-title">What people tend to notice first.</h2>
             </div>
             <div className="review-shell reveal delay-1">
-              <span className="review-score">5 / 5</span>
+              <span className="review-score">Client feedback</span>
               <p>{testimonials[reviewIndex]}</p>
             </div>
           </div>
@@ -770,13 +555,19 @@ export function HomePageClient() {
           <div className="section-grid">
             <div className="reveal">
               <p className="section-label">Contact</p>
-              <h2 className="section-title">If the current site feels generic, that is fixable.</h2>
+              <h2 className="section-title">If your site feels generic, we can fix the first impression.</h2>
             </div>
             <div className="contact-panel reveal delay-1">
               <p className="contact-note">
-                Send a short note with what you need and what currently feels off.
+                Send a short note with what you are building and what currently feels off. I will come
+                back with a direction that feels sharper and more custom.
               </p>
-              <a className="email-row" href={`mailto:${primaryEmail}`}>
+              <a
+                className="email-row"
+                href={`mailto:${primaryEmail}`}
+                onPointerLeave={handleSurfaceLeave}
+                onPointerMove={handleSurfaceMove}
+              >
                 <span className="email-label">Email</span>
                 <span className="email-address">{primaryEmail}</span>
               </a>
