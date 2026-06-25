@@ -45,3 +45,15 @@ Update 2026-06-24, premium portfolio refinement
 - Renamed the project card "Technologies" label to "Approach" so the case-study copy is more honest.
 - Added a final premium CSS layer in `styles/globals.css` that restores the dark blue Sparkle direction, removes visible yellow/light leftovers from the main site, improves menu/card/project styling, adds reusable motion utility classes, and strengthens mobile/tablet layout overrides.
 - Verified `npm run lint` and `npm run build` successfully.
+
+Update 2026-06-25, portfolio de-AI pass
+- User requested a cleaner, more human and more premium portfolio feel while keeping the Sparkle identity, base colors, logo and dark direction.
+- Rebuilt `components/HomePageClient.tsx` into a calmer portfolio structure with a shorter loader, stronger hero message, clearer CTA hierarchy, cleaner mobile menu, more honest project copy, explicit concept-project labeling, and reduced decorative filler.
+- Kept the interactive hero cards but simplified their presentation so they feel like intentional portfolio artifacts rather than noisy sci-fi UI.
+- Replaced the layered override-heavy `styles/globals.css` with a single coherent dark design system focused on controlled motion, transform-and-opacity reveals, cleaner panels, better spacing, and `prefers-reduced-motion` support.
+- Updated metadata in `app/layout.tsx` so the title and description reflect a real web designer/frontend portfolio instead of generic service copy.
+
+Update 2026-06-25, clean 3D consistency pass
+- User requested that future work always be logged in `codex.txt` and that the overall design feel like a cleaner professional 3D system throughout.
+- Added a consistent depth language across the homepage in `components/HomePageClient.tsx` and `styles/globals.css`, including quieter hover-lift behavior, panel edge highlights, layered surface shadows, and more coherent 3D treatment for hero, proof, process, work, review, and contact surfaces.
+- Kept the effect restrained so the site stays premium and readable instead of slipping back into noisy futuristic UI.

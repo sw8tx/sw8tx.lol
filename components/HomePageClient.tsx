@@ -29,164 +29,113 @@ type ShowcaseCard = {
   rotate: number;
   color: string;
   color2: string;
-  soft: string;
   dark?: boolean;
   image?: boolean;
 };
 
 const showcase: ShowcaseCard[] = [
   {
-    id: "interfaces",
-    kicker: "01 / Web",
-    title: "Interface Systems",
-    body: "Polished portfolio, shop and SaaS surfaces built around fast flows.",
-    category: "Web",
-    left: 7,
-    top: 18,
-    mobileLeft: 2,
-    mobileTop: 6,
+    id: "portfolio",
+    kicker: "Portfolio",
+    title: "Editorial structure",
+    body: "Clear hierarchy, calmer spacing and enough motion to support the work.",
+    category: "Web design",
+    left: 4,
+    top: 16,
+    mobileLeft: 4,
+    mobileTop: 0,
     rotate: -6,
     color: "#0050d8",
     color2: "#4db6e5",
-    soft: "#dbefff",
     dark: true,
   },
   {
-    id: "brand",
-    kicker: "02 / Brand",
-    title: "Brand Identity Kits",
-    body: "Logos, palettes, type systems and launch-ready social assets.",
-    category: "Brand",
-    left: 64,
+    id: "commerce",
+    kicker: "Shop",
+    title: "Sharper product pages",
+    body: "Better product grouping, cleaner CTAs and less clutter between steps.",
+    category: "Frontend",
+    left: 59,
     top: 10,
     mobileLeft: 52,
-    mobileTop: 12,
+    mobileTop: 8,
     rotate: 5,
-    color: "#1aaed8",
-    color2: "#9bd3ff",
-    soft: "#e7f8ff",
-  },
-  {
-    id: "motion",
-    kicker: "03 / Motion",
-    title: "Animated Details",
-    body: "Micro-interactions, reveal systems, hover energy and page rhythm.",
-    category: "Motion",
-    left: 12,
-    top: 58,
-    mobileLeft: 5,
-    mobileTop: 46,
-    rotate: 4,
     color: "#18bfa5",
-    color2: "#9bf1ff",
-    soft: "#dffbf2",
+    color2: "#9bd3ff",
   },
   {
-    id: "frontend",
-    kicker: "04 / Code",
-    title: "Next.js Builds",
-    body: "Responsive components with crisp implementation and clean handoff.",
-    category: "Code",
-    left: 61,
-    top: 55,
-    mobileLeft: 51,
-    mobileTop: 52,
+    id: "studio",
+    kicker: "Studio",
+    title: "Brand-led layouts",
+    body: "Sites that look specific to the team behind them, not borrowed from a template.",
+    category: "Identity",
+    left: 18,
+    top: 56,
+    mobileLeft: 6,
+    mobileTop: 50,
+    rotate: 4,
+    color: "#4db6e5",
+    color2: "#18bfa5",
+  },
+  {
+    id: "build",
+    kicker: "Build",
+    title: "Clean Next.js handoff",
+    body: "Responsive components, controlled motion and a build that holds up after launch.",
+    category: "Implementation",
+    left: 63,
+    top: 54,
+    mobileLeft: 50,
+    mobileTop: 54,
     rotate: -5,
     color: "#0076f5",
     color2: "#0050d8",
-    soft: "#e7ecff",
     dark: true,
   },
   {
-    id: "identity",
+    id: "sparkle",
     kicker: "Sparkle",
-    title: "Visual Identity",
-    body: "A compact design language for sites that need to feel memorable.",
-    category: "Look",
-    left: 35,
-    top: 2,
-    mobileLeft: 25,
-    mobileTop: 75,
+    title: "A quieter signature",
+    body: "Still dark, still sharp, just more deliberate and less performative.",
+    category: "Direction",
+    left: 34,
+    top: 0,
+    mobileLeft: 26,
+    mobileTop: 76,
     rotate: 2,
     color: "#4db6e5",
     color2: "#9bd3ff",
-    soft: "#eaf6ff",
     image: true,
   },
-] as const;
-
-const services = [
-  "Web Design",
-  "Frontend Development",
-  "Motion Direction",
-  "Brand Identity",
-  "Landing Pages",
-  "Portfolio Systems",
-  "UI/UX",
-  "Design Cleanup",
-  "Shop Interfaces",
-  "Animated Launches",
-  "Creator Pages",
-  "Visual Systems",
 ];
 
 const process = [
   {
     num: "01",
     title: "Direction",
-    body: "Mood, structure, colors and the exact feel of the site.",
-    color: "#2f9cff",
-    soft: "#e8f4ff",
+    body: "We define the visual tone, the audience and what the site needs to communicate first.",
   },
   {
     num: "02",
-    title: "Design",
-    body: "Visual systems in Figma-style thinking, then responsive layouts.",
-    color: "#4db6e5",
-    soft: "#eaf6ff",
+    title: "Layout",
+    body: "Sections, hierarchy and responsive behavior are designed together instead of patched later.",
   },
   {
     num: "03",
     title: "Build",
-    body: "Next.js implementation with interaction polish and clean details.",
-    color: "#18bfa5",
-    soft: "#ddfaef",
+    body: "The frontend is implemented with motion, spacing and performance in mind from the start.",
   },
   {
     num: "04",
-    title: "Launch",
-    body: "Final QA, copy pass, contact routes and handoff-ready files.",
-    color: "#0097d7",
-    soft: "#e7f8ff",
+    title: "Finish",
+    body: "Final copy polish, mobile passes and launch cleanup so the site feels properly complete.",
   },
-] as const;
+];
 
 const proofStats = [
-  { value: "20+", label: "Digital surfaces", color: "#2f9cff" },
-  { value: "3+", label: "Years designing", color: "#18bfa5" },
-  { value: "3", label: "Contact routes", color: "#4db6e5" },
-];
-
-const heroLines = [
-  ["Building", "websites"],
-  ["people", "remember."],
-];
-
-const heroChips = [
-  { label: "Drag The Cards", left: "50%", top: "82%", rotate: "0deg" },
-] as const;
-
-const rotatingTitles = [
-  "Sparkle | Websites",
-  "Sparkle | Coding",
-  "Sparkle | Frontend",
-  "Sparkle | Web Design",
-  "Sparkle | UI/UX",
-  "Sparkle | Brand Identity",
-  "Sparkle | Landing Pages",
-  "Sparkle | Motion Design",
-  "Sparkle | Portfolio Systems",
-  "Sparkle | Design Cleanup",
+  { value: "Clarity", label: "First impression" },
+  { value: "Pacing", label: "Controlled motion" },
+  { value: "Craft", label: "Responsive detail" },
 ];
 
 const menuItems = [
@@ -197,83 +146,64 @@ const menuItems = [
   { href: "#contact", label: "Contact" },
 ] as const;
 
-const floatingFeatures = [
-  { label: "Web Development", side: "left" },
-  { label: "Easily Customizable", side: "right" },
-] as const;
+const aboutPoints = [
+  "Structure first, styling second.",
+  "Motion used to guide, not to distract.",
+  "Design and frontend handled as one system.",
+];
 
-const aboutSignals = [
-  { label: "Clarity", value: "Structured layouts" },
-  { label: "Motion", value: "Human rhythm" },
-  { label: "Polish", value: "Premium finish" },
-] as const;
-
-const workSignals = [
-  { label: "Depth", x: "10%", y: "16%" },
-  { label: "Flow", x: "82%", y: "22%" },
-  { label: "Trust", x: "72%", y: "78%" },
-  { label: "Energy", x: "18%", y: "74%" },
-] as const;
-
-const contactNodes = [
-  { x: "12%", y: "24%" },
-  { x: "34%", y: "12%" },
-  { x: "56%", y: "28%" },
-  { x: "74%", y: "18%" },
-  { x: "88%", y: "34%" },
-] as const;
-
-const marqueeWords = [...services, ...services, ...services];
+const heroServices = ["Portfolio sites", "Marketing pages", "Concept-led redesigns"];
 
 const studioProjects = [
   {
     title: "Nova Studio",
-    category: "Creative Agency",
-    summary: "Premium service website with a calmer structure, stronger trust and cleaner calls to action.",
-    outcome: "A sharper conversion flow with motion that feels expensive instead of noisy.",
-    duration: "Strategy, design, build and QA need real time so the result feels deliberate.",
+    category: "Creative agency redesign",
+    label: "Selected case study",
+    summary: "A studio site reworked to feel more confident, easier to scan and less dependent on visual noise.",
+    approach: "A tighter hero, stronger service hierarchy and calmer motion created a clearer path into the enquiry flow.",
+    result: "The site feels more editorial and easier to trust without losing personality.",
     accent: "#0050d8",
     screens: [
-      { label: "Hero", note: "high-impact intro", accent: "#0050d8" },
-      { label: "Services", note: "clear selling blocks", accent: "#4db6e5" },
-      { label: "Contact", note: "strong close", accent: "#18bfa5" },
+      { label: "Hero", note: "clean entry" },
+      { label: "Services", note: "clear structure" },
+      { label: "Contact", note: "better close" },
     ],
   },
   {
     title: "Aura Commerce",
-    category: "Beauty Ecommerce",
-    summary: "Storefront concept with faster browsing, cleaner product hierarchy and more premium atmosphere.",
-    outcome: "Customers move from first impression to product discovery with less friction.",
-    duration: "Good ecommerce takes careful layout work, performance cleanup and responsive passes.",
+    category: "Beauty storefront concept",
+    label: "Concept project",
+    summary: "A concept storefront focused on product grouping, cleaner merchandising and less friction between browsing and purchase.",
+    approach: "The collection flow, product page and cart states were designed as one system instead of isolated screens.",
+    result: "A more premium shopping feel with clearer decisions on desktop and mobile.",
     accent: "#18bfa5",
     screens: [
-      { label: "Collection", note: "elevated browsing", accent: "#18bfa5" },
-      { label: "Product", note: "conversion detail", accent: "#4db6e5" },
-      { label: "Cart", note: "clean checkout feel", accent: "#0050d8" },
+      { label: "Collection", note: "faster browse" },
+      { label: "Product", note: "clean details" },
+      { label: "Cart", note: "lighter checkout" },
     ],
   },
   {
     title: "Vertex SaaS",
-    category: "B2B Software",
-    summary: "SaaS website system that makes technical products feel clearer, lighter and easier to trust.",
-    outcome: "A more readable product story that guides visitors toward demos and calls.",
-    duration: "Professional builds take planning, revisions and polish across desktop and mobile.",
+    category: "B2B marketing concept",
+    label: "Concept project",
+    summary: "A SaaS landing page concept built to explain a technical product without sounding cold or overloaded.",
+    approach: "The copy, section order and motion were simplified so the product story could carry more of the page.",
+    result: "A clearer, more mature presentation that supports demo intent instead of visual clutter.",
     accent: "#4db6e5",
     screens: [
-      { label: "Overview", note: "simple product story", accent: "#4db6e5" },
-      { label: "Features", note: "modular sections", accent: "#0050d8" },
-      { label: "Demo CTA", note: "conversion finish", accent: "#18bfa5" },
+      { label: "Overview", note: "clear message" },
+      { label: "Features", note: "modular blocks" },
+      { label: "CTA", note: "focused close" },
     ],
   },
 ];
 
 const testimonials = [
-  "Working with him was one of the smoothest freelance experiences I've had. The final website looked significantly better than what we originally imagined and performed perfectly across all devices.",
-  "The attention to detail was outstanding. Every animation felt purposeful and every section of the website reflected our brand perfectly.",
-  "The final result feels premium without sacrificing usability. Every interaction feels smooth and refined.",
+  "The site finally felt like our brand instead of a polished template. The work was thoughtful, not just flashy.",
+  "Everything became easier to understand, especially on mobile. The design looked better, but it also made more sense.",
+  "The biggest difference was the restraint. Nothing felt random, and the whole site felt more expensive because of it.",
 ];
-
-type ProcessStep = (typeof process)[number];
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -288,27 +218,23 @@ function setCardSurfaceState(element: HTMLElement, clientX: number, clientY: num
 
   element.style.setProperty("--shine-x", `${Math.round(ratioX * 100)}%`);
   element.style.setProperty("--shine-y", `${Math.round(ratioY * 100)}%`);
-  element.style.setProperty("--tilt-shadow-x", `${Math.round(centeredX * 18)}px`);
-  element.style.setProperty("--tilt-shadow-y", `${Math.round(centeredY * 14)}px`);
-  element.style.setProperty("--tilt-rotate-x", `${Number(-centeredY * 8).toFixed(2)}deg`);
-  element.style.setProperty("--tilt-rotate-y", `${Number(centeredX * 10).toFixed(2)}deg`);
+  element.style.setProperty("--tilt-rotate-x", `${Number(-centeredY * 6).toFixed(2)}deg`);
+  element.style.setProperty("--tilt-rotate-y", `${Number(centeredX * 8).toFixed(2)}deg`);
 }
 
 function resetCardSurfaceState(element: HTMLElement) {
   element.style.setProperty("--shine-x", "50%");
   element.style.setProperty("--shine-y", "50%");
-  element.style.setProperty("--tilt-shadow-x", "0px");
-  element.style.setProperty("--tilt-shadow-y", "0px");
   element.style.setProperty("--tilt-rotate-x", "0deg");
   element.style.setProperty("--tilt-rotate-y", "0deg");
 }
 
-function useMagnetic(strength = 8) {
+function useMagnetic(strength = 10) {
   const reduceMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 360, damping: 26, mass: 0.22 });
-  const springY = useSpring(y, { stiffness: 360, damping: 26, mass: 0.22 });
+  const springX = useSpring(x, { stiffness: 320, damping: 28, mass: 0.25 });
+  const springY = useSpring(y, { stiffness: 320, damping: 28, mass: 0.25 });
 
   const onPointerMove = <T extends HTMLElement>(event: ReactPointerEvent<T>) => {
     if (reduceMotion || event.pointerType !== "mouse") return;
@@ -337,7 +263,7 @@ function MagneticAnchor({
   children,
   className,
   href,
-  strength = 8,
+  strength = 10,
 }: {
   children: ReactNode;
   className: string;
@@ -353,82 +279,15 @@ function MagneticAnchor({
       onPointerLeave={magnetic.onPointerLeave}
       onPointerMove={magnetic.onPointerMove}
       style={magnetic.style}
-      whileHover={{ translateY: -2 }}
+      whileHover={{ y: -2 }}
     >
       {children}
     </motion.a>
   );
 }
 
-function AnimatedSectionTitle({
-  className = "section-title",
-  delay = 0,
-  text,
-}: {
-  className?: string;
-  delay?: number;
-  text: string;
-}) {
-  const [rewriting, setRewriting] = useState(false);
-  const resetTimerRef = useRef<number | null>(null);
-  const intervalTimerRef = useRef<number | null>(null);
-
-  const triggerRewrite = useCallback(() => {
-    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
-    setRewriting(false);
-
-    window.requestAnimationFrame(() => {
-      setRewriting(true);
-      resetTimerRef.current = window.setTimeout(() => setRewriting(false), 2400);
-    });
-  }, []);
-
-  useEffect(() => {
-    const startTimer = window.setTimeout(() => {
-      triggerRewrite();
-      intervalTimerRef.current = window.setInterval(triggerRewrite, 5000);
-    }, delay);
-
-    return () => {
-      window.clearTimeout(startTimer);
-      if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
-      if (intervalTimerRef.current) window.clearInterval(intervalTimerRef.current);
-    };
-  }, [delay, triggerRewrite]);
-
-  return (
-    <h2 className={`${className} write-loop-title${rewriting ? " is-rewriting" : ""}`} onPointerEnter={triggerRewrite}>
-      {Array.from(text).map((char, index) => (
-        <span
-          aria-hidden="true"
-          className={`write-loop-char${char === " " ? " write-loop-space" : ""}`}
-          key={`${char}-${index}`}
-          style={{ "--char-index": index } as CSSProperties}
-        >
-          {char === " " ? "\u00a0" : char}
-        </span>
-      ))}
-      <span className="sr-only">{text}</span>
-    </h2>
-  );
-}
-
-function ProcessStack({ items }: { items: ProcessStep[] }) {
-  return (
-    <div className="process-line reveal delay-1">
-      {items.map((item, index) => (
-        <article
-          className="process-line-card"
-          key={item.title}
-          style={{ "--process-color": item.color, "--process-soft": item.soft, "--process-index": index + 1 } as CSSProperties}
-        >
-          <span className="process-line-num">{item.num}</span>
-          <h3>{item.title}</h3>
-          <p>{item.body}</p>
-        </article>
-      ))}
-    </div>
-  );
+function SectionTitle({ text }: { text: string }) {
+  return <h2 className="section-title">{text}</h2>;
 }
 
 function HeroShowcaseCard({
@@ -471,6 +330,7 @@ function HeroShowcaseCard({
     const dragState = dragStateRef.current;
     if (!dragState) return;
     if (typeof pointerId === "number" && dragState.pointerId !== pointerId) return;
+
     const shouldSnapBack = dragState.hasMoved;
 
     if (element?.hasPointerCapture(dragState.pointerId)) {
@@ -479,6 +339,7 @@ function HeroShowcaseCard({
 
     dragStateRef.current = null;
     setIsDragging(false);
+
     if (!shouldSnapBack) return;
 
     if (snapBackTimerRef.current) window.clearTimeout(snapBackTimerRef.current);
@@ -491,8 +352,7 @@ function HeroShowcaseCard({
   const updateDragFromPointer = useCallback((pointerId: number, clientX: number, clientY: number) => {
     const element = cardRef.current;
     const dragState = dragStateRef.current;
-    if (!element || !dragState) return false;
-    if (dragState.pointerId !== pointerId) return false;
+    if (!element || !dragState || dragState.pointerId !== pointerId) return false;
 
     setCardSurfaceState(element, clientX, clientY);
 
@@ -504,8 +364,8 @@ function HeroShowcaseCard({
     dragState.hasMoved = true;
     setIsDragging(true);
     setDragOffset({
-      x: clamp(dragState.originX + deltaX, -150, 150),
-      y: clamp(dragState.originY + deltaY, -110, 110),
+      x: clamp(dragState.originX + deltaX, -132, 132),
+      y: clamp(dragState.originY + deltaY, -96, 96),
     });
 
     return true;
@@ -536,6 +396,7 @@ function HeroShowcaseCard({
   const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     const element = cardRef.current;
     if (!element) return;
+
     const target = event.target;
     const isHandle = target instanceof Element && Boolean(target.closest(".card-handle"));
 
@@ -571,10 +432,6 @@ function HeroShowcaseCard({
     setCardSurfaceState(element, event.clientX, event.clientY);
   };
 
-  const handlePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    finishDrag(event.pointerId);
-  };
-
   const handlePointerLeave = () => {
     const element = cardRef.current;
     if (!element || dragStateRef.current) return;
@@ -589,49 +446,46 @@ function HeroShowcaseCard({
       onFocus={() => onActivate(card.id)}
       onMouseEnter={() => onActivate(card.id)}
       onLostPointerCapture={() => finishDrag()}
-      onPointerCancel={handlePointerUp}
+      onPointerCancel={(event) => finishDrag(event.pointerId)}
       onPointerDown={handlePointerDown}
       onPointerLeave={handlePointerLeave}
       onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
+      onPointerUp={(event) => finishDrag(event.pointerId)}
       ref={cardRef}
-      style={{
-        "--left": card.left,
-        "--top": card.top,
-        "--mobile-left": card.mobileLeft,
-        "--mobile-top": card.mobileTop,
-        "--rotate": `${card.rotate}deg`,
-        "--drag-x": `${dragOffset.x}px`,
-        "--drag-y": `${dragOffset.y}px`,
-        "--magnet-x": "0px",
-        "--magnet-y": "0px",
-        "--card-color": card.color,
-        "--card-color-2": card.color2,
-        "--card-soft": card.soft,
-        "--shine-x": "50%",
-        "--shine-y": "50%",
-        "--tilt-shadow-x": "0px",
-        "--tilt-shadow-y": "0px",
-        "--tilt-rotate-x": "0deg",
-        "--tilt-rotate-y": "0deg",
-        "--delay": `${220 + index * 90}ms`,
-      } as CSSProperties}
+      style={
+        {
+          "--left": card.left,
+          "--top": card.top,
+          "--mobile-left": card.mobileLeft,
+          "--mobile-top": card.mobileTop,
+          "--rotate": `${card.rotate}deg`,
+          "--drag-x": `${dragOffset.x}px`,
+          "--drag-y": `${dragOffset.y}px`,
+          "--magnet-x": "0px",
+          "--magnet-y": "0px",
+          "--card-color": card.color,
+          "--card-color-2": card.color2,
+          "--shine-x": "50%",
+          "--shine-y": "50%",
+          "--tilt-rotate-x": "0deg",
+          "--tilt-rotate-y": "0deg",
+          "--delay": `${180 + index * 80}ms`,
+        } as CSSProperties
+      }
       transition={isDragging ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       type="button"
-      whileHover={isDragging ? undefined : { y: -10, scale: 1.02 }}
+      whileHover={isDragging ? undefined : { y: -8, scale: 1.015 }}
       whileTap={isDragging ? undefined : { scale: 0.99 }}
     >
       <span className="card-lift">
         {card.image && (
           <span className="card-logo">
-            <Image src="/logo-transparent.png" alt="" width={58} height={58} />
+            <Image src="/logo-transparent.png" alt="" width={44} height={44} />
           </span>
         )}
         <span className="card-top">
           <span className="card-kicker">{card.kicker}</span>
           <span className="card-handle" aria-hidden="true">
-            <span />
-            <span />
             <span />
             <span />
             <span />
@@ -643,80 +497,6 @@ function HeroShowcaseCard({
         <span className="card-body">{card.body}</span>
       </span>
     </motion.button>
-  );
-}
-
-function MarqueeLine({
-  direction = "normal",
-  row,
-  speed,
-}: {
-  direction?: "normal" | "reverse";
-  row: "near" | "mid" | "far";
-  speed: number;
-}) {
-  const words = direction === "reverse" ? [...marqueeWords].reverse() : marqueeWords;
-
-  return (
-    <div className={`marquee marquee-${row}`} style={{ "--marquee-speed": `${speed}s` } as CSSProperties}>
-      <div className="marquee-track">
-        {[0, 1].map((group) => (
-          <div className="marquee-row" key={group}>
-            {words.map((service, index) => (
-              <span className="marquee-item" key={`${row}-${group}-${service}-${index}`}>
-                {service}
-              </span>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function AboutSignalStrip() {
-  return (
-    <div className="about-signal-strip reveal delay-2" aria-hidden="true">
-      {aboutSignals.map((signal) => (
-        <div className="about-signal-card" key={signal.label}>
-          <span>{signal.label}</span>
-          <strong>{signal.value}</strong>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function WorkSignalField() {
-  return (
-    <div className="work-signal-field" aria-hidden="true">
-      {workSignals.map((signal, index) => (
-        <span
-          className="work-signal-dot"
-          key={signal.label}
-          style={{ left: signal.x, top: signal.y, "--signal-delay": `${index * 0.8}s` } as CSSProperties}
-        >
-          <span>{signal.label}</span>
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function ContactConstellation() {
-  return (
-    <div className="contact-constellation" aria-hidden="true">
-      {contactNodes.map((node, index) => (
-        <span
-          className="contact-node"
-          key={`${node.x}-${node.y}`}
-          style={{ left: node.x, top: node.y, "--node-delay": `${index * 0.6}s` } as CSSProperties}
-        />
-      ))}
-      <span className="contact-link contact-link-one" />
-      <span className="contact-link contact-link-two" />
-      <span className="contact-link contact-link-three" />
-    </div>
   );
 }
 
@@ -742,67 +522,51 @@ function PortfolioProjects() {
 
             event.currentTarget.style.setProperty("--project-x", `${Math.round(ratioX * 100)}%`);
             event.currentTarget.style.setProperty("--project-y", `${Math.round(ratioY * 100)}%`);
-            event.currentTarget.style.setProperty("--project-tilt-x", `${Number(-centeredY * 6).toFixed(2)}deg`);
-            event.currentTarget.style.setProperty("--project-tilt-y", `${Number(centeredX * 8).toFixed(2)}deg`);
+            event.currentTarget.style.setProperty("--project-tilt-x", `${Number(-centeredY * 4).toFixed(2)}deg`);
+            event.currentTarget.style.setProperty("--project-tilt-y", `${Number(centeredX * 5).toFixed(2)}deg`);
           }}
           style={{ "--project-color": project.accent, "--project-delay": `${index * 90}ms` } as CSSProperties}
-          whileHover={{ y: -10 }}
+          whileHover={{ y: -8 }}
         >
-          <div className="project-media" aria-hidden="true">
-            {project.screens.map((screen) => (
-              <div
-                className="project-shot"
-                key={`${project.title}-${screen.label}`}
-                style={{ "--shot-accent": screen.accent } as CSSProperties}
-              >
-                <span className="project-shot-bar" />
-                <span className="project-shot-chip">{screen.label}</span>
-                <span className="project-shot-pane" />
-                <span className="project-shot-caption">{screen.note}</span>
-              </div>
-            ))}
-          </div>
-          <div className="project-copy">
+          <div className="project-card-head">
+            <span className="project-label">{project.label}</span>
             <p>{project.category}</p>
-            <h3>{project.title}</h3>
-            <dl>
-              <div>
-                <dt>Goal</dt>
-                <dd>{project.summary}</dd>
-              </div>
-              <div>
-                <dt>Approach</dt>
-                <dd>{project.duration}</dd>
-              </div>
-              <div>
-                <dt>Result</dt>
-                <dd>{project.outcome}</dd>
-              </div>
-            </dl>
+          </div>
+          <div className="project-layout">
+            <div className="project-media" aria-hidden="true">
+              {project.screens.map((screen) => (
+                <div
+                  className="project-shot"
+                  key={`${project.title}-${screen.label}`}
+                  style={{ "--shot-accent": project.accent } as CSSProperties}
+                >
+                  <span className="project-shot-bar" />
+                  <span className="project-shot-chip">{screen.label}</span>
+                  <span className="project-shot-pane" />
+                  <span className="project-shot-caption">{screen.note}</span>
+                </div>
+              ))}
+            </div>
+            <div className="project-copy">
+              <h3>{project.title}</h3>
+              <dl>
+                <div>
+                  <dt>Summary</dt>
+                  <dd>{project.summary}</dd>
+                </div>
+                <div>
+                  <dt>Approach</dt>
+                  <dd>{project.approach}</dd>
+                </div>
+                <div>
+                  <dt>Result</dt>
+                  <dd>{project.result}</dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </motion.article>
       ))}
-    </div>
-  );
-}
-
-function IntroLoader({ active }: { active: boolean }) {
-  return (
-    <div aria-hidden={!active} className={`load-gate${active ? " is-active" : " is-exiting"}`}>
-      <div className="load-grid" aria-hidden="true" />
-      <div className="load-grain" aria-hidden="true" />
-      <div className="load-stage" role="status" aria-label="Preparing Sparkle interface">
-        <div className="load-logo-shell">
-          <div className="load-logo-build">
-            <Image src="/logo-transparent.png" alt="" width={180} height={180} priority />
-          </div>
-        </div>
-        <p className="load-status" aria-hidden="true">Preparing interface</p>
-        <div className="load-line" aria-hidden="true">
-          <span className="load-line-fill" />
-        </div>
-      </div>
-      <span className="load-wipe" aria-hidden="true" />
     </div>
   );
 }
@@ -819,7 +583,7 @@ function TestimonialsCarousel() {
   };
 
   useEffect(() => {
-    const interval = window.setInterval(() => paginate(1), 4800);
+    const interval = window.setInterval(() => paginate(1), 5200);
     return () => window.clearInterval(interval);
   }, []);
 
@@ -828,33 +592,35 @@ function TestimonialsCarousel() {
       <div className="section-grid">
         <div className="reveal">
           <p className="section-label">Reviews</p>
-          <AnimatedSectionTitle delay={1800} text="Clients feel the polish." />
+          <SectionTitle text="What people noticed after the redesign." />
         </div>
         <div className="review-shell reveal delay-1">
           <div className="review-controls">
             <button aria-label="Previous review" type="button" onClick={() => paginate(-1)}>
               &larr;
             </button>
-            <span>{String(active + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}</span>
+            <span>
+              {String(active + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
+            </span>
             <button aria-label="Next review" type="button" onClick={() => paginate(1)}>
               &rarr;
             </button>
           </div>
           <div className="review-viewport" aria-live="polite">
-            <div className="review-orbit review-orbit-one" />
-            <div className="review-orbit review-orbit-two" />
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
               <motion.article
+                animate={{ opacity: 1, x: 0 }}
                 className="review-card"
                 custom={direction}
+                exit={{ opacity: 0, x: direction >= 0 ? -44 : 44 }}
+                initial={{ opacity: 0, x: direction >= 0 ? 44 : -44 }}
                 key={review}
-                initial={{ opacity: 0, x: direction >= 0 ? 54 : -54, rotate: direction >= 0 ? 1.8 : -1.8 }}
-                animate={{ opacity: 1, x: 0, rotate: 0 }}
-                exit={{ opacity: 0, x: direction >= 0 ? -54 : 54, rotate: direction >= 0 ? -1.8 : 1.8 }}
-                transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="review-head">
-                  <span className="review-stars" aria-hidden="true">★★★★★</span>
+                  <span aria-hidden="true" className="review-stars">
+                    {"★★★★★"}
+                  </span>
                   <span className="review-score">5.0 / 5</span>
                 </div>
                 <p>{review}</p>
@@ -868,54 +634,74 @@ function TestimonialsCarousel() {
   );
 }
 
+function Loader() {
+  return (
+    <motion.div
+      animate={{ opacity: 1 }}
+      aria-hidden="true"
+      className="load-gate"
+      exit={{ opacity: 0, transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } }}
+      initial={{ opacity: 1 }}
+    >
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        className="load-shell"
+        initial={{ opacity: 0, y: 14 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="load-logo">
+          <Image src="/logo-transparent.png" alt="" width={68} height={68} priority />
+        </div>
+        <div className="load-copy">
+          <span className="load-word">Sparkle</span>
+          <span className="load-note">Web design and frontend</span>
+        </div>
+        <div className="load-line">
+          <motion.span
+            animate={{ scaleX: 1 }}
+            initial={{ scaleX: 0 }}
+            transition={{ duration: 0.72, ease: [0.33, 1, 0.68, 1] }}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
-  const siteRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [activeShowcase, setActiveShowcase] = useState(showcase[0].id);
-  const [isLoading, setIsLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
+  const [showLoader, setShowLoader] = useState(() => !reduceMotion);
   const { scrollYProgress } = useScroll();
-  const cursorAuraTargetX = useMotionValue(0);
-  const cursorAuraTargetY = useMotionValue(0);
-  const cursorAuraTargetOpacity = useMotionValue(0);
   const heroPointerX = useMotionValue(0);
   const heroPointerY = useMotionValue(0);
-  const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -54]);
-  const heroFieldTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 70]);
-  const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.12]);
-  const heroBackdropTargetY = useTransform(scrollYProgress, [0, 0.28], [0, 48]);
-  const heroOrbitTargetY = useTransform(scrollYProgress, [0, 0.28], [0, -86]);
-  const heroStageTargetRotate = useTransform(scrollYProgress, [0, 0.28], ["0deg", "5deg"]);
-  const heroPointerXSmooth = useSpring(heroPointerX, { stiffness: 110, damping: 18, mass: 0.5 });
-  const heroPointerYSmooth = useSpring(heroPointerY, { stiffness: 110, damping: 18, mass: 0.5 });
-  const heroCopyY = useSpring(heroCopyTargetY, { stiffness: 120, damping: 28 });
-  const heroFieldY = useSpring(heroFieldTargetY, { stiffness: 120, damping: 30 });
-  const heroGlowScale = useSpring(heroGlowTargetScale, { stiffness: 120, damping: 28 });
-  const heroBackdropY = useSpring(heroBackdropTargetY, { stiffness: 110, damping: 28 });
-  const heroOrbitY = useSpring(heroOrbitTargetY, { stiffness: 120, damping: 30 });
-  const heroStageRotate = useSpring(heroStageTargetRotate, { stiffness: 120, damping: 30 });
-  const scrollProgressX = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.24 });
-  const cursorAuraX = useSpring(cursorAuraTargetX, { stiffness: 180, damping: 24, mass: 0.3 });
-  const cursorAuraY = useSpring(cursorAuraTargetY, { stiffness: 180, damping: 24, mass: 0.3 });
-  const cursorAuraOpacity = useSpring(cursorAuraTargetOpacity, { stiffness: 180, damping: 26, mass: 0.32 });
-  const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.92, 0.54]);
-  const heroRibbonShift = useTransform(heroPointerXSmooth, [-1, 1], [-28, 28]);
-  const heroRibbonLift = useTransform(heroPointerYSmooth, [-1, 1], [16, -16]);
-  const heroCopyTiltX = useTransform(heroPointerYSmooth, [-1, 1], [4, -4]);
-  const heroCopyTiltY = useTransform(heroPointerXSmooth, [-1, 1], [-6, 6]);
-  const heroChipDriftX = useTransform(heroPointerXSmooth, [-1, 1], [-18, 18]);
-  const heroChipDriftY = useTransform(heroPointerYSmooth, [-1, 1], [14, -14]);
-  const heroStageShift = useTransform(heroPointerXSmooth, [-1, 1], [-20, 20]);
-  const floatingFeatureLeftX = useTransform(scrollYProgress, [0, 0.16, 0.38, 0.62, 0.82, 1], ["0vw", "18vw", "6vw", "30vw", "12vw", "22vw"]);
-  const floatingFeatureLeftY = useTransform(scrollYProgress, [0, 0.16, 0.38, 0.62, 0.82, 1], ["0vh", "18vh", "42vh", "58vh", "74vh", "84vh"]);
-  const floatingFeatureLeftRotate = useTransform(scrollYProgress, [0, 0.16, 0.38, 0.62, 0.82, 1], ["-7deg", "5deg", "-3deg", "8deg", "-6deg", "4deg"]);
-  const floatingFeatureRightX = useTransform(scrollYProgress, [0, 0.2, 0.42, 0.66, 0.86, 1], ["0vw", "-20vw", "-8vw", "-34vw", "-14vw", "-26vw"]);
-  const floatingFeatureRightY = useTransform(scrollYProgress, [0, 0.2, 0.42, 0.66, 0.86, 1], ["0vh", "24vh", "36vh", "64vh", "52vh", "82vh"]);
-  const floatingFeatureRightRotate = useTransform(scrollYProgress, [0, 0.2, 0.42, 0.66, 0.86, 1], ["7deg", "-5deg", "4deg", "-8deg", "6deg", "-4deg"]);
+
+  const heroCopyTargetY = useTransform(scrollYProgress, [0, 0.24], [0, -40]);
+  const heroStageTargetY = useTransform(scrollYProgress, [0, 0.24], [0, 54]);
+  const heroGlowTargetScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.05]);
+  const heroGlowOpacity = useTransform(scrollYProgress, [0, 0.28], [0.62, 0.28]);
+  const heroPointerXSmooth = useSpring(heroPointerX, { stiffness: 110, damping: 22, mass: 0.55 });
+  const heroPointerYSmooth = useSpring(heroPointerY, { stiffness: 110, damping: 22, mass: 0.55 });
+  const heroCopyY = useSpring(heroCopyTargetY, { stiffness: 120, damping: 30 });
+  const heroStageY = useSpring(heroStageTargetY, { stiffness: 120, damping: 30 });
+  const heroGlowScale = useSpring(heroGlowTargetScale, { stiffness: 120, damping: 30 });
+  const heroGlowX = useTransform(heroPointerXSmooth, [-1, 1], [-24, 24]);
+  const heroGlowY = useTransform(heroPointerYSmooth, [-1, 1], [20, -20]);
+  const heroCopyTiltX = useTransform(heroPointerYSmooth, [-1, 1], [2, -2]);
+  const heroCopyTiltY = useTransform(heroPointerXSmooth, [-1, 1], [-3, 3]);
+  const heroStageShift = useTransform(heroPointerXSmooth, [-1, 1], [-14, 14]);
   const year = new Date().getFullYear();
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const timer = window.setTimeout(() => setShowLoader(false), 900);
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion]);
 
   useEffect(() => {
     const revealEls = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
@@ -933,23 +719,8 @@ export function HomePageClient() {
       observer.observe(el);
     });
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      const reducedMotionTimer = window.setTimeout(() => {
-        setIsLoading(false);
-      }, 0);
-
-      return () => window.clearTimeout(reducedMotionTimer);
-    }
-
-    const timer = window.setTimeout(() => setIsLoading(false), 1200);
-    return () => window.clearTimeout(timer);
-  }, [reduceMotion]);
 
   useEffect(() => {
     const onScroll = () => setNavScrolled(window.scrollY > 24);
@@ -1015,7 +786,7 @@ export function HomePageClient() {
         const deltaX = event.clientX - centerX;
         const deltaY = event.clientY - centerY;
         const distance = Math.hypot(deltaX, deltaY);
-        const radius = 260;
+        const radius = 240;
 
         if (distance > radius) {
           card.style.setProperty("--magnet-x", "0px");
@@ -1023,11 +794,9 @@ export function HomePageClient() {
           return;
         }
 
-        const pull = (1 - distance / radius) ** 1.6;
-        const magnetX = clamp(deltaX * 0.14 * pull, -26, 26);
-        const magnetY = clamp(deltaY * 0.14 * pull, -20, 20);
-        card.style.setProperty("--magnet-x", `${magnetX.toFixed(2)}px`);
-        card.style.setProperty("--magnet-y", `${magnetY.toFixed(2)}px`);
+        const pull = (1 - distance / radius) ** 1.5;
+        card.style.setProperty("--magnet-x", `${clamp(deltaX * 0.11 * pull, -18, 18).toFixed(2)}px`);
+        card.style.setProperty("--magnet-y", `${clamp(deltaY * 0.11 * pull, -16, 16).toFixed(2)}px`);
       });
     };
 
@@ -1049,347 +818,289 @@ export function HomePageClient() {
     };
   }, [reduceMotion]);
 
-  useEffect(() => {
-    if (reduceMotion) return;
-
-    const updatePointer = (event: PointerEvent) => {
-      cursorAuraTargetX.set(event.clientX);
-      cursorAuraTargetY.set(event.clientY);
-      cursorAuraTargetOpacity.set(0.72);
-      siteRef.current?.style.setProperty("--mx", `${event.clientX}px`);
-      siteRef.current?.style.setProperty("--my", `${event.clientY}px`);
-    };
-
-    const resetPointer = () => {
-      cursorAuraTargetOpacity.set(0);
-      siteRef.current?.style.setProperty("--mx", "50vw");
-      siteRef.current?.style.setProperty("--my", "40vh");
-    };
-
-    window.addEventListener("pointermove", updatePointer, { passive: true });
-    window.addEventListener("pointerleave", resetPointer);
-
-    return () => {
-      window.removeEventListener("pointermove", updatePointer);
-      window.removeEventListener("pointerleave", resetPointer);
-    };
-  }, [cursorAuraTargetOpacity, cursorAuraTargetX, cursorAuraTargetY, reduceMotion]);
-
-  useEffect(() => {
-    let titleIndex = 0;
-    document.title = rotatingTitles[titleIndex];
-
-    const interval = window.setInterval(() => {
-      titleIndex = (titleIndex + 1) % rotatingTitles.length;
-      document.title = rotatingTitles[titleIndex];
-    }, 1800);
-
-    return () => {
-      window.clearInterval(interval);
-      document.title = "Sparkle Web Design";
-    };
-  }, []);
-
   return (
-    <main className={`site${isLoading ? " site-loading" : " site-entered"}`} ref={siteRef}>
-      <IntroLoader active={!reduceMotion && isLoading} />
-      <motion.div aria-hidden="true" className="scroll-progress" style={{ scaleX: scrollProgressX }} />
-      {!reduceMotion && (
-        <motion.div
-          aria-hidden="true"
-          className="cursor-aura"
-          style={{ x: cursorAuraX, y: cursorAuraY, opacity: cursorAuraOpacity }}
-        />
-      )}
-      {!menuOpen && (
-        <div aria-hidden="true" className="floating-feature-layer">
-          {floatingFeatures.map((feature, index) => (
-            <motion.div
-              className={`floating-feature floating-feature-${feature.side}`}
-              key={feature.label}
-              style={
-                feature.side === "left"
-                  ? { x: reduceMotion ? 0 : floatingFeatureLeftX, y: reduceMotion ? 0 : floatingFeatureLeftY, rotate: reduceMotion ? "-6deg" : floatingFeatureLeftRotate }
-                  : { x: reduceMotion ? 0 : floatingFeatureRightX, y: reduceMotion ? 0 : floatingFeatureRightY, rotate: reduceMotion ? "6deg" : floatingFeatureRightRotate }
-              }
-              transition={{ delay: index * 0.08 }}
-            >
-              {feature.label}
-            </motion.div>
-          ))}
-        </div>
-      )}
+    <>
+      <AnimatePresence>{showLoader ? <Loader /> : null}</AnimatePresence>
 
-      <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
-        <Link className="brand" href="/" aria-label="Sparkle home">
-          <span className="brand-mark">
-            <Image src="/logo-transparent.png" alt="" width={38} height={38} priority />
-          </span>
-          <span className="brand-name">Sparkle</span>
-        </Link>
-        <motion.button
-          aria-controls="site-menu"
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          className={`menu-toggle${menuOpen ? " is-open" : ""}`}
-          onClick={() => setMenuOpen((open) => !open)}
-          type="button"
-          whileHover={{ scale: 1.03, y: -1 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <span className="menu-toggle-label">{menuOpen ? "Close" : "Menu"}</span>
-          <span className="menu-toggle-icon" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-        </motion.button>
-      </nav>
+      <main className="site">
+        <nav className={`nav${navScrolled ? " scrolled" : ""}`}>
+          <Link className="brand" href="/" aria-label="Sparkle home">
+            <span className="brand-mark">
+              <Image src="/logo-transparent.png" alt="" width={38} height={38} priority />
+            </span>
+            <span className="brand-name">Sparkle</span>
+          </Link>
 
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            animate={{ opacity: 1 }}
-            className="menu-overlay"
-            exit={{ opacity: 0 }}
-            id="site-menu"
-            initial={{ opacity: 0 }}
+          <div className="nav-desktop-links" aria-label="Section navigation">
+            {menuItems.map((item) => (
+              <a className="nav-link" href={item.href} key={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </div>
+
+          <motion.button
+            aria-controls="site-menu"
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className={`menu-toggle${menuOpen ? " is-open" : ""}`}
+            onClick={() => setMenuOpen((open) => !open)}
+            type="button"
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <motion.div
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              className="menu-film"
-              exit={{ opacity: 0, scale: 0.98, y: 14 }}
-              initial={{ opacity: 0, scale: 0.98, y: 14 }}
-              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="menu-topbar">
-                <span className="menu-badge">Menu</span>
-                <button
-                  aria-label="Close menu"
-                  className="menu-close"
-                  onClick={() => setMenuOpen(false)}
-                  type="button"
-                >
-                  <span>Close</span>
-                  <span className="menu-close-x" aria-hidden="true">
-                    <span />
-                    <span />
-                  </span>
-                </button>
-              </div>
-              <div className="menu-panel">
-                {menuItems.map((item, index) => (
-                  <motion.a
-                    className="menu-link"
-                    href={item.href}
-                    key={item.href}
-                    onClick={() => setMenuOpen(false)}
-                    transition={{ delay: index * 0.05, duration: 0.28 }}
-                    initial={{ opacity: 0, x: -18 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -12 }}
-                  >
-                    {item.label}
-                  </motion.a>
-                ))}
-                <div className="menu-footer">
-                  <div className="menu-legal-links">
-                    <Link className="menu-legal-link" href="/tos" onClick={() => setMenuOpen(false)}>Terms of Service</Link>
-                    <Link className="menu-legal-link" href="/privacy" onClick={() => setMenuOpen(false)}>Privacy</Link>
-                    <Link className="menu-legal-link" href="/refund" onClick={() => setMenuOpen(false)}>Refund</Link>
-                  </div>
-                  <div className="menu-footer-note">EST. 2026 - All rights reserved</div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <span className="menu-toggle-label">{menuOpen ? "Close" : "Menu"}</span>
+            <span className="menu-toggle-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+          </motion.button>
+        </nav>
 
-      <section className="hero" aria-label="Sparkle web designer portfolio" ref={heroRef}>
-        <motion.div aria-hidden="true" className="hero-backdrop-grid" style={{ y: heroBackdropY }} />
-        <motion.div aria-hidden="true" className="hero-parallax-field" style={{ opacity: heroGlowOpacity, scale: heroGlowScale, y: heroFieldY }} />
-        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-one" style={{ x: heroRibbonShift, y: heroOrbitY }} />
-        <motion.div aria-hidden="true" className="hero-depth-ribbon hero-depth-ribbon-two" style={{ x: heroRibbonShift, y: heroBackdropY }} />
-        <motion.div aria-hidden="true" className="hero-orbit-shell" style={{ x: heroRibbonShift, y: heroOrbitY, rotate: heroStageRotate }}>
-          <span className="hero-orbit hero-orbit-one" />
-          <span className="hero-orbit hero-orbit-two" />
-          <span className="hero-orbit hero-orbit-three" />
-        </motion.div>
-        {heroChips.map((chip, index) => (
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              animate={{ opacity: 1 }}
+              className="menu-overlay"
+              exit={{ opacity: 0 }}
+              id="site-menu"
+              initial={{ opacity: 0 }}
+            >
+              <motion.div
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="menu-film"
+                exit={{ opacity: 0, scale: 0.98, y: 14 }}
+                initial={{ opacity: 0, scale: 0.98, y: 14 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="menu-topbar">
+                  <span className="menu-badge">Navigation</span>
+                  <button
+                    aria-label="Close menu"
+                    className="menu-close"
+                    onClick={() => setMenuOpen(false)}
+                    type="button"
+                  >
+                    <span>Close</span>
+                    <span className="menu-close-x" aria-hidden="true">
+                      <span />
+                      <span />
+                    </span>
+                  </button>
+                </div>
+                <div className="menu-panel">
+                  {menuItems.map((item, index) => (
+                    <motion.a
+                      animate={{ opacity: 1, x: 0 }}
+                      className="menu-link"
+                      href={item.href}
+                      initial={{ opacity: 0, x: -18 }}
+                      key={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      transition={{ delay: index * 0.04, duration: 0.24 }}
+                    >
+                      {item.label}
+                    </motion.a>
+                  ))}
+                  <div className="menu-footer">
+                    <div className="menu-legal-links">
+                      <Link className="menu-legal-link" href="/tos" onClick={() => setMenuOpen(false)}>
+                        Terms of Service
+                      </Link>
+                      <Link className="menu-legal-link" href="/privacy" onClick={() => setMenuOpen(false)}>
+                        Privacy
+                      </Link>
+                      <Link className="menu-legal-link" href="/refund" onClick={() => setMenuOpen(false)}>
+                        Refund
+                      </Link>
+                    </div>
+                    <div className="menu-footer-note">Sparkle portfolio, {year}</div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <section className="hero" aria-label="Sparkle portfolio hero" ref={heroRef}>
           <motion.div
             aria-hidden="true"
-            className="hero-chip"
-            key={chip.label}
-            style={{
-              left: chip.left,
-              top: chip.top,
-              rotate: chip.rotate,
-              x: index % 2 === 0 ? heroChipDriftX : heroRibbonShift,
-              y: index % 2 === 0 ? heroChipDriftY : heroRibbonLift,
-            }}
-          >
-            {chip.label}
-          </motion.div>
-        ))}
-        <motion.div className="hero-copy" style={{ rotateX: heroCopyTiltX, rotateY: heroCopyTiltY, y: heroCopyY }}>
-          <p className="eyebrow">Web Designer and Frontend Developer</p>
-          <div aria-hidden="true" className="hero-title-ghost">
-            <span>SPARKLE</span>
-            <span>SPARKLE</span>
-          </div>
-          <h1 className="hero-title">
-            {heroLines.map((line, lineIndex) => (
-              <span className="title-line" key={line.join("-")}>
-                {line.map((word, wordIndex) => (
-                  <span className="title-word" key={word}>
-                    {word.split("").map((letter, letterIndex) => {
-                      const direction = (letterIndex + lineIndex + wordIndex) % 2 === 0 ? -1 : 1;
-                      return (
-                        <span
-                          className="title-letter"
-                          key={`${word}-${letter}-${letterIndex}`}
-                          style={{
-                            "--letter-delay": `${lineIndex * 190 + wordIndex * 120 + letterIndex * 38}ms`,
-                            "--letter-x": `${direction * (12 + letterIndex * 3)}px`,
-                            "--letter-y": `${-28 + (letterIndex % 3) * 18}px`,
-                            "--letter-r": `${direction * (8 + letterIndex)}deg`,
-                          } as CSSProperties}
-                        >
-                          {letter}
-                        </span>
-                      );
-                    })}
-                  </span>
-                ))}
-              </span>
-            ))}
-          </h1>
-          <p className="hero-text">
-            I am Sparkle, building custom websites, animated interfaces, portfolio systems and
-            clean Next.js experiences for brands that need their own look.
-          </p>
-          <div className="hero-actions">
-            <MagneticAnchor className="button primary magnetic-action" href={`mailto:${primaryEmail}`} strength={18}>
-              <span>Email Sparkle</span>
-            </MagneticAnchor>
-            <MagneticAnchor className="button magnetic-action" href="#work" strength={18}>
-              <span>View Playground</span>
-            </MagneticAnchor>
-          </div>
-        </motion.div>
+            className="hero-glow"
+            style={{ opacity: heroGlowOpacity, scale: heroGlowScale, x: heroGlowX, y: heroGlowY }}
+          />
 
-        <motion.div
-          className="card-stage"
-          aria-label="Sparkle service cards"
-          ref={stageRef}
-          style={{ x: heroStageShift, y: heroFieldY, rotate: heroStageRotate }}
-        >
-          {showcase.map((card, index) => (
-            <HeroShowcaseCard
-              active={activeShowcase === card.id}
-              card={card}
-              index={index}
-              key={card.id}
-              onActivate={setActiveShowcase}
-            />
-          ))}
-        </motion.div>
-      </section>
-
-      <div className="marquee-field" aria-hidden="true">
-        <MarqueeLine row="near" speed={34} />
-        <MarqueeLine direction="reverse" row="mid" speed={44} />
-        <MarqueeLine row="far" speed={56} />
-      </div>
-
-      <section className="section" id="about">
-        <div className="section-grid">
-          <div className="reveal">
-            <p className="section-label">About</p>
-            <AnimatedSectionTitle text="Clean, sharp, animated." />
-          </div>
-          <div className="reveal delay-1">
-            <p className="section-text soft-copy">
-              I design and build modern web experiences with a focus on motion, layout clarity
-              and a strong first impression. The style is sharp and playful, but the code stays
-              practical enough to ship.
+          <motion.div className="hero-copy" style={{ rotateX: heroCopyTiltX, rotateY: heroCopyTiltY, y: heroCopyY }}>
+            <p className="eyebrow">Web designer and frontend developer</p>
+            <h1 className="hero-title">Custom websites with a sharper eye for pacing, clarity and finish.</h1>
+            <p className="hero-text">
+              I design and build portfolio sites, marketing pages and concept-led redesigns that
+              feel more specific to the brand and less like a dressed-up template.
             </p>
-            <AboutSignalStrip />
-            <div className="proof-grid">
-              {proofStats.map((proof) => (
-                <div className="proof" key={proof.label} style={{ "--proof-color": proof.color } as CSSProperties}>
-                  <strong>{proof.value}</strong>
-                  <span>{proof.label}</span>
-                </div>
+            <div className="hero-actions">
+              <MagneticAnchor className="button primary" href={`mailto:${primaryEmail}`} strength={16}>
+                <span>Start a project</span>
+              </MagneticAnchor>
+              <MagneticAnchor className="button" href="#work" strength={16}>
+                <span>See selected work</span>
+              </MagneticAnchor>
+            </div>
+            <div className="hero-meta reveal visible">
+              <div className="hero-service-list" aria-label="Services">
+                {heroServices.map((service) => (
+                  <span key={service}>{service}</span>
+                ))}
+              </div>
+              <p className="hero-caption">
+                Based around clean design systems, responsive frontend work and motion that stays in
+                service of the content.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div className="hero-visual" style={{ x: heroStageShift, y: heroStageY }}>
+            <motion.div className="hero-panel depth-surface" whileHover={reduceMotion ? undefined : { y: -4 }}>
+              <div className="hero-panel-header">
+                <span className="hero-panel-label">Current direction</span>
+                <span className="hero-panel-state">Sparkle</span>
+              </div>
+              <h2>Design that feels deliberate at first glance.</h2>
+              <p>
+                Dark, clean and animated where it counts. The visual identity stays intact, but the
+                presentation feels calmer, more premium and easier to trust.
+              </p>
+              <ul className="hero-panel-points">
+                <li>Better hierarchy in the first screen</li>
+                <li>Less decorative filler and fake system language</li>
+                <li>Smoother transforms, softer reveals, cleaner case studies</li>
+              </ul>
+            </motion.div>
+
+            <motion.div
+              aria-label="Sparkle service cards"
+              className="card-stage"
+              ref={stageRef}
+            >
+              {showcase.map((card, index) => (
+                <HeroShowcaseCard
+                  active={activeShowcase === card.id}
+                  card={card}
+                  index={index}
+                  key={card.id}
+                  onActivate={setActiveShowcase}
+                />
               ))}
+            </motion.div>
+          </motion.div>
+        </section>
+
+        <section className="section" id="about">
+          <div className="section-grid">
+            <div className="reveal">
+              <p className="section-label">About</p>
+              <SectionTitle text="A portfolio should say what you do before it shows off how much CSS you know." />
+            </div>
+            <div className="reveal delay-1">
+              <p className="section-text">
+                My work sits between visual design and frontend execution. That usually means
+                stronger spacing, clearer section rhythm, better responsive decisions and motion that
+                helps the page breathe instead of fighting for attention.
+              </p>
+              <div className="about-points">
+                {aboutPoints.map((point) => (
+                  <div className="about-point" key={point}>
+                    <span aria-hidden="true" />
+                    <p>{point}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="proof-grid">
+                {proofStats.map((proof) => (
+                  <motion.div className="proof depth-card" key={proof.label} whileHover={reduceMotion ? undefined : { y: -4 }}>
+                    <strong>{proof.value}</strong>
+                    <span>{proof.label}</span>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="section" id="process">
-        <div className="section-grid">
-          <div className="reveal">
-            <p className="section-label">Process</p>
-            <AnimatedSectionTitle delay={900} text="From idea to live site." />
+        <section className="section" id="process">
+          <div className="section-grid">
+            <div className="reveal">
+              <p className="section-label">Process</p>
+              <SectionTitle text="A straightforward process with room for taste and iteration." />
+            </div>
+            <div className="process-shell reveal delay-1">
+              <div className="process-line">
+                {process.map((item) => (
+                  <motion.article className="process-line-card depth-card" key={item.title} whileHover={reduceMotion ? undefined : { y: -4 }}>
+                    <span className="process-line-num">{item.num}</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </motion.article>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="process-shell">
-            <div className="process-ambient process-ambient-one" aria-hidden="true" />
-            <div className="process-ambient process-ambient-two" aria-hidden="true" />
-            <ProcessStack items={[...process]} />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="section" id="work">
-        <div className="section-grid work-grid">
-          <div className="reveal">
-            <p className="section-label">Work</p>
-            <AnimatedSectionTitle delay={1400} text="Portfolio with proof." />
+        <section className="section" id="work">
+          <div className="section-grid">
+            <div className="reveal">
+              <p className="section-label">Work</p>
+              <SectionTitle text="Selected work and concept projects." />
+            </div>
+            <div className="work-shell">
+              <p className="section-text reveal delay-1">
+                Some projects shown here are concept-led explorations. They are labeled clearly so
+                the work reads honestly, like a real portfolio should.
+              </p>
+              <PortfolioProjects />
+            </div>
           </div>
-          <div className="work-shell">
-            <div className="work-aurora work-aurora-one" aria-hidden="true" />
-            <div className="work-aurora work-aurora-two" aria-hidden="true" />
-            <WorkSignalField />
-            <PortfolioProjects />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <TestimonialsCarousel />
+        <TestimonialsCarousel />
 
-      <section className="contact" id="contact">
-        <div className="contact-shell">
-          <ContactConstellation />
-          <div className="reveal">
-            <p className="section-label">Contact</p>
-            <AnimatedSectionTitle className="contact-title" delay={2200} text="Let's build." />
+        <section className="contact" id="contact">
+          <div className="contact-shell">
+            <div className="reveal">
+              <p className="section-label">Contact</p>
+              <SectionTitle text="Need a site that feels more considered and less generic?" />
+            </div>
+            <motion.div className="contact-panel reveal delay-1 depth-surface" whileHover={reduceMotion ? undefined : { y: -4 }}>
+              <p className="contact-note">
+                Send a short note with what you are building, what feels off right now and whether
+                you need design, frontend, or both.
+              </p>
+              <MagneticAnchor className="email-row" href={`mailto:${primaryEmail}`}>
+                <span className="email-main">
+                  <span className="email-label">Email</span>
+                  <span className="email-address">{primaryEmail}</span>
+                </span>
+                <span className="email-arrow">-&gt;</span>
+              </MagneticAnchor>
+            </motion.div>
           </div>
-          <div className="contact-panel reveal delay-1">
-            <p className="contact-note soft-copy">
-              For web design, frontend builds, portfolio work, brand refreshes or collaborations,
-              send a mail and let&apos;s make the next version feel intentional.
-            </p>
-            <MagneticAnchor className="email-row magnetic-action" href={`mailto:${primaryEmail}`}>
-              <span className="email-main">
-                <span className="email-label">Email</span>
-                <span className="email-address">{primaryEmail}</span>
-              </span>
-              <span className="email-arrow">-&gt;</span>
-            </MagneticAnchor>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <footer className="footer">
-        <span>(C) {year} Sparkle / Tyler Osthoff</span>
-        <div className="footer-links">
-          <Link className="footer-link terms" href="/tos">Terms</Link>
-          <Link className="footer-link privacy" href="/privacy">Privacy</Link>
-          <Link className="footer-link refund" href="/refund">Refund</Link>
-        </div>
-      </footer>
-    </main>
+        <footer className="footer">
+          <span>(C) {year} Sparkle / Tyler Osthoff</span>
+          <div className="footer-links">
+            <Link className="footer-link" href="/tos">
+              Terms
+            </Link>
+            <Link className="footer-link" href="/privacy">
+              Privacy
+            </Link>
+            <Link className="footer-link" href="/refund">
+              Refund
+            </Link>
+          </div>
+        </footer>
+      </main>
+    </>
   );
 }
