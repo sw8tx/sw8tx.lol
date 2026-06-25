@@ -316,6 +316,8 @@ img {
 .menu-close {
   --pointer-x: 50%;
   --pointer-y: 50%;
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -332,27 +334,48 @@ img {
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
+.menu-toggle::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%, rgba(255, 255, 255, 0.03));
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.menu-toggle.is-open {
+  border-color: rgba(242, 200, 90, 0.28);
+  background:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.16), transparent 42%),
+    linear-gradient(135deg, rgba(29, 42, 62, 0.92), rgba(9, 18, 32, 0.84));
+}
+
+.menu-toggle-label-shell {
+  position: relative;
+  display: inline-grid;
+  min-width: 5.25rem;
+  min-height: 1.1rem;
+  align-items: center;
+}
+
 .menu-toggle-icon {
   position: relative;
   width: 18px;
-  height: 12px;
+  height: 18px;
+  flex: 0 0 18px;
 }
 
 .menu-toggle-icon span {
   position: absolute;
   left: 0;
+  top: 50%;
   width: 100%;
   height: 2px;
   border-radius: 999px;
   background: currentColor;
-}
-
-.menu-toggle-icon span:first-child {
-  top: 1px;
-}
-
-.menu-toggle-icon span:last-child {
-  bottom: 1px;
+  transform-origin: center;
+  translate: 0 -50%;
 }
 
 .menu-toggle-label,
@@ -374,6 +397,10 @@ img {
   text-transform: uppercase;
 }
 
+.menu-toggle-label {
+  white-space: nowrap;
+}
+
 .menu-overlay {
   position: fixed;
   inset: 0;
@@ -392,6 +419,8 @@ img {
   background:
     linear-gradient(180deg, rgba(15, 28, 48, 0.96) 0%, rgba(7, 16, 28, 0.98) 100%);
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.45);
+  transform-origin: top center;
+  perspective: 1200px;
 }
 
 .menu-topbar {
@@ -1094,6 +1123,10 @@ img {
   .menu-close:hover {
     transform: translateY(-2px);
     border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  .menu-toggle.is-open:hover {
+    border-color: rgba(242, 200, 90, 0.4);
   }
 
   .work-card:hover,

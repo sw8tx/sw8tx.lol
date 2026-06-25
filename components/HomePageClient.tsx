@@ -456,11 +456,47 @@ export function HomePageClient() {
             whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
             whileTap={reduceMotion ? undefined : { scale: 0.99 }}
           >
-            <span className="menu-toggle-label">{menuOpen ? copy.menuButton.close : copy.menuButton.open}</span>
-            <span className="menu-toggle-icon" aria-hidden="true">
-              <span />
-              <span />
+            <span className="menu-toggle-label-shell">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  className="menu-toggle-label"
+                  exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
+                  initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                  key={menuOpen ? "close" : "open"}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {menuOpen ? copy.menuButton.close : copy.menuButton.open}
+                </motion.span>
+              </AnimatePresence>
             </span>
+            <motion.span
+              animate={reduceMotion ? { rotate: 0 } : { rotate: menuOpen ? 180 : 0 }}
+              className="menu-toggle-icon"
+              aria-hidden="true"
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <motion.span
+                animate={
+                  reduceMotion
+                    ? { rotate: 0, y: 0, width: "100%" }
+                    : menuOpen
+                      ? { rotate: 45, y: 0, width: "100%" }
+                      : { rotate: 0, y: -4.5, width: "100%" }
+                }
+                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+              />
+              <motion.span
+                animate={
+                  reduceMotion
+                    ? { rotate: 0, y: 0, width: "100%" }
+                    : menuOpen
+                      ? { rotate: -45, y: 0, width: "100%" }
+                      : { rotate: 0, y: 4.5, width: "70%" }
+                }
+                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </motion.span>
           </motion.button>
         </nav>
 
@@ -472,13 +508,26 @@ export function HomePageClient() {
               exit={{ opacity: 0 }}
               id="site-menu"
               initial={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.32, 0, 0.67, 0] }}
             >
               <motion.div
-                animate={{ opacity: 1, scale: 1, y: 0 }}
+                animate={
+                  reduceMotion
+                    ? { opacity: 1, scale: 1, y: 0 }
+                    : { opacity: 1, scale: 1, y: 0, rotateX: 0, clipPath: "inset(0% 0% 0% 0% round 30px)" }
+                }
                 className="menu-film"
-                exit={{ opacity: 0, scale: 0.98, y: 14 }}
-                initial={{ opacity: 0, scale: 0.98, y: 14 }}
-                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                exit={
+                  reduceMotion
+                    ? { opacity: 0, scale: 0.98, y: 14 }
+                    : { opacity: 0, scale: 0.985, y: 18, rotateX: -8, clipPath: "inset(10% 0% 0% 0% round 30px)" }
+                }
+                initial={
+                  reduceMotion
+                    ? { opacity: 0, scale: 0.98, y: 14 }
+                    : { opacity: 0, scale: 0.985, y: 18, rotateX: -8, clipPath: "inset(10% 0% 0% 0% round 30px)" }
+                }
+                transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="menu-topbar">
                   <span className="menu-badge">{copy.menuBadge}</span>
@@ -489,13 +538,21 @@ export function HomePageClient() {
                 <div className="menu-panel">
                   {copy.menuItems.map((item, index) => (
                     <motion.a
-                      animate={{ opacity: 1, x: 0 }}
+                      animate={
+                        reduceMotion
+                          ? { opacity: 1, x: 0 }
+                          : { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
+                      }
                       className="menu-link"
                       href={item.href}
-                      initial={{ opacity: 0, x: -14 }}
+                      initial={
+                        reduceMotion
+                          ? { opacity: 0, x: -14 }
+                          : { opacity: 0, x: -18, y: 10, filter: "blur(8px)" }
+                      }
                       key={item.href}
                       onClick={() => setMenuOpen(false)}
-                      transition={{ delay: index * 0.04, duration: 0.22 }}
+                      transition={{ delay: 0.04 + index * 0.05, duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                     >
                       <span className="menu-link-meta" aria-hidden="true">
                         {String(index + 1).padStart(2, "0")}
