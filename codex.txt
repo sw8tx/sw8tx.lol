@@ -57,3 +57,8 @@ Update 2026-06-25, clean 3D consistency pass
 - User requested that future work always be logged in `codex.txt` and that the overall design feel like a cleaner professional 3D system throughout.
 - Added a consistent depth language across the homepage in `components/HomePageClient.tsx` and `styles/globals.css`, including quieter hover-lift behavior, panel edge highlights, layered surface shadows, and more coherent 3D treatment for hero, proof, process, work, review, and contact surfaces.
 - Kept the effect restrained so the site stays premium and readable instead of slipping back into noisy futuristic UI.
+
+Update 2026-06-25, menu-button and draggable-card rollback pass
+- User asked to bring back the older homepage direction with the menu button top right, logo top left, a large centered Sparkle wordmark behind the hero, a clean blue-yellow loading screen, and five draggable cards in the spirit of the Crav reference while still feeling professional and clean.
+- Rebuilt `components/HomePageClient.tsx` around that structure: fixed top navigation with only the menu button, oversized hero backdrop typography, short yellow loader with blue accent bar, simplified clean copy, and five draggable hero cards with a five-bar handle treatment.
+- Reworked `styles/globals.css` into a lighter cream-based presentation with blue and yellow accents so the homepage feels closer to the requested reference while staying custom to Sparkle.
