@@ -334,6 +334,62 @@ img {
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
+.menu-close {
+  gap: 14px;
+  padding-right: 12px;
+  padding-left: 18px;
+}
+
+.menu-close-label {
+  position: relative;
+  z-index: 1;
+}
+
+.menu-close-icon {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.menu-close-icon-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 200, 90, 0.14);
+  opacity: 0;
+  transform: scale(0.84);
+  transition:
+    opacity 220ms ease,
+    transform 320ms var(--ease),
+    border-color 220ms ease;
+}
+
+.menu-close-icon span {
+  position: absolute;
+  width: 12px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform-origin: center;
+}
+
+.menu-close-icon span:first-child {
+  transform: rotate(45deg);
+}
+
+.menu-close-icon span:last-child {
+  transform: rotate(-45deg);
+}
+
 .menu-toggle::after {
   content: "";
   position: absolute;
@@ -1129,6 +1185,19 @@ img {
     border-color: rgba(242, 200, 90, 0.4);
   }
 
+  .menu-close:hover .menu-close-icon {
+    background: rgba(242, 200, 90, 0.1);
+    box-shadow:
+      inset 0 0 0 1px rgba(242, 200, 90, 0.2),
+      0 10px 24px rgba(0, 0, 0, 0.22);
+  }
+
+  .menu-close:hover .menu-close-icon-ring {
+    opacity: 1;
+    transform: scale(1);
+    border-color: rgba(242, 200, 90, 0.28);
+  }
+
   .work-card:hover,
   .process-card:hover,
   .contact-panel:hover,
@@ -1258,6 +1327,11 @@ img {
   .button,
   .email-row {
     width: 100%;
+  }
+
+  .menu-close {
+    gap: 10px;
+    padding-right: 12px;
   }
 
   .hero-wordmark {

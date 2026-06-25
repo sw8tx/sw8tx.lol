@@ -85,3 +85,8 @@ Update 2026-06-25, language toggle pass
 - Added a persistent locale switcher in `components/HomePageClient.tsx` with English and German options, browser storage, and dynamic `document.documentElement.lang` updates.
 - Moved the homepage copy in `components/HomePageClient.tsx` into localized content objects so navigation, hero, sections, feedback, contact, loader text, and footer links switch together.
 - Added matching segmented-control styling in `styles/globals.css` so the language picker feels integrated with the premium top navigation.
+
+Update 2026-06-25, menu close-button pass
+- User requested that the animated X treatment should live on the menu close button in the top-right corner, not feel passive, and that `codex.txt` should be updated on each pass.
+- Updated the top-right close control in `components/HomePageClient.tsx` to include a dedicated animated X icon with stronger hover spin and line distortion.
+- Refined the close-button styling in `styles/globals.css` with a brighter icon capsule and a hover ring so the action reads more clearly as an intentional close affordance.

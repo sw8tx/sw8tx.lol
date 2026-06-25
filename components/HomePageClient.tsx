@@ -531,9 +531,33 @@ export function HomePageClient() {
               >
                 <div className="menu-topbar">
                   <span className="menu-badge">{copy.menuBadge}</span>
-                  <button className="menu-close" onClick={() => setMenuOpen(false)} type="button">
-                    {copy.close}
-                  </button>
+                  <motion.button
+                    className="menu-close"
+                    onClick={() => setMenuOpen(false)}
+                    onPointerLeave={handleSurfaceLeave}
+                    onPointerMove={handleSurfaceMove}
+                    type="button"
+                    whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+                  >
+                    <span className="menu-close-label">{copy.close}</span>
+                    <motion.span
+                      className="menu-close-icon"
+                      aria-hidden="true"
+                      whileHover={reduceMotion ? undefined : { rotate: 225, scale: 1.08 }}
+                      transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <span className="menu-close-icon-ring" />
+                      <motion.span
+                        whileHover={reduceMotion ? undefined : { rotate: 20, scaleX: 1.1 }}
+                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                      <motion.span
+                        whileHover={reduceMotion ? undefined : { rotate: -20, scaleX: 1.1 }}
+                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    </motion.span>
+                  </motion.button>
                 </div>
                 <div className="menu-panel">
                   {copy.menuItems.map((item, index) => (
