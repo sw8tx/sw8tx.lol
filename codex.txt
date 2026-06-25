@@ -68,3 +68,13 @@ Update 2026-06-25, strong-first-impression pass
 - Rebuilt `components/HomePageClient.tsx` into a darker Sparkle Studio presentation with a short branded loader, stronger hero headline, cleaner supporting copy, better CTA hierarchy, floating visual notes, and reduced-motion-safe pointer polish for interactive surfaces.
 - Replaced `styles/globals.css` with a coherent dark design system that keeps the Sparkle logo, sparkle mood and core colors while shifting the whole site toward a cleaner premium portfolio look with more controlled motion, stronger spacing, better accessibility, and less template energy.
 - Updated metadata in `app/layout.tsx` so the title and descriptions better match the new positioning around custom animated websites and portfolios.
+
+Update 2026-06-25, menu hover pass
+- User requested stronger hover animation inside the menu.
+- Added a lateral hover treatment for the large menu links in `styles/globals.css` with a subtle slide-right motion and an animated underline sweep.
+- Added a clean shimmer pass for the small legal links in the menu so the whole overlay feels more alive and intentionally designed on hover.
+
+Update 2026-06-25, menu hover refinement
+- User asked to push the menu-hover work and make it better before shipping.
+- Updated the main overlay links in `components/HomePageClient.tsx` to include a small numbered meta label and arrow reveal so the menu feels more editorial and premium.
+- Refined the hover behavior in `styles/globals.css` so the menu interactions now combine cleaner text movement, a stronger underline sweep, a small meta shift, and a controlled arrow reveal instead of a plain single hover effect.

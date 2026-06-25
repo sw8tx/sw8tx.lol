@@ -306,7 +306,13 @@ export function HomePageClient() {
                       onClick={() => setMenuOpen(false)}
                       transition={{ delay: index * 0.04, duration: 0.22 }}
                     >
-                      {item.label}
+                      <span className="menu-link-meta" aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="menu-link-text">{item.label}</span>
+                      <span className="menu-link-arrow" aria-hidden="true">
+                        ↗
+                      </span>
                     </motion.a>
                   ))}
                   <div className="menu-footer">
