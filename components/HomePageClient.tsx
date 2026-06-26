@@ -2,63 +2,63 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const primaryEmail = "info@tylerosthoff.xyz";
-const supportedLocales = ["en", "de"] as const;
-type Locale = (typeof supportedLocales)[number];
+
+const languageOptions = [
+  { code: "en", label: "English", short: "EN" },
+  { code: "de", label: "Deutsch", short: "DE" },
+] as const;
+type Locale = (typeof languageOptions)[number]["code"];
+
+const floatingLogoSlots = Array.from({ length: 8 }, (_, index) => `float-logo-${index + 1}`);
 
 const siteCopy = {
   en: {
-    loaderStatus: "Preparing Sparkle Studio...",
+    loaderStatus: "Materializing shapes...",
+    loaderFooter: "Designed and coded by Tyler (C) 2026",
+    languageLabel: "LANGUAGE",
     menuButton: { open: "Menu", close: "Close", openLabel: "Open menu", closeLabel: "Close menu" },
     menuBadge: "Sparkle Studio",
-    close: "Close",
     menuItems: [
       { href: "#about", label: "About" },
       { href: "#process", label: "Process" },
-      { href: "#work", label: "Work" },
-      { href: "#reviews", label: "Reviews" },
+      { href: "#work", label: "Past work" },
+      { href: "#reviews", label: "Feedback" },
       { href: "#contact", label: "Contact" },
     ],
     legal: { terms: "Terms", privacy: "Privacy", refund: "Refund" },
     hero: {
-      eyebrow: "Sparkle Studio / Web design and frontend",
-      title: "Websites that feel custom from the first second.",
+      eyebrow: "Web design and frontend",
+      title: "Sparkle Studio",
+      tagline: "Websites with soul",
       text:
-        "Animated portfolios, landing pages and brand sites built to stand out. Sharp design, clean code, smooth motion.",
-      support:
-        "For creators, brands and businesses that need a stronger online presence without the fake futuristic template look.",
+        "Custom animated portfolios, landing pages and brand sites for people who want their first impression to feel expensive, personal and smooth.",
       ctaPrimary: "Start a project",
-      ctaSecondary: "View work",
-      proofItems: ["Animated portfolios", "Landing pages", "Brand sites"],
-      frameKicker: "Selected direction",
-      frameTitle: "Dark, bold and polished without looking overproduced.",
-      frameBody:
-        "The first screen carries the brand. Motion supports it, visuals frame it and the layout gives it room to land.",
-      notes: [
+      ctaSecondary: "Past work",
+      scroll: "Scroll",
+      cards: [
         {
-          name: "Portfolio Refresh",
-          label: "Sharper hierarchy",
-          body: "Clearer first screens, stronger sections and cleaner pacing across the whole page.",
+          label: "Animated portfolios",
+          title: "Presence that moves",
+          body: "A stronger first screen, careful pacing and motion that makes the brand feel alive.",
         },
         {
-          name: "Launch Page",
-          label: "Motion direction",
-          body: "Smooth reveals, subtle parallax and hover states that support the brand instead of distracting from it.",
+          label: "Landing pages",
+          title: "Pages that sell the vibe",
+          body: "Clear sections, custom visual direction and frontend polish that stays smooth on mobile.",
         },
       ],
     },
+    marqueeIntro: "A calm studio site can still feel alive. This is the mix I build around.",
+    marqueeRows: [
+      ["Recent projects", "Portfolio refresh", "Landing pages", "Brand sites"],
+      ["Clean frontend", "Smooth motion", "Responsive polish", "Custom visuals"],
+      ["First impression", "Past work", "Launch pages", "Creator sites"],
+    ],
     about: {
       label: "About",
       title: "A stronger first impression starts with design choices that feel intentional.",
@@ -72,7 +72,7 @@ const siteCopy = {
         {
           num: "01",
           title: "Direction before decoration",
-          body: "We define the brand feeling, references and visual hierarchy first, so the design has a point of view from the beginning.",
+          body: "We define the brand feeling, references and hierarchy first, so the design has a clear point of view from the beginning.",
         },
         {
           num: "02",
@@ -82,12 +82,12 @@ const siteCopy = {
         {
           num: "03",
           title: "Clean build and polish",
-          body: "Responsive frontend, controlled motion and final spacing passes that keep the site sharp on desktop and mobile.",
+          body: "Responsive frontend, controlled motion and final spacing passes keep the site sharp on desktop and mobile.",
         },
       ],
     },
     work: {
-      label: "Work",
+      label: "Past work",
       title: "Selected directions for brands that need more presence online.",
       items: [
         {
@@ -100,7 +100,7 @@ const siteCopy = {
           title: "Orbis Homes",
           category: "Brand landing page",
           summary:
-            "A dark launch page focused on clear messaging, cleaner content flow and a more premium conversion path.",
+            "A launch page focused on clear messaging, cleaner content flow and a more premium conversion path.",
         },
         {
           title: "Axis Club",
@@ -111,7 +111,7 @@ const siteCopy = {
       ],
     },
     reviews: {
-      label: "Reviews",
+      label: "Feedback",
       title: "What people tend to notice first.",
       score: "Client feedback",
       items: [
@@ -129,50 +129,52 @@ const siteCopy = {
     },
   },
   de: {
-    loaderStatus: "Sparkle Studio wird vorbereitet...",
+    loaderStatus: "Materializing shapes...",
+    loaderFooter: "Designed and coded by Tyler (C) 2026",
+    languageLabel: "LANGUAGE",
     menuButton: {
       open: "Menue",
-      close: "Schliessen",
+      close: "Close",
       openLabel: "Menue oeffnen",
       closeLabel: "Menue schliessen",
     },
     menuBadge: "Sparkle Studio",
-    close: "Schliessen",
     menuItems: [
       { href: "#about", label: "Ueberblick" },
       { href: "#process", label: "Prozess" },
-      { href: "#work", label: "Arbeiten" },
+      { href: "#work", label: "Past work" },
       { href: "#reviews", label: "Feedback" },
       { href: "#contact", label: "Kontakt" },
     ],
     legal: { terms: "AGB", privacy: "Datenschutz", refund: "Rueckerstattung" },
     hero: {
-      eyebrow: "Sparkle Studio / Webdesign und Frontend",
-      title: "Websites, die vom ersten Moment an custom wirken.",
+      eyebrow: "Webdesign und Frontend",
+      title: "Sparkle Studio",
+      tagline: "Websites mit Charakter",
       text:
-        "Animierte Portfolios, Landingpages und Brand-Sites, die direkt herausstechen. Scharfes Design, sauberer Code, weiche Motion.",
-      support:
-        "Fuer Creator, Marken und Businesses, die online staerker auftreten wollen, ohne wie ein futuristisches Template zu wirken.",
+        "Custom animierte Portfolios, Landingpages und Brand-Sites fuer Menschen, deren erster Eindruck hochwertig, persoenlich und smooth wirken soll.",
       ctaPrimary: "Projekt starten",
-      ctaSecondary: "Arbeiten ansehen",
-      proofItems: ["Animierte Portfolios", "Landingpages", "Brand-Sites"],
-      frameKicker: "Ausgewaehlte Richtung",
-      frameTitle: "Dunkel, bold und hochwertig, ohne ueberproduziert zu wirken.",
-      frameBody:
-        "Der erste Screen traegt die Marke. Motion stuetzt ihn, Visuals rahmen ihn ein und das Layout gibt ihm Raum zu wirken.",
-      notes: [
+      ctaSecondary: "Past work",
+      scroll: "Scroll",
+      cards: [
         {
-          name: "Portfolio Refresh",
-          label: "Staerkere Hierarchie",
-          body: "Klarere First Screens, staerkere Sections und ein saubererer Rhythmus ueber die ganze Seite.",
+          label: "Animierte Portfolios",
+          title: "Praesenz, die sich bewegt",
+          body: "Ein staerkerer First Screen, sauberer Rhythmus und Motion, die die Marke lebendig macht.",
         },
         {
-          name: "Launch Page",
-          label: "Gezielte Motion",
-          body: "Sanfte Reveals, subtiler Parallax und Hover States, die die Marke unterstuetzen statt von ihr abzulenken.",
+          label: "Landingpages",
+          title: "Seiten, die den Vibe verkaufen",
+          body: "Klare Sections, eigene visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
         },
       ],
     },
+    marqueeIntro: "Eine ruhige Studio-Seite kann trotzdem lebendig wirken. Darum dreht sich mein Build.",
+    marqueeRows: [
+      ["Recent projects", "Portfolio refresh", "Landing pages", "Brand sites"],
+      ["Clean frontend", "Smooth motion", "Responsive polish", "Custom visuals"],
+      ["First impression", "Past work", "Launch pages", "Creator sites"],
+    ],
     about: {
       label: "Ueberblick",
       title: "Ein starker erster Eindruck beginnt mit Designentscheidungen, die bewusst wirken.",
@@ -196,12 +198,12 @@ const siteCopy = {
         {
           num: "03",
           title: "Sauber bauen und polieren",
-          body: "Responsives Frontend, kontrollierte Motion und finale Spacing-Paesse, damit die Seite auf Desktop und Mobile stark bleibt.",
+          body: "Responsives Frontend, kontrollierte Motion und finale Spacing-Paesse halten die Seite auf Desktop und Mobile stark.",
         },
       ],
     },
     work: {
-      label: "Arbeiten",
+      label: "Past work",
       title: "Ausgewaehlte Richtungen fuer Marken mit Anspruch auf mehr Praesenz online.",
       items: [
         {
@@ -214,7 +216,7 @@ const siteCopy = {
           title: "Orbis Homes",
           category: "Brand-Landingpage",
           summary:
-            "Eine dunkle Launch-Page mit klarerer Message, saubererem Content-Flow und einem hochwertigeren Conversion-Pfad.",
+            "Eine Launch-Page mit klarerer Message, saubererem Content-Flow und einem hochwertigeren Conversion-Pfad.",
         },
         {
           title: "Axis Club",
@@ -258,88 +260,134 @@ function resetSurfacePosition(element: HTMLElement) {
   element.style.setProperty("--pointer-y", "50%");
 }
 
-function Loader({ status }: { status: string }) {
+function nextPaint() {
+  return new Promise<void>((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => resolve());
+    });
+  });
+}
+
+function waitForHeroImages() {
+  const visibleImages = Array.from(document.images).filter((image) => {
+    const rect = image.getBoundingClientRect();
+    return rect.top < window.innerHeight * 1.4 && rect.bottom > -window.innerHeight * 0.2;
+  });
+
+  return Promise.all(
+    visibleImages.map((image) => {
+      if (image.complete && image.naturalWidth !== 0) return Promise.resolve();
+      if (typeof image.decode === "function") return image.decode().catch(() => undefined);
+
+      return new Promise<void>((resolve) => {
+        image.addEventListener("load", () => resolve(), { once: true });
+        image.addEventListener("error", () => resolve(), { once: true });
+      });
+    }),
+  );
+}
+
+function Loader({ status, footer }: { status: string; footer: string }) {
   return (
     <motion.div
       animate={{ opacity: 1 }}
-      aria-hidden="true"
       className="load-gate"
-      exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } }}
+      exit={{ opacity: 0, transition: { duration: 0.34, ease: [0.4, 0, 0.2, 1] } }}
       initial={{ opacity: 1 }}
+      role="status"
     >
-      <div className="load-noise" />
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className="load-shell"
-        initial={{ opacity: 0, y: 18 }}
-        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div className="load-mark">
-          <Image src="/logo-transparent.png" alt="" width={70} height={70} priority />
+      <div className="load-grain" aria-hidden="true" />
+      <div className="load-center">
+        <div className="load-mark" aria-hidden="true">
+          <Image src="/logo-transparent.png" alt="" width={62} height={62} loading="eager" />
         </div>
-        <div className="load-copy">
-          <span className="load-title">Sparkle</span>
-          <span className="load-status">{status}</span>
-        </div>
-        <div className="load-line" aria-hidden="true">
-          <motion.span
-            animate={{ scaleX: 1 }}
-            initial={{ scaleX: 0 }}
-            transition={{ duration: 0.88, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </div>
-      </motion.div>
-      <motion.div
-        animate={{ scaleY: 1 }}
-        className="load-wipe"
-        initial={{ scaleY: 0 }}
-        transition={{ delay: 0.82, duration: 0.34, ease: [0.76, 0, 0.24, 1] }}
-      />
+        <span className="load-status">{status}</span>
+      </div>
+      <span className="load-footer">{footer}</span>
     </motion.div>
+  );
+}
+
+function MarqueeRow({ items, reverse = false }: { items: readonly string[]; reverse?: boolean }) {
+  const rowItems = [...items, ...items, ...items];
+
+  return (
+    <div className={`marquee-row${reverse ? " is-reverse" : ""}`} aria-hidden="true">
+      <div className="marquee-track">
+        {rowItems.map((item, index) => (
+          <span className="marquee-item" key={`${item}-${index}`}>
+            {item}
+            <Image className="marquee-logo" src="/logo-transparent.png" alt="" width={46} height={46} />
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
-  const heroRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
-  const [locale, setLocale] = useState<Locale>(() => {
-    if (typeof window === "undefined") return "en";
-    const stored = window.localStorage.getItem("sparkle-locale");
-    if (stored === "en" || stored === "de") return stored;
-    return window.navigator.language.toLowerCase().startsWith("de") ? "de" : "en";
-  });
-  const [showLoader, setShowLoader] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  });
-  const { scrollYProgress } = useScroll();
-  const pointerX = useMotionValue(0);
-  const pointerY = useMotionValue(0);
-
-  const heroCopyY = useSpring(useTransform(scrollYProgress, [0, 0.22], [0, -18]), {
-    stiffness: 120,
-    damping: 26,
-  });
-  const visualY = useSpring(useTransform(scrollYProgress, [0, 0.22], [0, 28]), {
-    stiffness: 118,
-    damping: 28,
-  });
-  const visualX = useTransform(pointerX, [-1, 1], [-12, 12]);
-  const visualRotate = useTransform(pointerX, [-1, 1], [-2, 2]);
-  const visualTilt = useTransform(pointerY, [-1, 1], [1.6, -1.6]);
-  const wordmarkY = useTransform(pointerY, [-1, 1], [16, -16]);
-  const wordmarkX = useTransform(pointerX, [-1, 1], [-16, 16]);
-  const year = new Date().getFullYear();
+  const [showLoader, setShowLoader] = useState(true);
+  const [locale, setLocale] = useState<Locale>("en");
   const copy = siteCopy[locale];
+  const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
+  const year = new Date().getFullYear();
 
   useEffect(() => {
-    if (reduceMotion || !showLoader) return;
+    const id = window.setTimeout(() => {
+      const stored = window.localStorage.getItem("sparkle-locale");
+      const nextLocale =
+        stored === "en" || stored === "de"
+          ? stored
+          : window.navigator.language.toLowerCase().startsWith("de")
+            ? "de"
+            : "en";
 
-    const timer = window.setTimeout(() => setShowLoader(false), 1180);
-    return () => window.clearTimeout(timer);
-  }, [reduceMotion, showLoader]);
+      setLocale(nextLocale);
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      const id = window.setTimeout(() => setShowLoader(false), 0);
+      return () => window.clearTimeout(id);
+    }
+
+    let cancelled = false;
+    const waitForWindow = new Promise<void>((resolve) => {
+      if (document.readyState === "complete") {
+        resolve();
+        return;
+      }
+
+      window.addEventListener("load", () => resolve(), { once: true });
+    });
+    const waitForFonts = document.fonts?.ready.catch(() => undefined) ?? Promise.resolve();
+    const minimumTime = new Promise<void>((resolve) => window.setTimeout(resolve, 1050));
+    const hardLimit = new Promise<void>((resolve) => window.setTimeout(resolve, 2600));
+
+    const readyForFirstPaint = Promise.all([waitForWindow, waitForFonts, minimumTime])
+      .then(() => waitForHeroImages())
+      .then(() => nextPaint());
+
+    Promise.race([readyForFirstPaint, hardLimit]).then(() => {
+        if (!cancelled) setShowLoader(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [reduceMotion]);
+
+  useEffect(() => {
+    document.body.classList.toggle("is-loading", showLoader);
+    return () => document.body.classList.remove("is-loading");
+  }, [showLoader]);
 
   useEffect(() => {
     const revealElements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
@@ -349,7 +397,7 @@ export function HomePageClient() {
           if (entry.isIntersecting) entry.target.classList.add("visible");
         });
       },
-      { threshold: 0.16, rootMargin: "0px 0px -48px 0px" },
+      { threshold: 0.16, rootMargin: "0px 0px -56px 0px" },
     );
 
     revealElements.forEach((element) => observer.observe(element));
@@ -369,42 +417,21 @@ export function HomePageClient() {
   useEffect(() => {
     const interval = window.setInterval(() => {
       setReviewIndex((current) => (current + 1) % copy.reviews.items.length);
-    }, 5400);
+    }, 5200);
 
     return () => window.clearInterval(interval);
   }, [copy.reviews.items.length]);
 
   useEffect(() => {
-    if (reduceMotion) return;
-
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    const handlePointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-
-      const rect = hero.getBoundingClientRect();
-      const withinX = (event.clientX - rect.left) / rect.width;
-      const withinY = (event.clientY - rect.top) / rect.height;
-
-      pointerX.set(Math.min(1, Math.max(-1, withinX * 2 - 1)));
-      pointerY.set(Math.min(1, Math.max(-1, withinY * 2 - 1)));
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      setLanguageOpen(false);
     };
 
-    const resetPointer = () => {
-      pointerX.set(0);
-      pointerY.set(0);
-    };
-
-    hero.addEventListener("pointermove", handlePointerMove);
-    hero.addEventListener("pointerleave", resetPointer);
-
-    return () => {
-      hero.removeEventListener("pointermove", handlePointerMove);
-      hero.removeEventListener("pointerleave", resetPointer);
-      resetPointer();
-    };
-  }, [pointerX, pointerY, reduceMotion]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   function handleSurfaceMove(event: ReactPointerEvent<HTMLElement>) {
     if (reduceMotion) return;
@@ -415,33 +442,65 @@ export function HomePageClient() {
     resetSurfacePosition(event.currentTarget);
   }
 
+  function selectLocale(nextLocale: Locale) {
+    setLocale(nextLocale);
+    setLanguageOpen(false);
+  }
+
   return (
     <>
-      <AnimatePresence>{showLoader ? <Loader status={copy.loaderStatus} /> : null}</AnimatePresence>
+      <AnimatePresence>{showLoader ? <Loader footer={copy.loaderFooter} status={copy.loaderStatus} /> : null}</AnimatePresence>
 
       <main className="site">
         <nav className="nav">
           <div className="nav-left">
-            <div className="locale-switch" role="group" aria-label="Language selector">
-              {supportedLocales.map((item) => (
-                <button
-                  aria-pressed={locale === item}
-                  className={`locale-option${locale === item ? " is-active" : ""}`}
-                  key={item}
-                  onClick={() => setLocale(item)}
-                  type="button"
-                >
-                  {item === "en" ? "English" : "German"}
-                </button>
-              ))}
-            </div>
-
             <Link className="brand" href="/" aria-label="Sparkle home">
               <span className="brand-mark">
-                <Image src="/logo-transparent.png" alt="" width={36} height={36} priority />
+                <Image src="/logo-transparent.png" alt="" width={40} height={40} loading="eager" />
               </span>
               <span className="brand-name">Sparkle</span>
             </Link>
+
+            <div className={`language-picker${languageOpen ? " is-open" : ""}`}>
+              <button
+                aria-expanded={languageOpen}
+                aria-haspopup="menu"
+                className="language-button"
+                onClick={() => setLanguageOpen((open) => !open)}
+                type="button"
+              >
+                <span>{copy.languageLabel}</span>
+                <span className="language-current">{activeLanguage.short}</span>
+                <span className="language-chevron" aria-hidden="true" />
+              </button>
+
+              <AnimatePresence>
+                {languageOpen ? (
+                  <motion.div
+                    animate={{ opacity: 1, y: 0 }}
+                    className="language-menu"
+                    exit={{ opacity: 0, y: -8 }}
+                    initial={{ opacity: 0, y: -8 }}
+                    role="menu"
+                    transition={{ duration: 0.18 }}
+                  >
+                    {languageOptions.map((item) => (
+                      <button
+                        aria-current={locale === item.code ? "true" : undefined}
+                        className="language-option"
+                        key={item.code}
+                        onClick={() => selectLocale(item.code)}
+                        role="menuitem"
+                        type="button"
+                      >
+                        <span className="language-chip">{item.short}</span>
+                        {item.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
           </div>
 
           <motion.button
@@ -453,50 +512,14 @@ export function HomePageClient() {
             onPointerLeave={handleSurfaceLeave}
             onPointerMove={handleSurfaceMove}
             type="button"
-            whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
-            whileTap={reduceMotion ? undefined : { scale: 0.99 }}
+            whileHover={reduceMotion ? undefined : { y: -2 }}
+            whileTap={reduceMotion ? undefined : { scale: 0.98 }}
           >
-            <span className="menu-toggle-label-shell">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  className="menu-toggle-label"
-                  exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-                  initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
-                  key={menuOpen ? "close" : "open"}
-                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {menuOpen ? copy.menuButton.close : copy.menuButton.open}
-                </motion.span>
-              </AnimatePresence>
+            <span className="menu-toggle-text">{menuOpen ? copy.menuButton.close : copy.menuButton.open}</span>
+            <span className="mini-x" aria-hidden="true">
+              <span />
+              <span />
             </span>
-            <motion.span
-              animate={reduceMotion ? { rotate: 0 } : { rotate: menuOpen ? 180 : 0 }}
-              className="menu-toggle-icon"
-              aria-hidden="true"
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <motion.span
-                animate={
-                  reduceMotion
-                    ? { rotate: 0, y: 0, width: "100%" }
-                    : menuOpen
-                      ? { rotate: 45, y: 0, width: "100%" }
-                      : { rotate: 0, y: -4.5, width: "100%" }
-                }
-                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-              />
-              <motion.span
-                animate={
-                  reduceMotion
-                    ? { rotate: 0, y: 0, width: "100%" }
-                    : menuOpen
-                      ? { rotate: -45, y: 0, width: "100%" }
-                      : { rotate: 0, y: 4.5, width: "70%" }
-                }
-                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-              />
-            </motion.span>
           </motion.button>
         </nav>
 
@@ -508,85 +531,42 @@ export function HomePageClient() {
               exit={{ opacity: 0 }}
               id="site-menu"
               initial={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease: [0.32, 0, 0.67, 0] }}
+              transition={{ duration: 0.2 }}
             >
               <motion.div
-                animate={
-                  reduceMotion
-                    ? { opacity: 1, scale: 1, y: 0 }
-                    : { opacity: 1, scale: 1, y: 0, rotateX: 0, clipPath: "inset(0% 0% 0% 0% round 30px)" }
-                }
-                className="menu-film"
-                exit={
-                  reduceMotion
-                    ? { opacity: 0, scale: 0.98, y: 14 }
-                    : { opacity: 0, scale: 0.985, y: 18, rotateX: -8, clipPath: "inset(10% 0% 0% 0% round 30px)" }
-                }
-                initial={
-                  reduceMotion
-                    ? { opacity: 0, scale: 0.98, y: 14 }
-                    : { opacity: 0, scale: 0.985, y: 18, rotateX: -8, clipPath: "inset(10% 0% 0% 0% round 30px)" }
-                }
-                transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+                animate={{ opacity: 1, y: 0 }}
+                className="menu-sheet"
+                exit={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 16 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="menu-topbar">
                   <span className="menu-badge">{copy.menuBadge}</span>
-                  <motion.button
-                    className="menu-close"
-                    onClick={() => setMenuOpen(false)}
-                    onPointerLeave={handleSurfaceLeave}
-                    onPointerMove={handleSurfaceMove}
-                    type="button"
-                    whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
-                    whileTap={reduceMotion ? undefined : { scale: 0.985 }}
-                  >
-                    <span className="menu-close-label">{copy.close}</span>
-                    <motion.span
-                      className="menu-close-icon"
-                      aria-hidden="true"
-                      whileHover={reduceMotion ? undefined : { rotate: 225, scale: 1.08 }}
-                      transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <span className="menu-close-icon-ring" />
-                      <motion.span
-                        whileHover={reduceMotion ? undefined : { rotate: 20, scaleX: 1.1 }}
-                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                      />
-                      <motion.span
-                        whileHover={reduceMotion ? undefined : { rotate: -20, scaleX: 1.1 }}
-                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                      />
-                    </motion.span>
-                  </motion.button>
+                  <button className="menu-sheet-close" onClick={() => setMenuOpen(false)} type="button">
+                    <span className="visually-hidden">{copy.menuButton.closeLabel}</span>
+                    <span className="mini-x is-cross" aria-hidden="true">
+                      <span />
+                      <span />
+                    </span>
+                  </button>
                 </div>
+
                 <div className="menu-panel">
                   {copy.menuItems.map((item, index) => (
                     <motion.a
-                      animate={
-                        reduceMotion
-                          ? { opacity: 1, x: 0 }
-                          : { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
-                      }
+                      animate={{ opacity: 1, y: 0 }}
                       className="menu-link"
                       href={item.href}
-                      initial={
-                        reduceMotion
-                          ? { opacity: 0, x: -14 }
-                          : { opacity: 0, x: -18, y: 10, filter: "blur(8px)" }
-                      }
+                      initial={{ opacity: 0, y: 14 }}
                       key={item.href}
                       onClick={() => setMenuOpen(false)}
-                      transition={{ delay: 0.04 + index * 0.05, duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ delay: 0.04 + index * 0.045, duration: 0.28 }}
                     >
-                      <span className="menu-link-meta" aria-hidden="true">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <span className="menu-link-text">{item.label}</span>
-                      <span className="menu-link-arrow" aria-hidden="true">
-                        -&gt;
-                      </span>
+                      <span className="menu-link-meta">{String(index + 1).padStart(2, "0")}</span>
+                      <span>{item.label}</span>
                     </motion.a>
                   ))}
+
                   <div className="menu-footer">
                     <Link className="menu-legal-link" href="/tos" onClick={() => setMenuOpen(false)}>
                       {copy.legal.terms}
@@ -604,159 +584,120 @@ export function HomePageClient() {
           ) : null}
         </AnimatePresence>
 
-        <section className="hero" ref={heroRef}>
-          <div className="hero-background" aria-hidden="true" />
-          <motion.div
-            aria-hidden="true"
-            className="hero-wordmark"
-            style={{ x: reduceMotion ? 0 : wordmarkX, y: reduceMotion ? 0 : wordmarkY }}
-          >
-            <span>SPARKLE</span>
-            <span>SPARKLE</span>
-          </motion.div>
+        <section className="hero" id="home">
+          <div className="floating-logo-field" aria-hidden="true">
+            {floatingLogoSlots.map((slot, index) => (
+              <span className={`float-logo ${slot}`} key={slot}>
+                <Image
+                  src="/logo-transparent.png"
+                  alt=""
+                  width={170}
+                  height={170}
+                  loading={index < 4 ? "eager" : "lazy"}
+                />
+              </span>
+            ))}
+          </div>
 
-          <div className="hero-grid">
-            <motion.div
-              className="hero-copy"
-              style={{ y: reduceMotion ? 0 : heroCopyY }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          <div className="hero-stage">
+            <motion.p
+              animate={{ opacity: 1, y: 0 }}
+              className="eyebrow"
+              initial={{ opacity: 0, y: 14 }}
+              transition={{ delay: showLoader ? 0.12 : 0, duration: 0.42 }}
             >
-              <motion.p
-                animate={{ opacity: 1, y: 0 }}
-                className="eyebrow"
-                initial={{ opacity: 0, y: 16 }}
-                transition={{ delay: showLoader ? 0.1 : 0, duration: 0.45 }}
-              >
-                {copy.hero.eyebrow}
-              </motion.p>
-              <motion.h1
-                animate={{ opacity: 1, y: 0 }}
-                className="hero-title"
-                initial={{ opacity: 0, y: 24 }}
-                transition={{ delay: showLoader ? 0.16 : 0.04, duration: 0.56, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {copy.hero.title}
-              </motion.h1>
-              <motion.p
-                animate={{ opacity: 1, y: 0 }}
-                className="hero-text"
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ delay: showLoader ? 0.22 : 0.08, duration: 0.5 }}
-              >
-                {copy.hero.text}
-              </motion.p>
-              <motion.p
-                animate={{ opacity: 1, y: 0 }}
-                className="hero-support"
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ delay: showLoader ? 0.28 : 0.12, duration: 0.48 }}
-              >
-                {copy.hero.support}
-              </motion.p>
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                className="hero-actions"
-                initial={{ opacity: 0, y: 18 }}
-                transition={{ delay: showLoader ? 0.32 : 0.14, duration: 0.45 }}
-              >
-                <motion.a
-                  className="button primary"
-                  href={`mailto:${primaryEmail}`}
-                  onPointerLeave={handleSurfaceLeave}
-                  onPointerMove={handleSurfaceMove}
-                  whileHover={reduceMotion ? undefined : { y: -3, scale: 1.01 }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.99 }}
-                >
-                  {copy.hero.ctaPrimary}
-                </motion.a>
-                <motion.a
-                  className="button secondary"
-                  href="#work"
-                  onPointerLeave={handleSurfaceLeave}
-                  onPointerMove={handleSurfaceMove}
-                  whileHover={reduceMotion ? undefined : { y: -3, scale: 1.01 }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.99 }}
-                >
-                  {copy.hero.ctaSecondary}
-                </motion.a>
-              </motion.div>
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                className="hero-proof"
-                initial={{ opacity: 0, y: 18 }}
-                transition={{ delay: showLoader ? 0.36 : 0.16, duration: 0.45 }}
-              >
-                {copy.hero.proofItems.map((item) => (
-                  <span className="proof-pill" key={item}>
-                    {item}
-                  </span>
-                ))}
-              </motion.div>
-            </motion.div>
+              {copy.hero.eyebrow}
+            </motion.p>
+            <motion.h1
+              animate={{ opacity: 1, y: 0 }}
+              className="hero-title"
+              initial={{ opacity: 0, y: 18 }}
+              transition={{ delay: showLoader ? 0.18 : 0.04, duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {copy.hero.title}
+            </motion.h1>
+            <motion.p
+              animate={{ opacity: 1, y: 0 }}
+              className="hero-tagline"
+              initial={{ opacity: 0, y: 14 }}
+              transition={{ delay: showLoader ? 0.24 : 0.08, duration: 0.48 }}
+            >
+              {copy.hero.tagline}
+            </motion.p>
+            <motion.p
+              animate={{ opacity: 1, y: 0 }}
+              className="hero-text"
+              initial={{ opacity: 0, y: 14 }}
+              transition={{ delay: showLoader ? 0.3 : 0.12, duration: 0.48 }}
+            >
+              {copy.hero.text}
+            </motion.p>
 
             <motion.div
-              className="hero-visual"
-              style={{
-                x: reduceMotion ? 0 : visualX,
-                y: reduceMotion ? 0 : visualY,
-                rotateZ: reduceMotion ? 0 : visualRotate,
-                rotateX: reduceMotion ? 0 : visualTilt,
-              }}
+              animate={{ opacity: 1, y: 0 }}
+              className="hero-actions"
+              initial={{ opacity: 0, y: 14 }}
+              transition={{ delay: showLoader ? 0.34 : 0.14, duration: 0.44 }}
             >
-              <div className="visual-orbit orbit-left" aria-hidden="true" />
-              <div className="visual-orbit orbit-right" aria-hidden="true" />
-
-              <motion.article
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="feature-frame"
-                initial={{ opacity: 0, scale: 0.96, y: 22 }}
+              <motion.a
+                className="button primary"
+                href={`mailto:${primaryEmail}`}
                 onPointerLeave={handleSurfaceLeave}
                 onPointerMove={handleSurfaceMove}
-                transition={{ delay: showLoader ? 0.22 : 0.06, duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={reduceMotion ? undefined : { y: -2 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.98 }}
               >
-                <div className="frame-topbar">
-                  <span className="frame-dot" />
-                  <span className="frame-dot" />
-                  <span className="frame-dot" />
-                </div>
-                <div className="frame-copy">
-                  <span className="frame-kicker">{copy.hero.frameKicker}</span>
-                  <h2>{copy.hero.frameTitle}</h2>
-                  <p>{copy.hero.frameBody}</p>
-                </div>
-                <div className="frame-preview" aria-hidden="true">
-                  <div className="preview-grid">
-                    <span className="preview-block large" />
-                    <span className="preview-block" />
-                    <span className="preview-block" />
-                    <span className="preview-line short" />
-                    <span className="preview-line" />
-                    <span className="preview-line wide" />
-                  </div>
-                </div>
-              </motion.article>
+                {copy.hero.ctaPrimary}
+              </motion.a>
+              <motion.a
+                className="button secondary"
+                href="#work"
+                onPointerLeave={handleSurfaceLeave}
+                onPointerMove={handleSurfaceMove}
+                whileHover={reduceMotion ? undefined : { y: -2 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              >
+                {copy.hero.ctaSecondary}
+              </motion.a>
+            </motion.div>
 
-              {copy.hero.notes.map((note, index) => (
+            <div className="hero-products" aria-label="Services">
+              {copy.hero.cards.map((card, index) => (
                 <motion.article
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className={`floating-note note-${index + 1}`}
-                  initial={{ opacity: 0, y: 20, scale: 0.96 }}
-                  key={`${locale}-${note.name}`}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="service-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  key={card.title}
                   onPointerLeave={handleSurfaceLeave}
                   onPointerMove={handleSurfaceMove}
-                  transition={{
-                    delay: showLoader ? 0.3 + index * 0.08 : 0.14 + index * 0.05,
-                    duration: 0.5,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
+                  transition={{ delay: showLoader ? 0.38 + index * 0.08 : 0.18 + index * 0.05, duration: 0.46 }}
                 >
-                  <span className="note-name">{note.name}</span>
-                  <strong>{note.label}</strong>
-                  <p>{note.body}</p>
+                  <div className="jar-visual" aria-hidden="true">
+                    <span className="jar-lid" />
+                    <span className="jar-glass">
+                      <Image src="/logo-transparent.png" alt="" width={86} height={86} loading="eager" />
+                    </span>
+                  </div>
+                  <span className="service-index">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="service-label">{card.label}</span>
+                  <h2>{card.title}</h2>
+                  <p>{card.body}</p>
                 </motion.article>
               ))}
-            </motion.div>
+            </div>
+
+            <a className="scroll-cue" href="#motion-strip">
+              <span className="visually-hidden">{copy.hero.scroll}</span>
+              <span aria-hidden="true" />
+            </a>
           </div>
+        </section>
+
+        <section className="motion-strip" id="motion-strip">
+          <p className="strip-intro">{copy.marqueeIntro}</p>
+          {copy.marqueeRows.map((row, index) => (
+            <MarqueeRow items={row} key={row.join("-")} reverse={index % 2 === 1} />
+          ))}
         </section>
 
         <section className="section" id="about">
