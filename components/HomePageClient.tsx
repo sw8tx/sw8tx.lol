@@ -1034,6 +1034,45 @@ export function HomePageClient() {
   }, [showLoader]);
 
   useEffect(() => {
+    if (reduceMotion) return;
+
+    let frame: number | undefined;
+
+    const updateScrollMotion = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const scrollTop = window.scrollY;
+      const progress = Math.min(1, scrollTop / maxScroll);
+
+      document.documentElement.style.setProperty("--scroll-progress", progress.toFixed(4));
+      document.documentElement.style.setProperty("--scroll-drift", `${Math.min(22, scrollTop * 0.019).toFixed(2)}px`);
+      document.documentElement.style.setProperty("--scroll-drift-wide", `${Math.min(28, scrollTop * 0.024).toFixed(2)}px`);
+      document.documentElement.style.setProperty("--scroll-float", `${Math.max(-70, scrollTop * -0.06).toFixed(2)}px`);
+      document.documentElement.style.setProperty("--scroll-float-soft", `${Math.max(-17, scrollTop * -0.014).toFixed(2)}px`);
+      frame = undefined;
+    };
+
+    const requestUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateScrollMotion);
+    };
+
+    updateScrollMotion();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      document.documentElement.style.removeProperty("--scroll-progress");
+      document.documentElement.style.removeProperty("--scroll-drift");
+      document.documentElement.style.removeProperty("--scroll-drift-wide");
+      document.documentElement.style.removeProperty("--scroll-float");
+      document.documentElement.style.removeProperty("--scroll-float-soft");
+    };
+  }, [reduceMotion]);
+
+  useEffect(() => {
     const revealElements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
     const observer = new IntersectionObserver(
       (entries) => {
