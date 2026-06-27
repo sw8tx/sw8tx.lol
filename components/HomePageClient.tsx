@@ -981,21 +981,21 @@ export function HomePageClient() {
                   </button>
                 </div>
 
-                <div className="menu-panel">
-                  {copy.menuItems.map((item, index) => (
-                    <motion.a
-                      animate={{ opacity: 1, y: 0 }}
-                      className="menu-link"
-                      href={item.href}
-                      initial={{ opacity: 0, y: 14 }}
-                      key={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      transition={{ delay: 0.04 + index * 0.045, duration: 0.28 }}
-                    >
-                      <span className="menu-link-meta">{String(index + 1).padStart(2, "0")}</span>
-                      <span>{item.label}</span>
-                    </motion.a>
-                  ))}
+                  <div className="menu-panel">
+                    {copy.menuItems.map((item, index) => (
+                      <motion.a
+                        animate={{ opacity: 1, x: 0, y: 0 }}
+                        className="menu-link"
+                        href={item.href}
+                        initial={{ opacity: 0, x: 18, y: 10 }}
+                        key={item.href}
+                        onClick={() => setMenuOpen(false)}
+                        transition={{ delay: 0.05 + index * 0.055, duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <span className="menu-link-meta">{String(index + 1).padStart(2, "0")}</span>
+                        <span className="menu-link-text">{item.label}</span>
+                      </motion.a>
+                    ))}
 
                   <div className="menu-footer">
                     <Link className="menu-legal-link" href="/tos" onClick={() => setMenuOpen(false)}>
