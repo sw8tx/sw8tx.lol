@@ -42,14 +42,11 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
-  background-color: var(--paper);
-  background-image:
-    linear-gradient(180deg, #fffaf0 0%, #f5eddf 44%, #efe1cf 100%),
-    repeating-linear-gradient(90deg, rgba(94, 65, 39, 0.035) 0 1px, transparent 1px 34px);
+  background: #eee0cb;
 }
 
 body::before {
-  content: "";
+  content: none;
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -62,7 +59,7 @@ body::before {
 }
 
 body::after {
-  content: "";
+  content: none;
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -492,11 +489,11 @@ img {
 .menu-sheet {
   width: min(100%, 520px);
   overflow: hidden;
-  border: 1px solid rgba(255, 247, 232, 0.18);
+  border: 1px solid rgba(83, 52, 35, 0.18);
   border-radius: 8px;
-  color: var(--cream);
-  background: #32180f;
-  box-shadow: 0 34px 80px rgba(42, 20, 13, 0.32);
+  color: var(--ink);
+  background: #cbb08d;
+  box-shadow: 0 34px 80px rgba(83, 52, 35, 0.22);
 }
 
 .menu-topbar {
@@ -506,7 +503,7 @@ img {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 18px;
-  border-bottom: 1px solid rgba(255, 247, 232, 0.14);
+  border-bottom: 1px solid rgba(83, 52, 35, 0.18);
 }
 
 .menu-badge,
@@ -527,7 +524,7 @@ img {
 }
 
 .menu-badge {
-  color: rgba(255, 247, 232, 0.68);
+  color: rgba(55, 32, 22, 0.72);
 }
 
 .menu-sheet-close {
@@ -535,14 +532,14 @@ img {
   height: 36px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 247, 232, 0.18);
+  border: 1px solid rgba(83, 52, 35, 0.24);
   border-radius: 50%;
-  color: var(--cream);
-  background: rgba(255, 247, 232, 0.06);
+  color: var(--ink);
+  background: rgba(255, 247, 232, 0.22);
 }
 
 .menu-sheet-close .mini-x {
-  animation: menuXIdleSpin 6.8s linear infinite;
+  animation: menuXIdleSpin 2.1s linear infinite;
 }
 
 .menu-sheet-close.is-closing .mini-x {
@@ -561,8 +558,8 @@ img {
   gap: 18px;
   align-items: end;
   padding: 10px 0 14px;
-  border-bottom: 1px solid rgba(255, 247, 232, 0.12);
-  color: var(--cream);
+  border-bottom: 1px solid rgba(83, 52, 35, 0.18);
+  color: var(--ink);
   font-family: var(--font-serif);
   font-size: 3.2rem;
   line-height: 0.94;
@@ -570,7 +567,7 @@ img {
 }
 
 .menu-link-meta {
-  color: rgba(255, 247, 232, 0.46);
+  color: rgba(55, 32, 22, 0.5);
   font-family: var(--font-mono);
   font-size: 0.74rem;
   line-height: 1;
@@ -600,9 +597,9 @@ img {
 }
 
 .menu-legal-link {
-  color: rgba(255, 247, 232, 0.78);
-  border-color: rgba(255, 247, 232, 0.16);
-  background: rgba(255, 247, 232, 0.06);
+  color: var(--ink);
+  border-color: rgba(83, 52, 35, 0.18);
+  background: rgba(255, 247, 232, 0.26);
   box-shadow: none;
 }
 
@@ -1123,9 +1120,14 @@ img {
   gap: 16px;
 }
 
-.process-grid,
+.process-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .work-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
 }
 
 .process-card,
@@ -1136,6 +1138,42 @@ img {
   padding: 24px;
 }
 
+.process-card {
+  min-height: 210px;
+  display: grid;
+  align-content: start;
+  border-radius: 10px;
+}
+
+.process-card::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 22px;
+  height: 1px;
+  background: rgba(83, 52, 35, 0.16);
+}
+
+.work-card {
+  min-height: 290px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 18px;
+  background: #f7eddd;
+}
+
+.work-card::before {
+  content: "";
+  position: absolute;
+  inset: 12px 12px auto;
+  height: 54px;
+  border: 1px solid rgba(83, 52, 35, 0.13);
+  border-radius: 999px;
+  background: #ead7bc;
+}
+
 .process-card h3,
 .work-card h3,
 .legal-section h2 {
@@ -1144,11 +1182,27 @@ img {
   line-height: 1.08;
 }
 
+.work-card h3 {
+  margin-top: 86px;
+  max-width: 10rem;
+  font-size: 1.8rem;
+}
+
 .process-card p,
 .work-card p,
 .review-shell p,
 .legal-section p {
   margin: 0;
+}
+
+.project-label {
+  position: relative;
+  z-index: 1;
+  color: var(--ink);
+}
+
+.work-card > p:last-child {
+  font-size: 1rem;
 }
 
 .review-shell {
@@ -1296,7 +1350,7 @@ img {
   }
 
   .menu-link:hover {
-    color: #f5d0a2;
+    color: var(--rust);
   }
 
   .process-card:hover,
