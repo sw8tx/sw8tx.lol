@@ -11,8 +11,15 @@ const primaryEmail = "info@tylerosthoff.xyz";
 const languageOptions = [
   { code: "en", label: "English", short: "EN" },
   { code: "de", label: "Deutsch", short: "DE" },
+  { code: "es", label: "Espanol", short: "ES" },
+  { code: "fr", label: "Francais", short: "FR" },
+  { code: "sr", label: "Srpski", short: "SR" },
 ] as const;
 type Locale = (typeof languageOptions)[number]["code"];
+
+function isLocale(value: string | null): value is Locale {
+  return languageOptions.some((item) => item.code === value);
+}
 
 const floatingLogoSlots = Array.from({ length: 8 }, (_, index) => `float-logo-${index + 1}`);
 
@@ -22,7 +29,7 @@ const siteCopy = {
     loaderFooter: "sw8tx.lol - EST 2026",
     languageLabel: "LANGUAGE",
     menuButton: { open: "Menu", close: "Close", openLabel: "Open menu", closeLabel: "Close menu" },
-    menuBadge: "sw8tx.lol",
+    menuBadge: "Sparkle",
     menuItems: [
       { href: "#about", label: "About" },
       { href: "#process", label: "Process" },
@@ -158,7 +165,7 @@ const siteCopy = {
       openLabel: "Menue oeffnen",
       closeLabel: "Menue schliessen",
     },
-    menuBadge: "sw8tx.lol",
+    menuBadge: "Sparkle",
     menuItems: [
       { href: "#about", label: "Ueberblick" },
       { href: "#process", label: "Prozess" },
@@ -285,6 +292,14 @@ const siteCopy = {
     },
   },
 } as const;
+
+const localeCopyMap: Record<Locale, keyof typeof siteCopy> = {
+  en: "en",
+  de: "de",
+  es: "en",
+  fr: "en",
+  sr: "en",
+};
 
 function setSurfacePosition(element: HTMLElement, clientX: number, clientY: number) {
   const rect = element.getBoundingClientRect();
@@ -413,19 +428,25 @@ export function HomePageClient() {
   const [locale, setLocale] = useState<Locale>("en");
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const [menuClosing, setMenuClosing] = useState(false);
-  const copy = siteCopy[locale];
+  const copy = siteCopy[localeCopyMap[locale]];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
   const year = new Date().getFullYear();
 
   useEffect(() => {
     const id = window.setTimeout(() => {
       const stored = window.localStorage.getItem("sparkle-locale");
-      const nextLocale =
-        stored === "en" || stored === "de"
-          ? stored
-          : window.navigator.language.toLowerCase().startsWith("de")
-            ? "de"
-            : "en";
+      const browserLanguage = window.navigator.language.toLowerCase();
+      const nextLocale = isLocale(stored)
+        ? stored
+        : browserLanguage.startsWith("de")
+          ? "de"
+          : browserLanguage.startsWith("es")
+            ? "es"
+            : browserLanguage.startsWith("fr")
+              ? "fr"
+              : browserLanguage.startsWith("sr")
+                ? "sr"
+                : "en";
 
       setLocale(nextLocale);
     }, 0);
@@ -561,11 +582,11 @@ export function HomePageClient() {
       <main className="site">
         <nav className="nav">
           <div className="nav-left">
-            <Link className="brand" href="/" aria-label="sw8tx.lol home">
+            <Link className="brand" href="/" aria-label="Sparkle home">
               <span className="brand-mark">
                 <Image src="/logo-transparent.png" alt="" width={40} height={40} loading="eager" />
               </span>
-              <span className="brand-name">sw8tx.lol</span>
+              <span className="brand-name">Sparkle</span>
             </Link>
 
             <div className={`language-picker${languageOpen ? " is-open" : ""}`}>
@@ -851,11 +872,11 @@ export function HomePageClient() {
 
         <section className="section" id="about">
           <div className="section-grid">
-            <div className="reveal">
+            <div className="reveal reveal-left">
               <p className="section-label">{copy.about.label}</p>
               <h2 className="section-title">{copy.about.title}</h2>
             </div>
-            <div className="reveal delay-1">
+            <div className="reveal reveal-right delay-1">
               <p className="section-text">{copy.about.text}</p>
             </div>
           </div>
@@ -863,11 +884,11 @@ export function HomePageClient() {
 
         <section className="section" id="process">
           <div className="section-grid">
-            <div className="reveal">
+            <div className="reveal reveal-left">
               <p className="section-label">{copy.process.label}</p>
               <h2 className="section-title">{copy.process.title}</h2>
             </div>
-            <div className="process-grid reveal delay-1">
+            <div className="process-grid reveal reveal-rise delay-1">
               {copy.process.items.map((item) => (
                 <article className="process-card" key={`${locale}-${item.title}`}>
                   <span className="process-line-num">{item.num}</span>
@@ -881,11 +902,11 @@ export function HomePageClient() {
 
         <section className="section" id="work">
           <div className="section-grid">
-            <div className="reveal">
+            <div className="reveal reveal-left">
               <p className="section-label">{copy.work.label}</p>
               <h2 className="section-title">{copy.work.title}</h2>
             </div>
-            <div className="work-grid reveal delay-1">
+            <div className="work-grid reveal reveal-right delay-1">
               {copy.work.items.map((project) => (
                 <article className="work-card" key={`${locale}-${project.title}`}>
                   <p className="project-label">{project.category}</p>
@@ -899,11 +920,11 @@ export function HomePageClient() {
 
         <section className="section reviews-section" id="reviews">
           <div className="section-grid">
-            <div className="reveal">
+            <div className="reveal reveal-left">
               <p className="section-label">{copy.reviews.label}</p>
               <h2 className="section-title">{copy.reviews.title}</h2>
             </div>
-            <div className="review-shell reveal delay-1">
+            <div className="review-shell reveal reveal-scale delay-1">
               <span className="review-score">{copy.reviews.score}</span>
               <p>{copy.reviews.items[reviewIndex]}</p>
             </div>
@@ -912,11 +933,11 @@ export function HomePageClient() {
 
         <section className="contact" id="contact">
           <div className="section-grid">
-            <div className="reveal">
+            <div className="reveal reveal-left">
               <p className="section-label">{copy.contact.label}</p>
               <h2 className="section-title">{copy.contact.title}</h2>
             </div>
-            <div className="contact-panel reveal delay-1">
+            <div className="contact-panel reveal reveal-float delay-1">
               <p className="contact-note">{copy.contact.text}</p>
               <a
                 className="email-row"
