@@ -312,11 +312,14 @@ function setMenuCloseMagnet(sheet: HTMLElement, clientX: number, clientY: number
   const distance = Math.hypot(deltaX, deltaY);
   const radius = 138;
   const pull = Math.max(0, 1 - distance / radius);
+  const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
 
   button.style.setProperty("--magnet-x", `${(deltaX * pull * 0.34).toFixed(2)}px`);
   button.style.setProperty("--magnet-y", `${(deltaY * pull * 0.34).toFixed(2)}px`);
-  button.style.setProperty("--magnet-stretch", (1 + pull * 0.22).toFixed(3));
-  button.style.setProperty("--magnet-squash", (1 - pull * 0.08).toFixed(3));
+  button.style.setProperty("--magnet-stretch", (1 + pull * 0.42).toFixed(3));
+  button.style.setProperty("--magnet-squash", (1 - pull * 0.16).toFixed(3));
+  button.style.setProperty("--magnet-angle", `${angle.toFixed(2)}deg`);
+  button.style.setProperty("--magnet-angle-back", `${(-angle).toFixed(2)}deg`);
 }
 
 function resetMenuCloseMagnet(sheet: HTMLElement) {
@@ -327,6 +330,8 @@ function resetMenuCloseMagnet(sheet: HTMLElement) {
   button.style.setProperty("--magnet-y", "0px");
   button.style.setProperty("--magnet-stretch", "1");
   button.style.setProperty("--magnet-squash", "1");
+  button.style.setProperty("--magnet-angle", "0deg");
+  button.style.setProperty("--magnet-angle-back", "0deg");
 }
 
 function nextPaint() {

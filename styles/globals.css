@@ -532,6 +532,8 @@ img {
   --magnet-y: 0px;
   --magnet-stretch: 1;
   --magnet-squash: 1;
+  --magnet-angle: 0deg;
+  --magnet-angle-back: 0deg;
   width: 36px;
   height: 36px;
   display: grid;
@@ -540,7 +542,11 @@ img {
   border-radius: 50%;
   color: var(--ink);
   background: rgba(255, 247, 232, 0.22);
-  transform: translate3d(var(--magnet-x), var(--magnet-y), 0) scale(var(--magnet-stretch), var(--magnet-squash));
+  transform:
+    translate3d(var(--magnet-x), var(--magnet-y), 0)
+    rotate(var(--magnet-angle))
+    scale(var(--magnet-stretch), var(--magnet-squash))
+    rotate(var(--magnet-angle-back));
   transform-origin: center;
   transition:
     transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
