@@ -42,14 +42,34 @@ const siteCopy = {
       scroll: "Scroll",
       cards: [
         {
-          label: "Animated portfolios",
-          title: "Presence that moves",
-          body: "A stronger first screen, careful pacing and motion that makes the brand feel alive.",
+          action: "Show next detail",
+          variants: [
+            {
+              label: "Animated portfolios",
+              title: "Presence that moves",
+              body: "A stronger first screen, careful pacing and motion that makes the brand feel alive.",
+            },
+            {
+              label: "Recent projects",
+              title: "Built like a signature",
+              body: "Project sections, hover moments and scroll rhythm designed around your actual work.",
+            },
+          ],
         },
         {
-          label: "Landing pages",
-          title: "Pages that sell the vibe",
-          body: "Clear sections, custom visual direction and frontend polish that stays smooth on mobile.",
+          action: "Show next detail",
+          variants: [
+            {
+              label: "Landing pages",
+              title: "Pages that sell the vibe",
+              body: "Clear sections, custom visual direction and frontend polish that stays smooth on mobile.",
+            },
+            {
+              label: "Launch polish",
+              title: "Smooth before people scroll",
+              body: "Fast first loads, responsive spacing and motion that feels intentional instead of heavy.",
+            },
+          ],
         },
       ],
     },
@@ -158,14 +178,34 @@ const siteCopy = {
       scroll: "Scroll",
       cards: [
         {
-          label: "Animierte Portfolios",
-          title: "Praesenz, die sich bewegt",
-          body: "Ein staerkerer First Screen, sauberer Rhythmus und Motion, die die Marke lebendig macht.",
+          action: "Naechstes Detail zeigen",
+          variants: [
+            {
+              label: "Animierte Portfolios",
+              title: "Praesenz, die sich bewegt",
+              body: "Ein staerkerer First Screen, sauberer Rhythmus und Motion, die die Marke lebendig macht.",
+            },
+            {
+              label: "Recent projects",
+              title: "Gebaut wie eine Signatur",
+              body: "Projektbereiche, Hover-Momente und Scroll-Rhythmus, die um deine echten Arbeiten gebaut sind.",
+            },
+          ],
         },
         {
-          label: "Landingpages",
-          title: "Seiten, die den Vibe verkaufen",
-          body: "Klare Sections, eigene visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
+          action: "Naechstes Detail zeigen",
+          variants: [
+            {
+              label: "Landingpages",
+              title: "Seiten, die den Vibe verkaufen",
+              body: "Klare Sections, eigene visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
+            },
+            {
+              label: "Launch polish",
+              title: "Smooth bevor man scrollt",
+              body: "Schnelle First Loads, responsive Abstaende und Motion, die bewusst statt schwer wirkt.",
+            },
+          ],
         },
       ],
     },
@@ -292,11 +332,16 @@ function Loader({ status, footer }: { status: string; footer: string }) {
     <motion.div
       animate={{ opacity: 1 }}
       className="load-gate"
-      exit={{ opacity: 0, transition: { duration: 0.34, ease: [0.4, 0, 0.2, 1] } }}
-      initial={{ opacity: 1 }}
+      exit={{
+        clipPath: "inset(0 0 100% 0)",
+        opacity: 0.88,
+        transition: { duration: 0.72, ease: [0.76, 0, 0.24, 1] },
+      }}
+      initial={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
       role="status"
     >
       <div className="load-grain" aria-hidden="true" />
+      <div className="load-cut-lines" aria-hidden="true" />
       <div className="load-center">
         <div className="load-mark" aria-hidden="true">
           <Image src="/logo-transparent.png" alt="" width={62} height={62} loading="eager" />
@@ -332,6 +377,7 @@ export function HomePageClient() {
   const [reviewIndex, setReviewIndex] = useState(0);
   const [showLoader, setShowLoader] = useState(true);
   const [locale, setLocale] = useState<Locale>("en");
+  const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const copy = siteCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
   const year = new Date().getFullYear();
@@ -376,8 +422,8 @@ export function HomePageClient() {
       .then(() => nextPaint());
 
     Promise.race([readyForFirstPaint, hardLimit]).then(() => {
-        if (!cancelled) setShowLoader(false);
-      });
+      if (!cancelled) setShowLoader(false);
+    });
 
     return () => {
       cancelled = true;
@@ -445,6 +491,14 @@ export function HomePageClient() {
   function selectLocale(nextLocale: Locale) {
     setLocale(nextLocale);
     setLanguageOpen(false);
+  }
+
+  function cycleServiceCard(cardIndex: number, variantCount: number) {
+    setServiceCardPages((current) => {
+      const next = [...current];
+      next[cardIndex] = ((next[cardIndex] ?? 0) + 1) % variantCount;
+      return next;
+    });
   }
 
   return (
@@ -667,21 +721,49 @@ export function HomePageClient() {
                   animate={{ opacity: 1, y: 0 }}
                   className="service-card"
                   initial={{ opacity: 0, y: 20 }}
-                  key={card.title}
+                  key={`service-${index}`}
                   onPointerLeave={handleSurfaceLeave}
                   onPointerMove={handleSurfaceMove}
                   transition={{ delay: showLoader ? 0.38 + index * 0.08 : 0.18 + index * 0.05, duration: 0.46 }}
                 >
+                  <button
+                    aria-label={card.action}
+                    className="mouse-toggle"
+                    onClick={() => cycleServiceCard(index, card.variants.length)}
+                    type="button"
+                  >
+                    <span className="mouse-icon" aria-hidden="true">
+                      <span />
+                    </span>
+                  </button>
                   <div className="jar-visual" aria-hidden="true">
                     <span className="jar-lid" />
                     <span className="jar-glass">
                       <Image src="/logo-transparent.png" alt="" width={86} height={86} loading="eager" />
                     </span>
                   </div>
-                  <span className="service-index">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="service-label">{card.label}</span>
-                  <h2>{card.title}</h2>
-                  <p>{card.body}</p>
+                  <AnimatePresence mode="wait" initial={false}>
+                    {(() => {
+                      const activeIndex = serviceCardPages[index] ?? 0;
+                      const activeCard = card.variants[activeIndex] ?? card.variants[0];
+
+                      return (
+                        <motion.div
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          className="service-card-copy"
+                          exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
+                          initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                          key={`${index}-${activeIndex}`}
+                          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <span className="service-index">{String(index + 1).padStart(2, "0")}</span>
+                          <span className="service-label">{activeCard.label}</span>
+                          <h2>{activeCard.title}</h2>
+                          <p>{activeCard.body}</p>
+                        </motion.div>
+                      );
+                    })()}
+                  </AnimatePresence>
                 </motion.article>
               ))}
             </div>
