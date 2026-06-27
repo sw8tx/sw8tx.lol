@@ -47,9 +47,10 @@ const siteCopy = {
     hero: {
       eyebrow: "Web design and frontend",
       title: "Sparkle Studio",
+      credit: "by Tyler Osthoff - Web Design & Frontend",
       tagline: "Websites with soul",
       text:
-        "Custom animated portfolios, landing pages and brand sites for people who want their first impression to feel expensive, personal and smooth.",
+        "Customized animated portfolios, landing pages and brand sites for people who see a website as an investment in presence, trust and momentum.",
       ctaPrimary: "Start a project",
       ctaSecondary: "Past work",
       scroll: "Scroll",
@@ -59,11 +60,11 @@ const siteCopy = {
           variants: [
             {
               label: "Animated portfolios",
-              title: "Presence that moves",
-              body: "A stronger first screen, careful pacing and motion that makes the brand feel alive.",
+              title: "Essential presence",
+              body: "A stronger first screen, careful pacing and limited motion that makes the brand feel alive.",
             },
             {
-              label: "Recent projects",
+              label: "Signature projects",
               title: "Built like a signature",
               body: "Project sections, hover moments and scroll rhythm designed around your actual work.",
             },
@@ -75,10 +76,10 @@ const siteCopy = {
             {
               label: "Landing pages",
               title: "Pages that sell the vibe",
-              body: "Clear sections, custom visual direction and frontend polish that stays smooth on mobile.",
+              body: "Clear sections, customized visual direction and frontend polish that stays smooth on mobile.",
             },
             {
-              label: "Launch polish",
+              label: "Launch investment",
               title: "Smooth before people scroll",
               body: "Fast first loads, responsive spacing and motion that feels intentional instead of heavy.",
             },
@@ -96,7 +97,7 @@ const siteCopy = {
       label: "About",
       title: "A stronger first impression starts with design choices that feel intentional.",
       text:
-        "Sparkle sits between design and frontend, so the concept and the actual build stay in sync. The result is cleaner structure, better mobile behavior, smoother motion and a site that feels genuinely custom.",
+        "Sparkle sits between design and frontend, so the concept and the actual build stay in sync. The result is cleaner structure, better mobile behavior, smoother motion and a site that feels genuinely customized.",
     },
     process: {
       label: "Process",
@@ -133,7 +134,7 @@ const siteCopy = {
           title: "Orbis Homes",
           category: "Brand landing page",
           summary:
-            "A launch page focused on clear messaging, cleaner content flow and a more premium conversion path.",
+            "A launch page focused on clear messaging, cleaner content flow and a more premium investment path.",
         },
         {
           title: "Axis Club",
@@ -238,9 +239,10 @@ const siteCopy = {
     hero: {
       eyebrow: "Webdesign und Frontend",
       title: "Sparkle Studio",
+      credit: "by Tyler Osthoff - Web Design & Frontend",
       tagline: "Websites mit Charakter",
       text:
-        "Custom animierte Portfolios, Landingpages und Brand-Sites fuer Menschen, deren erster Eindruck hochwertig, persoenlich und smooth wirken soll.",
+        "Customized animierte Portfolios, Landingpages und Brand-Sites fuer Menschen, die ihre Website als Investment in Wirkung, Vertrauen und Momentum sehen.",
       ctaPrimary: "Projekt starten",
       ctaSecondary: "Past work",
       scroll: "Scroll",
@@ -250,11 +252,11 @@ const siteCopy = {
           variants: [
             {
               label: "Animierte Portfolios",
-              title: "Praesenz, die sich bewegt",
-              body: "Ein staerkerer First Screen, sauberer Rhythmus und Motion, die die Marke lebendig macht.",
+              title: "Essential Praesenz",
+              body: "Ein staerkerer First Screen, sauberer Rhythmus und limited Motion, die die Marke lebendig macht.",
             },
             {
-              label: "Recent projects",
+              label: "Signature projects",
               title: "Gebaut wie eine Signatur",
               body: "Projektbereiche, Hover-Momente und Scroll-Rhythmus, die um deine echten Arbeiten gebaut sind.",
             },
@@ -266,10 +268,10 @@ const siteCopy = {
             {
               label: "Landingpages",
               title: "Seiten, die den Vibe verkaufen",
-              body: "Klare Sections, eigene visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
+              body: "Klare Sections, customized visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
             },
             {
-              label: "Launch polish",
+              label: "Launch investment",
               title: "Smooth bevor man scrollt",
               body: "Schnelle First Loads, responsive Abstaende und Motion, die bewusst statt schwer wirkt.",
             },
@@ -287,7 +289,7 @@ const siteCopy = {
       label: "Ueberblick",
       title: "Ein starker erster Eindruck beginnt mit Designentscheidungen, die bewusst wirken.",
       text:
-        "Sparkle sitzt zwischen Design und Frontend, damit Konzept und echter Build zusammenpassen. Das Ergebnis ist klarere Struktur, besseres Mobile-Verhalten, ruhigere Motion und eine Seite, die wirklich custom wirkt.",
+        "Sparkle sitzt zwischen Design und Frontend, damit Konzept und echter Build zusammenpassen. Das Ergebnis ist klarere Struktur, besseres Mobile-Verhalten, ruhigere Motion und eine Seite, die wirklich customized wirkt.",
     },
     process: {
       label: "Prozess",
@@ -324,7 +326,7 @@ const siteCopy = {
           title: "Orbis Homes",
           category: "Brand-Landingpage",
           summary:
-            "Eine Launch-Page mit klarerer Message, saubererem Content-Flow und einem hochwertigeren Conversion-Pfad.",
+            "Eine Launch-Page mit klarerer Message, saubererem Content-Flow und einem hochwertigeren Investment-Pfad.",
         },
         {
           title: "Axis Club",
@@ -403,26 +405,139 @@ const siteCopy = {
   },
 } as const;
 
-const localeCopyMap: Record<Locale, keyof typeof siteCopy> = {
-  en: "en",
-  de: "de",
-  es: "en",
-  fr: "en",
-  sr: "en",
-};
+const localizedCopy = {
+  en: siteCopy.en,
+  de: siteCopy.de,
+  es: {
+    ...siteCopy.en,
+    languageLabel: "IDIOMA",
+    menuButton: { open: "Menu", close: "Cerrar", openLabel: "Abrir menu", closeLabel: "Cerrar menu" },
+    menuItems: [
+      { href: "#about", label: "Sobre" },
+      { href: "#process", label: "Proceso" },
+      { href: "#work", label: "Trabajo" },
+      { href: "#reviews", label: "Feedback" },
+      { href: "#contact", label: "Contacto" },
+    ],
+    legal: { terms: "Terminos", privacy: "Privacidad", refund: "Reembolso" },
+    hero: {
+      ...siteCopy.en.hero,
+      eyebrow: "Diseno web y frontend",
+      tagline: "Websites con alma",
+      ctaPrimary: "Iniciar proyecto",
+      ctaSecondary: "Trabajos",
+    },
+    about: {
+      ...siteCopy.en.about,
+      label: "Sobre",
+      title: "Una primera impresion fuerte empieza con decisiones de diseno intencionales.",
+    },
+    process: { ...siteCopy.en.process, label: "Proceso" },
+    work: { ...siteCopy.en.work, label: "Trabajos" },
+    reviews: {
+      ...siteCopy.en.reviews,
+      label: "Feedback",
+      previous: "Review anterior",
+      next: "Siguiente review",
+    },
+    contact: {
+      ...siteCopy.en.contact,
+      label: "Contacto",
+      emailLabel: "Email",
+    },
+  },
+  fr: {
+    ...siteCopy.en,
+    languageLabel: "LANGUE",
+    menuButton: { open: "Menu", close: "Fermer", openLabel: "Ouvrir le menu", closeLabel: "Fermer le menu" },
+    menuItems: [
+      { href: "#about", label: "A propos" },
+      { href: "#process", label: "Process" },
+      { href: "#work", label: "Travaux" },
+      { href: "#reviews", label: "Feedback" },
+      { href: "#contact", label: "Contact" },
+    ],
+    legal: { terms: "Conditions", privacy: "Privacy", refund: "Remboursement" },
+    hero: {
+      ...siteCopy.en.hero,
+      eyebrow: "Web design et frontend",
+      tagline: "Websites avec du caractere",
+      ctaPrimary: "Lancer un projet",
+      ctaSecondary: "Travaux",
+    },
+    about: {
+      ...siteCopy.en.about,
+      label: "A propos",
+      title: "Une premiere impression forte commence avec des choix de design intentionnels.",
+    },
+    process: { ...siteCopy.en.process, label: "Process" },
+    work: { ...siteCopy.en.work, label: "Travaux" },
+    reviews: {
+      ...siteCopy.en.reviews,
+      previous: "Review precedente",
+      next: "Review suivante",
+    },
+    contact: {
+      ...siteCopy.en.contact,
+      label: "Contact",
+    },
+  },
+  sr: {
+    ...siteCopy.en,
+    languageLabel: "JEZIK",
+    menuButton: { open: "Meni", close: "Zatvori", openLabel: "Otvori meni", closeLabel: "Zatvori meni" },
+    menuItems: [
+      { href: "#about", label: "O meni" },
+      { href: "#process", label: "Proces" },
+      { href: "#work", label: "Radovi" },
+      { href: "#reviews", label: "Feedback" },
+      { href: "#contact", label: "Kontakt" },
+    ],
+    legal: { terms: "Uslovi", privacy: "Privatnost", refund: "Refund" },
+    hero: {
+      ...siteCopy.en.hero,
+      eyebrow: "Web dizajn i frontend",
+      tagline: "Websites sa karakterom",
+      ctaPrimary: "Pokreni projekat",
+      ctaSecondary: "Radovi",
+    },
+    about: {
+      ...siteCopy.en.about,
+      label: "O meni",
+      title: "Jak prvi utisak pocinje od dizajn odluka koje deluju namerno.",
+    },
+    process: { ...siteCopy.en.process, label: "Proces" },
+    work: { ...siteCopy.en.work, label: "Radovi" },
+    reviews: {
+      ...siteCopy.en.reviews,
+      previous: "Prethodni review",
+      next: "Sledeci review",
+    },
+    contact: {
+      ...siteCopy.en.contact,
+      label: "Kontakt",
+    },
+  },
+} as const;
 
 function setSurfacePosition(element: HTMLElement, clientX: number, clientY: number) {
   const rect = element.getBoundingClientRect();
   const x = ((clientX - rect.left) / rect.width) * 100;
   const y = ((clientY - rect.top) / rect.height) * 100;
+  const tiltX = ((50 - y) / 50) * 5;
+  const tiltY = ((x - 50) / 50) * 6;
 
   element.style.setProperty("--pointer-x", `${x.toFixed(2)}%`);
   element.style.setProperty("--pointer-y", `${y.toFixed(2)}%`);
+  element.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+  element.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
 }
 
 function resetSurfacePosition(element: HTMLElement) {
   element.style.setProperty("--pointer-x", "50%");
   element.style.setProperty("--pointer-y", "50%");
+  element.style.setProperty("--tilt-x", "0deg");
+  element.style.setProperty("--tilt-y", "0deg");
 }
 
 function setMenuCloseMagnet(sheet: HTMLElement, clientX: number, clientY: number) {
@@ -539,7 +654,7 @@ export function HomePageClient() {
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const [menuClosing, setMenuClosing] = useState(false);
   const [typedReviewText, setTypedReviewText] = useState("");
-  const copy = siteCopy[localeCopyMap[locale]];
+  const copy = localizedCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
   const activeReview = copy.reviews.items[reviewIndex] ?? copy.reviews.items[0];
   const visibleReviewText = reduceMotion ? activeReview.text : typedReviewText;
@@ -931,6 +1046,14 @@ export function HomePageClient() {
             >
               {copy.hero.title}
             </motion.h1>
+            <motion.p
+              animate={{ opacity: 1, y: 0 }}
+              className="hero-credit"
+              initial={{ opacity: 0, y: 10 }}
+              transition={{ delay: showLoader ? 0.2 : 0.06, duration: 0.42 }}
+            >
+              {copy.hero.credit}
+            </motion.p>
             <motion.p
               animate={{ opacity: 1, y: 0 }}
               className="hero-tagline"
