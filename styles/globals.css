@@ -835,17 +835,16 @@ img {
   text-align: center;
 }
 
-.hero-stage::after {
-  content: "S";
+.hero-back-logo {
   position: absolute;
   top: 112px;
   right: max(9%, 34px);
   z-index: -1;
-  color: rgba(180, 63, 46, 0.12);
-  font-family: var(--font-serif);
-  font-size: 9rem;
-  font-weight: 800;
-  line-height: 1;
+  width: clamp(116px, 14vw, 180px);
+  height: auto;
+  opacity: 0.16;
+  object-fit: contain;
+  filter: blur(0.4px) sepia(0.2) saturate(0.9);
   transform: translate3d(var(--scroll-drift), var(--scroll-float-soft), 0) rotate(-9deg);
   animation: signaturePulse 4.8s ease-in-out infinite;
 }
@@ -1946,10 +1945,10 @@ img {
     font-size: 3.2rem;
   }
 
-  .hero-stage::after {
+  .hero-back-logo {
     top: 86px;
     right: 4%;
-    font-size: 5.5rem;
+    width: 108px;
   }
 
   .hero-credit {

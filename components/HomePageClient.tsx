@@ -46,7 +46,7 @@ const siteCopy = {
     legal: { terms: "Terms", privacy: "Privacy", refund: "Refund" },
     hero: {
       eyebrow: "Web design and frontend",
-      title: "Sparkle Studio",
+      title: "Sparkle",
       credit: "by Tyler Osthoff - Web Design & Frontend",
       tagline: "Websites with soul",
       text:
@@ -239,7 +239,7 @@ const siteCopy = {
     legal: { terms: "AGB", privacy: "Datenschutz", refund: "Rueckerstattung" },
     hero: {
       eyebrow: "Webdesign und Frontend",
-      title: "Sparkle Studio",
+      title: "Sparkle",
       credit: "by Tyler Osthoff - Webdesign & Frontend",
       tagline: "Websites mit Charakter",
       text:
@@ -1393,6 +1393,15 @@ export function HomePageClient() {
           </div>
 
           <div className="hero-stage">
+            <Image
+              aria-hidden="true"
+              className="hero-back-logo"
+              src="/logo-transparent.png"
+              alt=""
+              width={230}
+              height={230}
+              loading="eager"
+            />
             <motion.p
               animate={{ opacity: 1, y: 0 }}
               className="eyebrow"
