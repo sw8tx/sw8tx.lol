@@ -586,14 +586,14 @@ export function HomePageClient() {
 
         <section className="hero" id="home">
           <div className="floating-logo-field" aria-hidden="true">
-            {floatingLogoSlots.map((slot, index) => (
+            {floatingLogoSlots.map((slot) => (
               <span className={`float-logo ${slot}`} key={slot}>
                 <Image
                   src="/logo-transparent.png"
                   alt=""
                   width={170}
                   height={170}
-                  loading={index < 4 ? "eager" : "lazy"}
+                  loading="eager"
                 />
               </span>
             ))}
