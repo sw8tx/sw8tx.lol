@@ -310,7 +310,7 @@ function setMenuCloseMagnet(sheet: HTMLElement, clientX: number, clientY: number
   const deltaX = clientX - centerX;
   const deltaY = clientY - centerY;
   const distance = Math.hypot(deltaX, deltaY);
-  const radius = 138;
+  const radius = rect.width * 0.5 + 38;
   const pull = Math.max(0, 1 - distance / radius);
   const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
 
