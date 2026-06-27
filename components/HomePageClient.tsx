@@ -1393,15 +1393,19 @@ export function HomePageClient() {
           </div>
 
           <div className="hero-stage">
-            <Image
+            <motion.div
               aria-hidden="true"
               className="hero-back-logo"
-              src="/logo-transparent.png"
-              alt=""
-              width={230}
-              height={230}
-              loading="eager"
-            />
+              drag
+              dragConstraints={{ bottom: 72, left: -110, right: 110, top: -72 }}
+              dragElastic={0.18}
+              dragMomentum={false}
+              whileDrag={reduceMotion ? undefined : { scale: 1.08, rotate: -3 }}
+              whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+            >
+              <span className="hero-logo-tooltip">Drag me</span>
+              <Image src="/logo-transparent.png" alt="" width={520} height={520} loading="eager" priority />
+            </motion.div>
             <motion.p
               animate={{ opacity: 1, y: 0 }}
               className="eyebrow"
