@@ -150,6 +150,7 @@ const siteCopy = {
       score: "Client feedback",
       previous: "Previous review",
       next: "Next review",
+      starsLabel: "{rating} out of 5 stars",
       items: [
         {
           name: "Liam S.",
@@ -212,12 +213,12 @@ const siteCopy = {
     },
   },
   de: {
-    loaderStatus: "Materializing shapes...",
+    loaderStatus: "Formen entstehen...",
     loaderFooter: "sw8tx.lol - EST 2026",
-    languageLabel: "LANGUAGE",
+    languageLabel: "SPRACHE",
     menuButton: {
       open: "Menue",
-      close: "Close",
+      close: "Schliessen",
       openLabel: "Menue oeffnen",
       closeLabel: "Menue schliessen",
     },
@@ -239,12 +240,12 @@ const siteCopy = {
     hero: {
       eyebrow: "Webdesign und Frontend",
       title: "Sparkle Studio",
-      credit: "by Tyler Osthoff - Web Design & Frontend",
+      credit: "by Tyler Osthoff - Webdesign & Frontend",
       tagline: "Websites mit Charakter",
       text:
-        "Customized animierte Portfolios, Landingpages und Brand-Sites fuer Menschen, die ihre Website als Investment in Wirkung, Vertrauen und Momentum sehen.",
+        "Individuell animierte Portfolios, Landingpages und Brand-Sites fuer Menschen, die ihre Website als Investment in Wirkung, Vertrauen und Momentum sehen.",
       ctaPrimary: "Projekt starten",
-      ctaSecondary: "Past work",
+      ctaSecondary: "Arbeiten",
       scroll: "Scroll",
       cards: [
         {
@@ -252,11 +253,11 @@ const siteCopy = {
           variants: [
             {
               label: "Animierte Portfolios",
-              title: "Essential Praesenz",
-              body: "Ein staerkerer First Screen, sauberer Rhythmus und limited Motion, die die Marke lebendig macht.",
+              title: "Praesenz mit Substanz",
+              body: "Ein staerkerer First Screen, sauberer Rhythmus und gezielte Motion, die die Marke lebendig macht.",
             },
             {
-              label: "Signature projects",
+              label: "Signature Projekte",
               title: "Gebaut wie eine Signatur",
               body: "Projektbereiche, Hover-Momente und Scroll-Rhythmus, die um deine echten Arbeiten gebaut sind.",
             },
@@ -268,10 +269,10 @@ const siteCopy = {
             {
               label: "Landingpages",
               title: "Seiten, die den Vibe verkaufen",
-              body: "Klare Sections, customized visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
+              body: "Klare Sections, individuelle visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
             },
             {
-              label: "Launch investment",
+              label: "Launch Investment",
               title: "Smooth bevor man scrollt",
               body: "Schnelle First Loads, responsive Abstaende und Motion, die bewusst statt schwer wirkt.",
             },
@@ -281,9 +282,9 @@ const siteCopy = {
     },
     marqueeIntro: "Eine ruhige Studio-Seite kann trotzdem lebendig wirken. Darum dreht sich mein Build.",
     marqueeRows: [
-      ["Recent projects", "Portfolio refresh", "Landing pages", "Brand sites"],
-      ["Clean frontend", "Smooth motion", "Responsive polish", "Custom visuals"],
-      ["First impression", "Past work", "Launch pages", "Creator sites"],
+      ["Aktuelle Projekte", "Portfolio Refresh", "Landingpages", "Brand Sites"],
+      ["Sauberes Frontend", "Smooth Motion", "Responsive Polish", "Custom Visuals"],
+      ["Erster Eindruck", "Past Work", "Launch Pages", "Creator Sites"],
     ],
     about: {
       label: "Ueberblick",
@@ -342,6 +343,7 @@ const siteCopy = {
       score: "Kundenfeedback",
       previous: "Vorherige Review",
       next: "Naechste Review",
+      starsLabel: "{rating} von 5 Sternen",
       items: [
         {
           name: "Liam S.",
@@ -410,6 +412,7 @@ const localizedCopy = {
   de: siteCopy.de,
   es: {
     ...siteCopy.en,
+    loaderStatus: "Creando formas...",
     languageLabel: "IDIOMA",
     menuButton: { open: "Menu", close: "Cerrar", openLabel: "Abrir menu", closeLabel: "Cerrar menu" },
     menuItems: [
@@ -424,30 +427,134 @@ const localizedCopy = {
       ...siteCopy.en.hero,
       eyebrow: "Diseno web y frontend",
       tagline: "Websites con alma",
+      text:
+        "Portfolios animados, landing pages y sitios de marca hechos a medida para personas que ven su web como una inversion en presencia, confianza y momentum.",
       ctaPrimary: "Iniciar proyecto",
       ctaSecondary: "Trabajos",
+      cards: [
+        {
+          action: "Mostrar siguiente detalle",
+          variants: [
+            {
+              label: "Portfolios animados",
+              title: "Presencia esencial",
+              body: "Un first screen mas fuerte, ritmo cuidado y motion limitada que hace que la marca se sienta viva.",
+            },
+            {
+              label: "Proyectos signature",
+              title: "Construido como una firma",
+              body: "Secciones de proyecto, hover moments y ritmo de scroll disenados alrededor de tu trabajo real.",
+            },
+          ],
+        },
+        {
+          action: "Mostrar siguiente detalle",
+          variants: [
+            {
+              label: "Landing pages",
+              title: "Paginas que venden el vibe",
+              body: "Secciones claras, direccion visual custom y polish frontend que se mantiene suave en mobile.",
+            },
+            {
+              label: "Launch investment",
+              title: "Smooth antes del scroll",
+              body: "First loads rapidos, spacing responsive y motion que se siente intencional, no pesada.",
+            },
+          ],
+        },
+      ],
     },
+    marqueeIntro: "Un sitio de estudio tranquilo tambien puede sentirse vivo. Esta es la mezcla que construyo.",
+    marqueeRows: [
+      ["Proyectos recientes", "Refresh de portfolio", "Landing pages", "Sitios de marca"],
+      ["Frontend limpio", "Motion suave", "Responsive polish", "Visuales custom"],
+      ["Primera impresion", "Trabajos", "Launch pages", "Sitios de creator"],
+    ],
     about: {
       ...siteCopy.en.about,
       label: "Sobre",
       title: "Una primera impresion fuerte empieza con decisiones de diseno intencionales.",
+      text:
+        "Sparkle une diseno y frontend para que el concepto y el build real se mantengan alineados. El resultado es estructura mas clara, mejor comportamiento mobile, motion mas suave y una web que se siente realmente custom.",
     },
-    process: { ...siteCopy.en.process, label: "Proceso" },
-    work: { ...siteCopy.en.work, label: "Trabajos" },
+    process: {
+      label: "Proceso",
+      title: "Diseno preciso, codigo limpio, motion suave.",
+      items: [
+        {
+          num: "01",
+          title: "Direccion antes de decoracion",
+          body: "Definimos primero el feeling de marca, referencias y jerarquia para que el diseno tenga una postura clara desde el inicio.",
+        },
+        {
+          num: "02",
+          title: "Diseno que se siente propio",
+          body: "Layouts, ritmo tipografico y visuales se construyen alrededor de la marca, no desde un template generico.",
+        },
+        {
+          num: "03",
+          title: "Build limpio y polish",
+          body: "Frontend responsive, motion controlada y ajustes finales de spacing mantienen el sitio fuerte en desktop y mobile.",
+        },
+      ],
+    },
+    work: {
+      label: "Trabajos",
+      title: "Direcciones seleccionadas para marcas que necesitan mas presencia online.",
+      items: [
+        {
+          title: "Nova Studio",
+          category: "Portfolio creativo",
+          summary:
+            "Un sitio de estudio mas calmado con tipografia grande, mejor framing de proyectos y motion que se siente premium.",
+        },
+        {
+          title: "Orbis Homes",
+          category: "Landing de marca",
+          summary:
+            "Una launch page enfocada en mensaje claro, flujo de contenido limpio y una ruta de inversion mas premium.",
+        },
+        {
+          title: "Axis Club",
+          category: "Personal brand site",
+          summary:
+            "Un sistema de portfolio custom para un creator que necesitaba mas presencia online sin fake tech styling.",
+        },
+      ],
+    },
     reviews: {
       ...siteCopy.en.reviews,
       label: "Feedback",
+      title: "Lo que la gente suele notar primero.",
+      score: "Feedback de clientes",
       previous: "Review anterior",
       next: "Siguiente review",
+      starsLabel: "{rating} de 5 estrellas",
+      items: [
+        { name: "Liam S.", rating: 5, text: "El sitio por fin se veia custom, no como salido de una carpeta de templates trendy." },
+        { name: "Maya R.", rating: 5, text: "Lo que mas cambio fue la primera impresion. Se sentia profesional antes de leer mucho." },
+        { name: "Noah K.", rating: 4, text: "La motion le dio confianza a la marca sin intentar ser toda la marca." },
+        { name: "Elena V.", rating: 5, text: "El layout se siente calmado, pero con suficiente movimiento para que la marca viva." },
+        { name: "Jonas M.", rating: 4, text: "Por fin funciona en mobile sin sentirse como una version desktop apretada." },
+        { name: "Ava P.", rating: 5, text: "La nueva direccion hizo que el proyecto se vea mas premium sin complicarlo." },
+        { name: "Theo B.", rating: 3, text: "La estructura quedo mucho mas clara. La gente entiende mas rapido que hago." },
+        { name: "Sofia L.", rating: 5, text: "La pagina ahora tiene personalidad. Se siente disenada, no solo ensamblada." },
+        { name: "Milan C.", rating: 4, text: "El loading y los scroll moments hacen que todo se sienta mas suave e intencional." },
+        { name: "Nina H.", rating: 5, text: "Le dio a la marca mas presencia online sin perder el toque personal." },
+      ],
     },
     contact: {
       ...siteCopy.en.contact,
       label: "Contacto",
+      title: "Si tu sitio se siente generico, podemos arreglar la primera impresion.",
+      text:
+        "Manda una nota corta con lo que estas construyendo y lo que ahora se siente mal. Te devuelvo una direccion mas precisa y custom.",
       emailLabel: "Email",
     },
   },
   fr: {
     ...siteCopy.en,
+    loaderStatus: "Les formes prennent vie...",
     languageLabel: "LANGUE",
     menuButton: { open: "Menu", close: "Fermer", openLabel: "Ouvrir le menu", closeLabel: "Fermer le menu" },
     menuItems: [
@@ -462,28 +569,132 @@ const localizedCopy = {
       ...siteCopy.en.hero,
       eyebrow: "Web design et frontend",
       tagline: "Websites avec du caractere",
+      text:
+        "Portfolios animes, landing pages et sites de marque sur mesure pour celles et ceux qui voient leur site comme un investissement en presence, confiance et momentum.",
       ctaPrimary: "Lancer un projet",
       ctaSecondary: "Travaux",
+      cards: [
+        {
+          action: "Afficher le detail suivant",
+          variants: [
+            {
+              label: "Portfolios animes",
+              title: "Presence essentielle",
+              body: "Un first screen plus fort, un rythme soigne et une motion limitee qui rend la marque vivante.",
+            },
+            {
+              label: "Projets signature",
+              title: "Construit comme une signature",
+              body: "Sections projet, hover moments et rythme de scroll concus autour de ton vrai travail.",
+            },
+          ],
+        },
+        {
+          action: "Afficher le detail suivant",
+          variants: [
+            {
+              label: "Landing pages",
+              title: "Pages qui vendent le vibe",
+              body: "Sections claires, direction visuelle custom et polish frontend qui reste fluide sur mobile.",
+            },
+            {
+              label: "Launch investment",
+              title: "Smooth avant le scroll",
+              body: "First loads rapides, spacing responsive et motion intentionnelle plutot que lourde.",
+            },
+          ],
+        },
+      ],
     },
+    marqueeIntro: "Un site studio calme peut quand meme sembler vivant. C'est le mix que je construis.",
+    marqueeRows: [
+      ["Projets recents", "Refresh portfolio", "Landing pages", "Sites de marque"],
+      ["Frontend propre", "Motion fluide", "Responsive polish", "Visuels custom"],
+      ["Premiere impression", "Travaux", "Launch pages", "Sites creator"],
+    ],
     about: {
       ...siteCopy.en.about,
       label: "A propos",
       title: "Une premiere impression forte commence avec des choix de design intentionnels.",
+      text:
+        "Sparkle relie design et frontend pour garder le concept et le build reel synchronises. Le resultat: structure plus claire, meilleur comportement mobile, motion plus douce et un site vraiment custom.",
     },
-    process: { ...siteCopy.en.process, label: "Process" },
-    work: { ...siteCopy.en.work, label: "Travaux" },
+    process: {
+      label: "Process",
+      title: "Design net, code propre, motion fluide.",
+      items: [
+        {
+          num: "01",
+          title: "Direction avant decoration",
+          body: "On definit d'abord le feeling de marque, les references et la hierarchie pour donner au design un point de vue clair.",
+        },
+        {
+          num: "02",
+          title: "Un design qui semble propre a la marque",
+          body: "Layouts, rythme typographique et visuels sont construits autour de la marque, pas empruntes a un template generique.",
+        },
+        {
+          num: "03",
+          title: "Build propre et polish",
+          body: "Frontend responsive, motion controlee et derniers ajustements gardent le site net sur desktop et mobile.",
+        },
+      ],
+    },
+    work: {
+      label: "Travaux",
+      title: "Directions selectionnees pour des marques qui veulent plus de presence online.",
+      items: [
+        {
+          title: "Nova Studio",
+          category: "Portfolio creatif",
+          summary:
+            "Un site studio plus calme avec une typo plus grande, un meilleur cadrage projet et une motion premium.",
+        },
+        {
+          title: "Orbis Homes",
+          category: "Landing de marque",
+          summary:
+            "Une launch page centree sur un message clair, un flux plus propre et un parcours d'investissement plus premium.",
+        },
+        {
+          title: "Axis Club",
+          category: "Personal brand site",
+          summary:
+            "Un systeme portfolio custom pour un creator qui voulait une presence plus forte sans fake tech styling.",
+        },
+      ],
+    },
     reviews: {
       ...siteCopy.en.reviews,
+      title: "Ce que les gens remarquent souvent en premier.",
+      score: "Feedback client",
       previous: "Review precedente",
       next: "Review suivante",
+      starsLabel: "{rating} sur 5 etoiles",
+      items: [
+        { name: "Liam S.", rating: 5, text: "Le site avait enfin l'air custom, pas sorti d'un dossier de templates tendance." },
+        { name: "Maya R.", rating: 5, text: "Ce qui a le plus change, c'est la premiere impression. C'etait pro avant meme de lire." },
+        { name: "Noah K.", rating: 4, text: "La motion a donne confiance a la marque sans essayer d'etre toute la marque." },
+        { name: "Elena V.", rating: 5, text: "Le layout est calme, mais avec assez de mouvement pour rendre la marque vivante." },
+        { name: "Jonas M.", rating: 4, text: "Enfin un rendu mobile qui ne ressemble pas a une version desktop compressee." },
+        { name: "Ava P.", rating: 5, text: "La nouvelle direction rend le projet plus premium sans le rendre complique." },
+        { name: "Theo B.", rating: 3, text: "La structure est beaucoup plus claire. Les gens comprennent plus vite ce que je fais." },
+        { name: "Sofia L.", rating: 5, text: "La page a maintenant de la personnalite. Elle semble designee, pas assemblee." },
+        { name: "Milan C.", rating: 4, text: "Le loading et les moments de scroll rendent tout plus fluide et intentionnel." },
+        { name: "Nina H.", rating: 5, text: "La marque a gagne en presence online sans perdre le cote personnel." },
+      ],
     },
     contact: {
       ...siteCopy.en.contact,
       label: "Contact",
+      title: "Si ton site semble generique, on peut reparer la premiere impression.",
+      text:
+        "Envoie une note courte avec ce que tu construis et ce qui semble encore off. Je reviens avec une direction plus nette et plus custom.",
     },
   },
   sr: {
     ...siteCopy.en,
+    loaderStatus: "Oblici nastaju...",
     languageLabel: "JEZIK",
     menuButton: { open: "Meni", close: "Zatvori", openLabel: "Otvori meni", closeLabel: "Zatvori meni" },
     menuItems: [
@@ -498,24 +709,127 @@ const localizedCopy = {
       ...siteCopy.en.hero,
       eyebrow: "Web dizajn i frontend",
       tagline: "Websites sa karakterom",
+      text:
+        "Custom animirani portfolio sajtovi, landing stranice i brand sajtovi za ljude koji website vide kao investiciju u prisustvo, poverenje i momentum.",
       ctaPrimary: "Pokreni projekat",
       ctaSecondary: "Radovi",
+      cards: [
+        {
+          action: "Prikazi sledeci detalj",
+          variants: [
+            {
+              label: "Animirani portfolio",
+              title: "Essential prisustvo",
+              body: "Jaci first screen, pazljiv ritam i limited motion koji brend cini zivim.",
+            },
+            {
+              label: "Signature projekti",
+              title: "Gradjeno kao potpis",
+              body: "Project sekcije, hover momenti i scroll ritam dizajnirani oko tvog stvarnog rada.",
+            },
+          ],
+        },
+        {
+          action: "Prikazi sledeci detalj",
+          variants: [
+            {
+              label: "Landing stranice",
+              title: "Stranice koje prodaju vibe",
+              body: "Jasne sekcije, custom vizuelni pravac i frontend polish koji ostaje smooth na mobilnom.",
+            },
+            {
+              label: "Launch investment",
+              title: "Smooth pre scrolla",
+              body: "Brzi first loads, responsive spacing i motion koji deluje namerno umesto tesko.",
+            },
+          ],
+        },
+      ],
     },
+    marqueeIntro: "Miran studio sajt i dalje moze da deluje zivo. Oko tog miksa gradim.",
+    marqueeRows: [
+      ["Novi projekti", "Portfolio refresh", "Landing stranice", "Brand sajtovi"],
+      ["Cist frontend", "Smooth motion", "Responsive polish", "Custom vizuali"],
+      ["Prvi utisak", "Radovi", "Launch stranice", "Creator sajtovi"],
+    ],
     about: {
       ...siteCopy.en.about,
       label: "O meni",
       title: "Jak prvi utisak pocinje od dizajn odluka koje deluju namerno.",
+      text:
+        "Sparkle spaja dizajn i frontend, tako da koncept i pravi build ostaju uskladjeni. Rezultat je jasnija struktura, bolje mobile ponasanje, mirnija motion animacija i sajt koji stvarno deluje custom.",
     },
-    process: { ...siteCopy.en.process, label: "Proces" },
-    work: { ...siteCopy.en.work, label: "Radovi" },
+    process: {
+      label: "Proces",
+      title: "Ostar dizajn, cist kod, smooth motion.",
+      items: [
+        {
+          num: "01",
+          title: "Pravac pre dekoracije",
+          body: "Prvo definisemo osecaj brenda, reference i hijerarhiju, da dizajn od starta ima jasan stav.",
+        },
+        {
+          num: "02",
+          title: "Dizajn koji deluje tvoje",
+          body: "Layout, tipografski ritam i vizuali grade se oko brenda, umesto da izgledaju pozajmljeno iz genericnog template-a.",
+        },
+        {
+          num: "03",
+          title: "Cist build i polish",
+          body: "Responsive frontend, kontrolisana motion animacija i finalni spacing drze sajt ostar na desktopu i mobilnom.",
+        },
+      ],
+    },
+    work: {
+      label: "Radovi",
+      title: "Izabrani pravci za brendove kojima treba jace online prisustvo.",
+      items: [
+        {
+          title: "Nova Studio",
+          category: "Kreativni portfolio",
+          summary:
+            "Mirniji studio sajt sa vecom tipografijom, jacim project framingom i motionom koji deluje premium.",
+        },
+        {
+          title: "Orbis Homes",
+          category: "Brand landing page",
+          summary:
+            "Launch page fokusiran na jasnu poruku, cistiji tok sadrzaja i premium investment putanju.",
+        },
+        {
+          title: "Axis Club",
+          category: "Personal brand site",
+          summary:
+            "Custom portfolio sistem za creatora kome je trebalo jace online prisustvo bez fake tech stylinga.",
+        },
+      ],
+    },
     reviews: {
       ...siteCopy.en.reviews,
+      title: "Sta ljudi najcesce prvo primete.",
+      score: "Feedback klijenata",
       previous: "Prethodni review",
       next: "Sledeci review",
+      starsLabel: "{rating} od 5 zvezdica",
+      items: [
+        { name: "Liam S.", rating: 5, text: "Sajt je konacno izgledao custom, a ne kao iz trendy template foldera." },
+        { name: "Maya R.", rating: 5, text: "Najvise se promenio prvi utisak. Delovalo je profesionalno pre nego sto ljudi krenu da citaju." },
+        { name: "Noah K.", rating: 4, text: "Motion je brendu dao sigurnost, bez toga da pokusa da bude ceo brend." },
+        { name: "Elena V.", rating: 5, text: "Layout deluje mirno, ali ima dovoljno pokreta da brend deluje zivo." },
+        { name: "Jonas M.", rating: 4, text: "Konacno radi na mobilnom bez osecaja da je desktop verzija samo stisnuta." },
+        { name: "Ava P.", rating: 5, text: "Novi pravac je ucinio projekat premium, bez nepotrebnog komplikovanja." },
+        { name: "Theo B.", rating: 3, text: "Struktura je mnogo jasnija. Ljudi brze razumeju sta radim." },
+        { name: "Sofia L.", rating: 5, text: "Stranica sada ima licnost. Deluje dizajnirano, ne samo sklopljeno." },
+        { name: "Milan C.", rating: 4, text: "Loading i scroll momenti cine ceo sajt smooth i namernim." },
+        { name: "Nina H.", rating: 5, text: "Brend ima jace online prisustvo bez gubitka licnog osecaja." },
+      ],
     },
     contact: {
       ...siteCopy.en.contact,
       label: "Kontakt",
+      title: "Ako tvoj sajt deluje genericno, mozemo da popravimo prvi utisak.",
+      text:
+        "Posalji kratku poruku sa tim sta gradis i sta trenutno deluje off. Vracam se sa pravcem koji deluje ostrije i vise custom.",
     },
   },
 } as const;
@@ -1147,7 +1461,7 @@ export function HomePageClient() {
                             initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
                             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                           >
-                            <span className="service-index">{String(activeIndex + 1).padStart(2, "0")}</span>
+                            <span className="service-index">{String(index + 1).padStart(2, "0")}</span>
                             <span className="service-label">{activeCard.label}</span>
                             <h2>{activeCard.title}</h2>
                             <p>{activeCard.body}</p>
@@ -1247,7 +1561,10 @@ export function HomePageClient() {
                 {visibleReviewText}
                 <span aria-hidden="true" className="type-caret" />
               </p>
-              <div className="review-stars" aria-label={`${activeReview.rating} out of 5 stars`}>
+              <div
+                className="review-stars"
+                aria-label={copy.reviews.starsLabel.replace("{rating}", String(activeReview.rating))}
+              >
                 {Array.from({ length: 5 }, (_, index) => (
                   <span className={index < activeReview.rating ? "is-filled" : ""} key={index}>
                     ★
