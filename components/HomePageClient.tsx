@@ -30,6 +30,12 @@ const siteCopy = {
     languageLabel: "LANGUAGE",
     menuButton: { open: "Menu", close: "Close", openLabel: "Open menu", closeLabel: "Close menu" },
     menuBadge: "Sparkle",
+    tabTitles: [
+      "Sparkle | Custom Animated Websites",
+      "Sparkle | Portfolios That Move",
+      "Sparkle | Landing Pages With Soul",
+      "Sparkle | Clean Frontend Polish",
+    ],
     menuItems: [
       { href: "#about", label: "About" },
       { href: "#process", label: "Process" },
@@ -141,10 +147,59 @@ const siteCopy = {
       label: "Feedback",
       title: "What people tend to notice first.",
       score: "Client feedback",
+      previous: "Previous review",
+      next: "Next review",
       items: [
-        "The site finally looked custom instead of looking like it came from a trendy template folder.",
-        "What changed most was the first impression. It felt professional before people even started reading.",
-        "The motion added confidence to the brand instead of trying to be the whole brand.",
+        {
+          name: "Liam S.",
+          rating: 5,
+          text: "The site finally looked custom instead of looking like it came from a trendy template folder.",
+        },
+        {
+          name: "Maya R.",
+          rating: 5,
+          text: "What changed most was the first impression. It felt professional before people even started reading.",
+        },
+        {
+          name: "Noah K.",
+          rating: 4,
+          text: "The motion added confidence to the brand instead of trying to be the whole brand.",
+        },
+        {
+          name: "Elena V.",
+          rating: 5,
+          text: "The layout feels calm, but still has enough movement to make the brand feel alive.",
+        },
+        {
+          name: "Jonas M.",
+          rating: 4,
+          text: "It finally works on mobile without feeling like the desktop version was squeezed down.",
+        },
+        {
+          name: "Ava P.",
+          rating: 5,
+          text: "The new direction made the project look more premium without making it complicated.",
+        },
+        {
+          name: "Theo B.",
+          rating: 3,
+          text: "The structure got much clearer. People understood what I do faster.",
+        },
+        {
+          name: "Sofia L.",
+          rating: 5,
+          text: "The page has personality now. It feels designed instead of assembled.",
+        },
+        {
+          name: "Milan C.",
+          rating: 4,
+          text: "The loading and scroll moments made the whole site feel smoother and more intentional.",
+        },
+        {
+          name: "Nina H.",
+          rating: 5,
+          text: "It gave the brand a stronger online presence without losing the personal feel.",
+        },
       ],
     },
     contact: {
@@ -166,6 +221,12 @@ const siteCopy = {
       closeLabel: "Menue schliessen",
     },
     menuBadge: "Sparkle",
+    tabTitles: [
+      "Sparkle | Custom animierte Websites",
+      "Sparkle | Portfolios mit Motion",
+      "Sparkle | Landingpages mit Charakter",
+      "Sparkle | Sauberer Frontend-Polish",
+    ],
     menuItems: [
       { href: "#about", label: "Ueberblick" },
       { href: "#process", label: "Prozess" },
@@ -277,10 +338,59 @@ const siteCopy = {
       label: "Feedback",
       title: "Was Menschen meistens sofort bemerken.",
       score: "Kundenfeedback",
+      previous: "Vorherige Review",
+      next: "Naechste Review",
       items: [
-        "Die Seite sah endlich custom aus und nicht mehr wie aus einem trendigen Template-Ordner.",
-        "Am meisten veraendert hat sich der erste Eindruck. Es wirkte professionell, bevor man ueberhaupt viel gelesen hat.",
-        "Die Motion hat der Marke Selbstbewusstsein gegeben, statt selbst die ganze Marke sein zu wollen.",
+        {
+          name: "Liam S.",
+          rating: 5,
+          text: "Die Seite sah endlich custom aus und nicht mehr wie aus einem trendigen Template-Ordner.",
+        },
+        {
+          name: "Maya R.",
+          rating: 5,
+          text: "Am meisten veraendert hat sich der erste Eindruck. Es wirkte professionell, bevor man viel gelesen hat.",
+        },
+        {
+          name: "Noah K.",
+          rating: 4,
+          text: "Die Motion hat der Marke Selbstbewusstsein gegeben, statt selbst die ganze Marke sein zu wollen.",
+        },
+        {
+          name: "Elena V.",
+          rating: 5,
+          text: "Das Layout wirkt ruhig, aber hat genug Bewegung, damit die Marke lebendig wirkt.",
+        },
+        {
+          name: "Jonas M.",
+          rating: 4,
+          text: "Mobil funktioniert es endlich, ohne wie eine zusammengedrueckte Desktop-Seite zu wirken.",
+        },
+        {
+          name: "Ava P.",
+          rating: 5,
+          text: "Die neue Richtung wirkt hochwertiger, ohne unnoetig kompliziert zu werden.",
+        },
+        {
+          name: "Theo B.",
+          rating: 3,
+          text: "Die Struktur ist viel klarer geworden. Menschen verstehen schneller, was ich mache.",
+        },
+        {
+          name: "Sofia L.",
+          rating: 5,
+          text: "Die Seite hat jetzt Persoenlichkeit. Sie wirkt gestaltet statt nur zusammengebaut.",
+        },
+        {
+          name: "Milan C.",
+          rating: 4,
+          text: "Loading und Scroll-Momente lassen alles deutlich smoother und bewusster wirken.",
+        },
+        {
+          name: "Nina H.",
+          rating: 5,
+          text: "Die Marke wirkt online staerker, ohne den persoenlichen Charakter zu verlieren.",
+        },
       ],
     },
     contact: {
@@ -428,8 +538,11 @@ export function HomePageClient() {
   const [locale, setLocale] = useState<Locale>("en");
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const [menuClosing, setMenuClosing] = useState(false);
+  const [typedReviewText, setTypedReviewText] = useState("");
   const copy = siteCopy[localeCopyMap[locale]];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
+  const activeReview = copy.reviews.items[reviewIndex] ?? copy.reviews.items[0];
+  const visibleReviewText = reduceMotion ? activeReview.text : typedReviewText;
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -517,12 +630,76 @@ export function HomePageClient() {
   }, [locale]);
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      setReviewIndex((current) => (current + 1) % copy.reviews.items.length);
-    }, 5200);
+    let frame: number | undefined;
+    let timeout: number | undefined;
+    let position = 0;
+    let phase: "typing" | "pausing" | "erasing" = "typing";
+    const fullText = activeReview.text;
 
-    return () => window.clearInterval(interval);
-  }, [copy.reviews.items.length]);
+    if (reduceMotion) {
+      return;
+    }
+
+    const tick = () => {
+      if (phase === "typing") {
+        position += 1;
+        setTypedReviewText(fullText.slice(0, position));
+
+        if (position >= fullText.length) {
+          phase = "pausing";
+          timeout = window.setTimeout(tick, 1700);
+          return;
+        }
+
+        timeout = window.setTimeout(tick, 26 + Math.random() * 18);
+        return;
+      }
+
+      if (phase === "pausing") {
+        phase = "erasing";
+      }
+
+      position -= 1;
+      setTypedReviewText(fullText.slice(0, Math.max(0, position)));
+
+      if (position <= 0) {
+        frame = window.requestAnimationFrame(() => {
+          setReviewIndex((current) => (current + 1) % copy.reviews.items.length);
+        });
+        return;
+      }
+
+      timeout = window.setTimeout(tick, 14);
+    };
+
+    timeout = window.setTimeout(() => {
+      setTypedReviewText("");
+      tick();
+    }, 220);
+
+    return () => {
+      if (timeout) window.clearTimeout(timeout);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [activeReview.text, copy.reviews.items.length, reduceMotion]);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      document.title = copy.tabTitles[0];
+      return;
+    }
+
+    document.title = copy.tabTitles[0];
+
+    const interval = window.setInterval(() => {
+      document.title = copy.tabTitles[(Math.floor(Date.now() / 2600) % copy.tabTitles.length)];
+    }, 2600);
+
+    return () => {
+      window.clearInterval(interval);
+      document.title = copy.tabTitles[0];
+    };
+  }, [copy.tabTitles, reduceMotion]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -573,6 +750,10 @@ export function HomePageClient() {
       next[cardIndex] = ((next[cardIndex] ?? 0) + 1) % variantCount;
       return next;
     });
+  }
+
+  function selectReview(direction: -1 | 1) {
+    setReviewIndex((current) => (current + direction + copy.reviews.items.length) % copy.reviews.items.length);
   }
 
   return (
@@ -925,8 +1106,31 @@ export function HomePageClient() {
               <h2 className="section-title">{copy.reviews.title}</h2>
             </div>
             <div className="review-shell reveal reveal-scale delay-1">
-              <span className="review-score">{copy.reviews.score}</span>
-              <p>{copy.reviews.items[reviewIndex]}</p>
+              <div className="review-topline">
+                <div>
+                  <span className="review-score">{copy.reviews.score}</span>
+                  <span className="review-name">{activeReview.name}</span>
+                </div>
+                <div className="review-controls">
+                  <button aria-label={copy.reviews.previous} onClick={() => selectReview(-1)} type="button">
+                    <span aria-hidden="true">←</span>
+                  </button>
+                  <button aria-label={copy.reviews.next} onClick={() => selectReview(1)} type="button">
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+              <p className="review-typewriter">
+                {visibleReviewText}
+                <span aria-hidden="true" className="type-caret" />
+              </p>
+              <div className="review-stars" aria-label={`${activeReview.rating} out of 5 stars`}>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <span className={index < activeReview.rating ? "is-filled" : ""} key={index}>
+                    ★
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </section>
