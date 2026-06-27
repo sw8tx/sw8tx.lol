@@ -610,6 +610,7 @@ img {
 
 .menu-link {
   --link-shift: 0px;
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 14px;
@@ -624,7 +625,9 @@ img {
   transform: translateX(var(--link-shift));
   transition:
     color 180ms ease,
-    transform 220ms var(--ease);
+    transform 220ms var(--ease),
+    filter 220ms ease;
+  will-change: transform;
 }
 
 .menu-link::before {
@@ -702,6 +705,88 @@ img {
   min-height: 34px;
   padding: 7px 12px;
   font-size: 0.92rem;
+}
+
+.menu-jump-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 145;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 250, 240, 0.88), rgba(238, 224, 203, 0.72) 42%, rgba(198, 169, 129, 0.72)),
+    rgba(238, 224, 203, 0.86);
+  backdrop-filter: blur(15px);
+}
+
+.menu-jump-gate::before,
+.menu-jump-gate::after {
+  content: "";
+  position: absolute;
+  inset: -22% -18%;
+  opacity: 0.5;
+  background:
+    linear-gradient(104deg, transparent 0 36%, rgba(83, 52, 35, 0.14) 37%, transparent 38%),
+    linear-gradient(104deg, transparent 0 48%, rgba(255, 250, 240, 0.78) 50%, transparent 53%),
+    linear-gradient(104deg, transparent 0 61%, rgba(180, 63, 46, 0.18) 62%, transparent 63%);
+  transform: translate3d(-46%, 0, 0);
+  animation: menuJumpSweep 920ms var(--ease) forwards;
+}
+
+.menu-jump-gate::after {
+  opacity: 0.28;
+  transform: translate3d(44%, 0, 0) scaleX(-1);
+  animation-delay: 90ms;
+}
+
+.menu-jump-lines {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 250, 240, 0.76), transparent),
+    radial-gradient(circle at 50% 50%, transparent 0 26%, rgba(83, 52, 35, 0.08) 27% 28%, transparent 29%);
+  background-size: 210px 100%, 52px 52px;
+  animation: menuJumpTexture 860ms ease-out forwards;
+}
+
+.menu-jump-card {
+  position: relative;
+  z-index: 1;
+  min-width: min(310px, calc(100vw - 42px));
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 24px 28px 26px;
+  border: 1px solid rgba(83, 52, 35, 0.2);
+  border-radius: 28px;
+  color: var(--ink);
+  text-align: center;
+  background: rgba(255, 247, 232, 0.72);
+  box-shadow: 0 30px 80px rgba(83, 52, 35, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.menu-jump-card img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  animation: menuJumpLogo 780ms var(--ease) both;
+}
+
+.menu-jump-card span {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.menu-jump-card strong {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 0.9;
 }
 
 .hero {
@@ -1785,6 +1870,7 @@ img {
   .menu-link:hover {
     color: var(--rust);
     --link-shift: 10px;
+    filter: drop-shadow(0 12px 18px rgba(83, 52, 35, 0.14));
   }
 
   .menu-link:hover::before {
@@ -1797,7 +1883,7 @@ img {
   }
 
   .menu-link:hover .menu-link-text {
-    transform: translateX(5px) scale(1.02);
+    transform: translateX(5px) skewX(-2deg) scale(1.02);
   }
 
   .process-card:hover,
@@ -1991,6 +2077,17 @@ img {
 
   .menu-link {
     font-size: 2.05rem;
+  }
+
+  .menu-jump-card {
+    min-width: min(282px, calc(100vw - 30px));
+    padding: 20px 22px 22px;
+    border-radius: 24px;
+  }
+
+  .menu-jump-card img {
+    width: 46px;
+    height: 46px;
   }
 
   .menu-panel {
@@ -2657,6 +2754,58 @@ img {
   100% {
     opacity: 0;
     transform: rotate(820deg) scale(0.28);
+  }
+}
+
+@keyframes menuJumpSweep {
+  0% {
+    opacity: 0;
+    transform: translate3d(-52%, 0, 0) skewX(-9deg);
+  }
+
+  28% {
+    opacity: 0.62;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(58%, 0, 0) skewX(-9deg);
+  }
+}
+
+@keyframes menuJumpTexture {
+  0% {
+    opacity: 0;
+    background-position: -210px 0, 0 0;
+  }
+
+  38% {
+    opacity: 0.45;
+  }
+
+  100% {
+    opacity: 0.08;
+    background-position: 210px 0, 18px 18px;
+  }
+}
+
+@keyframes menuJumpLogo {
+  0% {
+    opacity: 0;
+    clip-path: inset(48% 48% 48% 48%);
+    transform: rotate(-18deg) scale(0.7);
+  }
+
+  58% {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: rotate(7deg) scale(1.08);
+  }
+
+  100% {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: rotate(-3deg) scale(1);
   }
 }
 

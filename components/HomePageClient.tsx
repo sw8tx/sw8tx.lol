@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import { AnimatePresence, motion, type PanInfo, useReducedMotion } from "framer-motion";
+import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useState } from "react";
 
 const primaryEmail = "info@tylerosthoff.xyz";
@@ -22,6 +22,12 @@ function isLocale(value: string | null): value is Locale {
 }
 
 const floatingLogoSlots = Array.from({ length: 8 }, (_, index) => `float-logo-${index + 1}`);
+const heroLogoDragBounds = { x: 118, y: 82 };
+const heroLogoStorageKey = "sparkle-hero-logo-position";
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
 
 const siteCopy = {
   en: {
@@ -967,6 +973,9 @@ export function HomePageClient() {
   const [locale, setLocale] = useState<Locale>("en");
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const [menuClosing, setMenuClosing] = useState(false);
+  const [menuJump, setMenuJump] = useState<{ href: string; label: string } | null>(null);
+  const [logoPositionReady, setLogoPositionReady] = useState(false);
+  const [heroLogoPosition, setHeroLogoPosition] = useState({ x: 0, y: 0 });
   const [typedReviewText, setTypedReviewText] = useState("");
   const copy = localizedCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
@@ -995,6 +1004,36 @@ export function HomePageClient() {
 
     return () => window.clearTimeout(id);
   }, []);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      const storedPosition = window.localStorage.getItem(heroLogoStorageKey);
+
+      if (storedPosition) {
+        try {
+          const parsed = JSON.parse(storedPosition) as { x?: unknown; y?: unknown };
+
+          if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+            setHeroLogoPosition({
+              x: clamp(parsed.x, -heroLogoDragBounds.x, heroLogoDragBounds.x),
+              y: clamp(parsed.y, -heroLogoDragBounds.y, heroLogoDragBounds.y),
+            });
+          }
+        } catch {
+          window.localStorage.removeItem(heroLogoStorageKey);
+        }
+      }
+
+      setLogoPositionReady(true);
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (!logoPositionReady) return;
+    window.localStorage.setItem(heroLogoStorageKey, JSON.stringify(heroLogoPosition));
+  }, [heroLogoPosition, logoPositionReady]);
 
   useEffect(() => {
     if (reduceMotion) {
@@ -1222,6 +1261,30 @@ export function HomePageClient() {
     }, 360);
   }
 
+  function handleHeroLogoDragEnd(_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) {
+    setHeroLogoPosition((current) => ({
+      x: clamp(current.x + info.offset.x, -heroLogoDragBounds.x, heroLogoDragBounds.x),
+      y: clamp(current.y + info.offset.y, -heroLogoDragBounds.y, heroLogoDragBounds.y),
+    }));
+  }
+
+  function jumpToMenuSection(event: ReactMouseEvent<HTMLAnchorElement>, item: { href: string; label: string }) {
+    event.preventDefault();
+    setMenuOpen(false);
+    setLanguageOpen(false);
+    setMenuJump(item);
+
+    const scrollDelay = reduceMotion ? 0 : 430;
+    const releaseDelay = reduceMotion ? 180 : 1180;
+
+    window.setTimeout(() => {
+      const target = document.querySelector<HTMLElement>(item.href);
+      target?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    }, scrollDelay);
+
+    window.setTimeout(() => setMenuJump(null), releaseDelay);
+  }
+
   function cycleServiceCard(cardIndex: number, variantCount: number) {
     setServiceCardPages((current) => {
       const next = [...current];
@@ -1352,7 +1415,8 @@ export function HomePageClient() {
                         href={item.href}
                         initial={{ opacity: 0, x: 18, y: 10 }}
                         key={item.href}
-                        onClick={() => setMenuOpen(false)}
+                        onClick={(event) => jumpToMenuSection(event, item)}
+                        whileTap={reduceMotion ? undefined : { scale: 0.985, x: 14 }}
                         transition={{ delay: 0.05 + index * 0.055, duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
                       >
                         <span className="menu-link-meta">{String(index + 1).padStart(2, "0")}</span>
@@ -1372,6 +1436,31 @@ export function HomePageClient() {
                     </Link>
                   </div>
                 </div>
+              </motion.div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {menuJump ? (
+            <motion.div
+              animate={{ opacity: 1 }}
+              className="menu-jump-gate"
+              exit={{ opacity: 0, scale: 1.04, transition: { duration: 0.24 } }}
+              initial={{ opacity: 0 }}
+              transition={{ duration: 0.16 }}
+            >
+              <span className="menu-jump-lines" aria-hidden="true" />
+              <motion.div
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="menu-jump-card"
+                exit={{ opacity: 0, scale: 0.92, y: -16 }}
+                initial={{ opacity: 0, scale: 0.9, y: 18 }}
+                transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Image src="/logo-transparent.png" alt="" width={54} height={54} />
+                <span>Teleporting to</span>
+                <strong>{menuJump.label}</strong>
               </motion.div>
             </motion.div>
           ) : null}
@@ -1397,9 +1486,16 @@ export function HomePageClient() {
               aria-hidden="true"
               className="hero-back-logo"
               drag
-              dragConstraints={{ bottom: 72, left: -110, right: 110, top: -72 }}
+              dragConstraints={{
+                bottom: heroLogoDragBounds.y,
+                left: -heroLogoDragBounds.x,
+                right: heroLogoDragBounds.x,
+                top: -heroLogoDragBounds.y,
+              }}
               dragElastic={0.18}
               dragMomentum={false}
+              onDragEnd={handleHeroLogoDragEnd}
+              style={{ x: heroLogoPosition.x, y: heroLogoPosition.y }}
               whileDrag={reduceMotion ? undefined : { scale: 1.08, rotate: -3 }}
               whileHover={reduceMotion ? undefined : { scale: 1.04 }}
             >
