@@ -300,6 +300,35 @@ function resetSurfacePosition(element: HTMLElement) {
   element.style.setProperty("--pointer-y", "50%");
 }
 
+function setMenuCloseMagnet(sheet: HTMLElement, clientX: number, clientY: number) {
+  const button = sheet.querySelector<HTMLElement>(".menu-sheet-close");
+  if (!button) return;
+
+  const rect = button.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const deltaX = clientX - centerX;
+  const deltaY = clientY - centerY;
+  const distance = Math.hypot(deltaX, deltaY);
+  const radius = 138;
+  const pull = Math.max(0, 1 - distance / radius);
+
+  button.style.setProperty("--magnet-x", `${(deltaX * pull * 0.34).toFixed(2)}px`);
+  button.style.setProperty("--magnet-y", `${(deltaY * pull * 0.34).toFixed(2)}px`);
+  button.style.setProperty("--magnet-stretch", (1 + pull * 0.22).toFixed(3));
+  button.style.setProperty("--magnet-squash", (1 - pull * 0.08).toFixed(3));
+}
+
+function resetMenuCloseMagnet(sheet: HTMLElement) {
+  const button = sheet.querySelector<HTMLElement>(".menu-sheet-close");
+  if (!button) return;
+
+  button.style.setProperty("--magnet-x", "0px");
+  button.style.setProperty("--magnet-y", "0px");
+  button.style.setProperty("--magnet-stretch", "1");
+  button.style.setProperty("--magnet-squash", "1");
+}
+
 function nextPaint() {
   return new Promise<void>((resolve) => {
     requestAnimationFrame(() => {
@@ -489,6 +518,15 @@ export function HomePageClient() {
     resetSurfacePosition(event.currentTarget);
   }
 
+  function handleMenuMagnetMove(event: ReactPointerEvent<HTMLElement>) {
+    if (reduceMotion) return;
+    setMenuCloseMagnet(event.currentTarget, event.clientX, event.clientY);
+  }
+
+  function handleMenuMagnetLeave(event: ReactPointerEvent<HTMLElement>) {
+    resetMenuCloseMagnet(event.currentTarget);
+  }
+
   function selectLocale(nextLocale: Locale) {
     setLocale(nextLocale);
     setLanguageOpen(false);
@@ -602,6 +640,8 @@ export function HomePageClient() {
                 className="menu-sheet"
                 exit={{ opacity: 0, y: 16 }}
                 initial={{ opacity: 0, y: 16 }}
+                onPointerLeave={handleMenuMagnetLeave}
+                onPointerMove={handleMenuMagnetMove}
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="menu-topbar">
