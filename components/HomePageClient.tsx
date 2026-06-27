@@ -19,10 +19,10 @@ const floatingLogoSlots = Array.from({ length: 8 }, (_, index) => `float-logo-${
 const siteCopy = {
   en: {
     loaderStatus: "Materializing shapes...",
-    loaderFooter: "Designed and coded by Tyler (C) 2026",
+    loaderFooter: "sw8tx.lol - EST 2026",
     languageLabel: "LANGUAGE",
     menuButton: { open: "Menu", close: "Close", openLabel: "Open menu", closeLabel: "Close menu" },
-    menuBadge: "Sparkle Studio",
+    menuBadge: "sw8tx.lol",
     menuItems: [
       { href: "#about", label: "About" },
       { href: "#process", label: "Process" },
@@ -150,7 +150,7 @@ const siteCopy = {
   },
   de: {
     loaderStatus: "Materializing shapes...",
-    loaderFooter: "Designed and coded by Tyler (C) 2026",
+    loaderFooter: "sw8tx.lol - EST 2026",
     languageLabel: "LANGUAGE",
     menuButton: {
       open: "Menue",
@@ -158,7 +158,7 @@ const siteCopy = {
       openLabel: "Menue oeffnen",
       closeLabel: "Menue schliessen",
     },
-    menuBadge: "Sparkle Studio",
+    menuBadge: "sw8tx.lol",
     menuItems: [
       { href: "#about", label: "Ueberblick" },
       { href: "#process", label: "Prozess" },
@@ -378,6 +378,7 @@ export function HomePageClient() {
   const [showLoader, setShowLoader] = useState(true);
   const [locale, setLocale] = useState<Locale>("en");
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
+  const [menuClosing, setMenuClosing] = useState(false);
   const copy = siteCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
   const year = new Date().getFullYear();
@@ -493,6 +494,15 @@ export function HomePageClient() {
     setLanguageOpen(false);
   }
 
+  function closeMenuWithSpin() {
+    if (menuClosing) return;
+    setMenuClosing(true);
+    window.setTimeout(() => {
+      setMenuOpen(false);
+      setMenuClosing(false);
+    }, 360);
+  }
+
   function cycleServiceCard(cardIndex: number, variantCount: number) {
     setServiceCardPages((current) => {
       const next = [...current];
@@ -508,11 +518,11 @@ export function HomePageClient() {
       <main className="site">
         <nav className="nav">
           <div className="nav-left">
-            <Link className="brand" href="/" aria-label="Sparkle home">
+            <Link className="brand" href="/" aria-label="sw8tx.lol home">
               <span className="brand-mark">
                 <Image src="/logo-transparent.png" alt="" width={40} height={40} loading="eager" />
               </span>
-              <span className="brand-name">Sparkle</span>
+              <span className="brand-name">sw8tx.lol</span>
             </Link>
 
             <div className={`language-picker${languageOpen ? " is-open" : ""}`}>
@@ -596,7 +606,11 @@ export function HomePageClient() {
               >
                 <div className="menu-topbar">
                   <span className="menu-badge">{copy.menuBadge}</span>
-                  <button className="menu-sheet-close" onClick={() => setMenuOpen(false)} type="button">
+                  <button
+                    className={`menu-sheet-close${menuClosing ? " is-closing" : ""}`}
+                    onClick={closeMenuWithSpin}
+                    type="button"
+                  >
                     <span className="visually-hidden">{copy.menuButton.closeLabel}</span>
                     <span className="mini-x is-cross" aria-hidden="true">
                       <span />
@@ -736,30 +750,38 @@ export function HomePageClient() {
                       <span />
                     </span>
                   </button>
-                  <div className="jar-visual" aria-hidden="true">
-                    <span className="jar-lid" />
-                    <span className="jar-glass">
-                      <Image src="/logo-transparent.png" alt="" width={86} height={86} loading="eager" />
-                    </span>
-                  </div>
                   <AnimatePresence mode="wait" initial={false}>
                     {(() => {
                       const activeIndex = serviceCardPages[index] ?? 0;
                       const activeCard = card.variants[activeIndex] ?? card.variants[0];
 
                       return (
-                        <motion.div
-                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                          className="service-card-copy"
-                          exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-                          initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
-                          key={`${index}-${activeIndex}`}
-                          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                          <span className="service-index">{String(index + 1).padStart(2, "0")}</span>
-                          <span className="service-label">{activeCard.label}</span>
-                          <h2>{activeCard.title}</h2>
-                          <p>{activeCard.body}</p>
+                        <motion.div className="service-card-inner" key={`${index}-${activeIndex}`}>
+                          <motion.div
+                            animate={{ opacity: 1, rotateX: 0, y: 0 }}
+                            aria-hidden="true"
+                            className="jar-visual"
+                            exit={{ opacity: 0, rotateX: -62, y: -12 }}
+                            initial={{ opacity: 0, rotateX: 62, y: 12 }}
+                            transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            <span className="jar-lid" />
+                            <span className="jar-glass">
+                              <Image src="/logo-transparent.png" alt="" width={86} height={86} loading="eager" />
+                            </span>
+                          </motion.div>
+                          <motion.div
+                            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                            className="service-card-copy"
+                            exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
+                            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            <span className="service-index">{String(activeIndex + 1).padStart(2, "0")}</span>
+                            <span className="service-label">{activeCard.label}</span>
+                            <h2>{activeCard.title}</h2>
+                            <p>{activeCard.body}</p>
+                          </motion.div>
                         </motion.div>
                       );
                     })()}
@@ -865,7 +887,7 @@ export function HomePageClient() {
         </section>
 
         <footer className="footer">
-          <span>(C) {year} Sparkle / Tyler Osthoff</span>
+          <span>(C) {year} sw8tx.lol - EST 2026</span>
           <div className="footer-links">
             <Link className="footer-link" href="/tos">
               {copy.legal.terms}

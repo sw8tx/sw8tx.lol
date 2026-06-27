@@ -495,9 +495,7 @@ img {
   border: 1px solid rgba(255, 247, 232, 0.18);
   border-radius: 8px;
   color: var(--cream);
-  background:
-    linear-gradient(180deg, rgba(47, 25, 17, 0.98), rgba(34, 16, 10, 0.98)),
-    var(--ink);
+  background: #32180f;
   box-shadow: 0 34px 80px rgba(42, 20, 13, 0.32);
 }
 
@@ -541,6 +539,14 @@ img {
   border-radius: 50%;
   color: var(--cream);
   background: rgba(255, 247, 232, 0.06);
+}
+
+.menu-sheet-close .mini-x {
+  animation: menuXIdleSpin 6.8s linear infinite;
+}
+
+.menu-sheet-close.is-closing .mini-x {
+  animation: menuXCloseSpin 360ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
 .menu-panel {
@@ -837,6 +843,7 @@ img {
   gap: 8px;
   min-height: 358px;
   padding: 18px 18px 20px;
+  perspective: 900px;
 }
 
 .mouse-toggle {
@@ -911,20 +918,25 @@ img {
   justify-items: center;
   align-items: end;
   margin-bottom: 4px;
+  transform-origin: 50% 18%;
+  transform-style: preserve-3d;
 }
 
 .jar-lid {
   position: absolute;
   top: 4px;
+  z-index: 3;
   width: 82px;
   height: 16px;
   border-radius: 999px 999px 4px 4px;
   background: #1e1714;
   box-shadow: 0 6px 10px rgba(45, 20, 12, 0.16);
+  transform: translateZ(34px);
 }
 
 .jar-glass {
   position: relative;
+  z-index: 2;
   width: 112px;
   height: 118px;
   display: grid;
@@ -939,6 +951,7 @@ img {
     inset 0 9px 18px rgba(255, 255, 255, 0.45),
     inset 0 -18px 28px rgba(180, 63, 46, 0.18),
     0 18px 28px rgba(83, 52, 35, 0.14);
+  transform: translateZ(12px);
 }
 
 .jar-glass img {
@@ -949,6 +962,12 @@ img {
 
 .service-label {
   color: var(--sage);
+}
+
+.service-card-inner {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
 }
 
 .service-card-copy {
@@ -1632,6 +1651,33 @@ img {
   100% {
     opacity: 0;
     transform: translate3d(34%, 0, 0);
+  }
+}
+
+@keyframes menuXIdleSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes menuXCloseSpin {
+  0% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  70% {
+    opacity: 1;
+    transform: rotate(620deg) scale(1.16);
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(820deg) scale(0.28);
   }
 }
 
