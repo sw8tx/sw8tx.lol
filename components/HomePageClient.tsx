@@ -1042,8 +1042,18 @@ export function HomePageClient() {
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const scrollTop = window.scrollY;
       const progress = Math.min(1, scrollTop / maxScroll);
+      const shouldReduceSurfaceMotion = window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
 
       document.documentElement.style.setProperty("--scroll-progress", progress.toFixed(4));
+      if (shouldReduceSurfaceMotion) {
+        document.documentElement.style.setProperty("--scroll-drift", "0px");
+        document.documentElement.style.setProperty("--scroll-drift-wide", "0px");
+        document.documentElement.style.setProperty("--scroll-float", "0px");
+        document.documentElement.style.setProperty("--scroll-float-soft", "0px");
+        frame = undefined;
+        return;
+      }
+
       document.documentElement.style.setProperty("--scroll-drift", `${Math.min(22, scrollTop * 0.019).toFixed(2)}px`);
       document.documentElement.style.setProperty("--scroll-drift-wide", `${Math.min(28, scrollTop * 0.024).toFixed(2)}px`);
       document.documentElement.style.setProperty("--scroll-float", `${Math.max(-70, scrollTop * -0.06).toFixed(2)}px`);
