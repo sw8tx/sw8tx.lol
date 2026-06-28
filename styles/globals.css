@@ -20,9 +20,6 @@
   --scroll-drift-wide: 0px;
   --scroll-float: 0px;
   --scroll-float-soft: 0px;
-  --logo-shake-x: 0px;
-  --logo-shake-y: 0px;
-  --logo-shake-rot: 0deg;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --font-serif: "Cormorant Garamond", "Baskerville", "Libre Baskerville", Georgia, serif;
   --font-script: "Brush Script MT", "Segoe Script", cursive;
@@ -89,16 +86,6 @@ body.menu-open {
   overflow: hidden;
 }
 
-body.logo-shaking .nav,
-body.logo-shaking .motion-strip,
-body.logo-shaking .section,
-body.logo-shaking .contact,
-body.logo-shaking .footer,
-body.logo-shaking .floating-logo-field,
-body.logo-shaking .hero-stage > :not(.hero-back-logo) {
-  transform: translate3d(var(--logo-shake-x), var(--logo-shake-y), 0) rotate(var(--logo-shake-rot));
-}
-
 a,
 button {
   font: inherit;
@@ -141,11 +128,11 @@ img {
 }
 
 .draggable-logo-layer {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 3;
+  z-index: 2;
   pointer-events: none;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .nav,
@@ -964,7 +951,7 @@ img {
 }
 
 .draggable-logo {
-  position: absolute;
+  position: fixed;
   z-index: 3;
   width: clamp(74px, 7.5vw, 124px);
   aspect-ratio: 1;
@@ -976,29 +963,20 @@ img {
   touch-action: none;
   user-select: none;
   filter: blur(0.2px) drop-shadow(0 18px 36px rgba(42, 20, 13, 0.13));
-}
-
-.drag-logo-about {
-  top: 118vh;
-  left: 8vw;
+  left: 0;
+  top: 0;
 }
 
 .drag-logo-process {
-  top: 190vh;
-  right: 10vw;
   width: clamp(84px, 8.4vw, 138px);
   opacity: 0.17;
 }
 
 .drag-logo-work {
-  top: 275vh;
-  left: 14vw;
   opacity: 0.18;
 }
 
 .drag-logo-contact {
-  top: 380vh;
-  right: 13vw;
   width: clamp(78px, 7.8vw, 128px);
   opacity: 0.16;
 }
@@ -1009,6 +987,12 @@ img {
   cursor: grabbing;
 }
 
+.draggable-logo-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .hero-back-logo img,
 .draggable-logo img {
   width: 100%;
@@ -1017,6 +1001,11 @@ img {
   image-rendering: auto;
   transform: rotate(-9deg);
   animation: heroLogoFloat 4.8s ease-in-out infinite;
+}
+
+.hero-back-logo.is-charging .draggable-logo-art,
+.draggable-logo.is-charging .draggable-logo-art {
+  animation: holdToChaos 680ms linear forwards;
 }
 
 .hero-logo-tooltip {
@@ -2223,16 +2212,6 @@ img {
     opacity: 0.16;
   }
 
-  .drag-logo-about {
-    top: 126vh;
-    left: 5vw;
-  }
-
-  .drag-logo-process {
-    top: 236vh;
-    right: 5vw;
-  }
-
   .drag-logo-work,
   .drag-logo-contact {
     display: none;
@@ -2627,6 +2606,32 @@ img {
 
   50% {
     transform: translate3d(0, -8px, 0) rotate(-5deg) scale(1.035);
+  }
+}
+
+@keyframes holdToChaos {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-9deg) scale(1);
+  }
+
+  20% {
+    transform: translate3d(-1px, 1px, 0) rotate(-8deg) scale(1.01);
+  }
+
+  40% {
+    transform: translate3d(2px, -2px, 0) rotate(-6deg) scale(1.03);
+  }
+
+  60% {
+    transform: translate3d(-5px, 4px, 0) rotate(-3deg) scale(1.06);
+  }
+
+  80% {
+    transform: translate3d(8px, -7px, 0) rotate(2deg) scale(1.09);
+  }
+
+  100% {
+    transform: translate3d(-12px, 10px, 0) rotate(6deg) scale(1.12);
   }
 }
 
