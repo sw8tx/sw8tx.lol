@@ -25,6 +25,15 @@ const floatingLogoSlots = Array.from({ length: 8 }, (_, index) => `float-logo-${
 const heroLogoFallbackBounds = { x: 260, y: 190 };
 const heroLogoHoldTime = 680;
 const heroLogoStorageKey = "sparkle-hero-logo-position";
+const siteDragLogos = [
+  { className: "drag-logo-about", id: "about" },
+  { className: "drag-logo-process", id: "process" },
+  { className: "drag-logo-work", id: "work" },
+  { className: "drag-logo-contact", id: "contact" },
+] as const;
+
+let logoShakeFrame: number | undefined;
+let logoShakeStartedAt = 0;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -37,6 +46,38 @@ function getHeroLogoBounds() {
     x: Math.max(heroLogoFallbackBounds.x, Math.round(window.innerWidth * 0.43)),
     y: Math.max(heroLogoFallbackBounds.y, Math.round(window.innerHeight * 0.36)),
   };
+}
+
+function startLogoShake(reduceMotion: boolean) {
+  if (reduceMotion || typeof window === "undefined") return;
+  if (logoShakeFrame) window.cancelAnimationFrame(logoShakeFrame);
+
+  logoShakeStartedAt = performance.now();
+  document.body.classList.add("logo-shaking");
+
+  const shake = (time: number) => {
+    const elapsed = time - logoShakeStartedAt;
+    const intensity = Math.min(1, elapsed / 1700);
+    const distance = 1 + intensity * 7;
+    const twist = 0.08 + intensity * 0.55;
+
+    document.documentElement.style.setProperty("--logo-shake-x", `${Math.sin(time / 33) * distance}px`);
+    document.documentElement.style.setProperty("--logo-shake-y", `${Math.cos(time / 41) * distance * 0.72}px`);
+    document.documentElement.style.setProperty("--logo-shake-rot", `${Math.sin(time / 52) * twist}deg`);
+    logoShakeFrame = window.requestAnimationFrame(shake);
+  };
+
+  logoShakeFrame = window.requestAnimationFrame(shake);
+}
+
+function stopLogoShake() {
+  if (typeof window === "undefined") return;
+  if (logoShakeFrame) window.cancelAnimationFrame(logoShakeFrame);
+  logoShakeFrame = undefined;
+  document.body.classList.remove("logo-shaking");
+  document.documentElement.style.setProperty("--logo-shake-x", "0px");
+  document.documentElement.style.setProperty("--logo-shake-y", "0px");
+  document.documentElement.style.setProperty("--logo-shake-rot", "0deg");
 }
 
 const siteCopy = {
@@ -974,6 +1015,141 @@ function MarqueeRow({ items, reverse = false }: { items: readonly string[]; reve
   );
 }
 
+function DraggableLogo({ className, id }: { className: string; id: string }) {
+  const reduceMotion = useReducedMotion();
+  const holdTimer = useRef<number | undefined>(undefined);
+  const pointerPoint = useRef<{ x: number; y: number } | null>(null);
+  const [positionReady, setPositionReady] = useState(false);
+  const [holdState, setHoldState] = useState<"idle" | "charging" | "ready">("idle");
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const storageKey = `sparkle-drag-logo-${id}`;
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const storedPosition = window.localStorage.getItem(storageKey);
+
+      if (storedPosition) {
+        try {
+          const parsed = JSON.parse(storedPosition) as { x?: unknown; y?: unknown };
+
+          if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+            const bounds = getHeroLogoBounds();
+            setPosition({
+              x: clamp(parsed.x, -bounds.x, bounds.x),
+              y: clamp(parsed.y, -bounds.y, bounds.y),
+            });
+          }
+        } catch {
+          window.localStorage.removeItem(storageKey);
+        }
+      }
+
+      setPositionReady(true);
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!positionReady) return;
+    window.localStorage.setItem(storageKey, JSON.stringify(position));
+  }, [position, positionReady, storageKey]);
+
+  useEffect(() => {
+    return () => {
+      if (holdTimer.current) window.clearTimeout(holdTimer.current);
+    };
+  }, []);
+
+  function cancelHold() {
+    if (holdTimer.current) {
+      window.clearTimeout(holdTimer.current);
+      holdTimer.current = undefined;
+    }
+
+    pointerPoint.current = null;
+    setHoldState("idle");
+    stopLogoShake();
+  }
+
+  function beginHold(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+
+    event.preventDefault();
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    pointerPoint.current = { x: event.clientX, y: event.clientY };
+    startLogoShake(Boolean(reduceMotion));
+
+    if (reduceMotion) {
+      setHoldState("ready");
+      return;
+    }
+
+    if (holdTimer.current) window.clearTimeout(holdTimer.current);
+
+    setHoldState("charging");
+    holdTimer.current = window.setTimeout(() => {
+      holdTimer.current = undefined;
+      setHoldState("ready");
+    }, heroLogoHoldTime);
+  }
+
+  function moveLogo(event: ReactPointerEvent<HTMLDivElement>) {
+    if (holdState === "idle") return;
+
+    const nextPoint = { x: event.clientX, y: event.clientY };
+
+    if (holdState === "charging") {
+      pointerPoint.current = nextPoint;
+      return;
+    }
+
+    const previousPoint = pointerPoint.current ?? nextPoint;
+    const deltaX = nextPoint.x - previousPoint.x;
+    const deltaY = nextPoint.y - previousPoint.y;
+    const bounds = getHeroLogoBounds();
+
+    pointerPoint.current = nextPoint;
+    setPosition((current) => ({
+      x: clamp(current.x + deltaX, -bounds.x, bounds.x),
+      y: clamp(current.y + deltaY, -bounds.y, bounds.y),
+    }));
+  }
+
+  function finishMove() {
+    if (holdTimer.current) {
+      cancelHold();
+      return;
+    }
+
+    pointerPoint.current = null;
+    setHoldState("idle");
+    stopLogoShake();
+  }
+
+  return (
+    <motion.div
+      aria-hidden="true"
+      className={`draggable-logo ${className} is-${holdState}`}
+      onPointerCancel={cancelHold}
+      onPointerDown={beginHold}
+      onPointerLeave={() => {
+        if (holdState === "charging") cancelHold();
+      }}
+      onPointerMove={moveLogo}
+      onPointerUp={finishMove}
+      style={{ x: position.x, y: position.y }}
+      whileHover={reduceMotion ? undefined : { scale: 1.05 }}
+    >
+      <span className="hero-logo-tooltip">
+        <span className="drag-countdown" aria-hidden="true" />
+        <span>{holdState === "ready" ? "Drag now" : "Drag me"}</span>
+      </span>
+      <Image src="/logo-transparent.png" alt="" width={260} height={260} loading="lazy" />
+    </motion.div>
+  );
+}
+
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
   const heroLogoHoldTimer = useRef<number | undefined>(undefined);
@@ -1052,6 +1228,7 @@ export function HomePageClient() {
   useEffect(() => {
     return () => {
       if (heroLogoHoldTimer.current) window.clearTimeout(heroLogoHoldTimer.current);
+      stopLogoShake();
     };
   }, []);
 
@@ -1289,6 +1466,7 @@ export function HomePageClient() {
 
     heroLogoPointerPoint.current = null;
     setHeroLogoHoldState("idle");
+    stopLogoShake();
   }
 
   function beginHeroLogoHold(event: ReactPointerEvent<HTMLDivElement>) {
@@ -1297,6 +1475,7 @@ export function HomePageClient() {
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     heroLogoPointerPoint.current = { x: event.clientX, y: event.clientY };
+    startLogoShake(Boolean(reduceMotion));
 
     if (reduceMotion) {
       setHeroLogoHoldState("ready");
@@ -1342,6 +1521,7 @@ export function HomePageClient() {
 
     heroLogoPointerPoint.current = null;
     setHeroLogoHoldState("idle");
+    stopLogoShake();
   }
 
   function jumpToMenuSection(event: ReactMouseEvent<HTMLAnchorElement>, item: { href: string; label: string }) {
@@ -1378,6 +1558,12 @@ export function HomePageClient() {
       <AnimatePresence>{showLoader ? <Loader footer={copy.loaderFooter} status={copy.loaderStatus} /> : null}</AnimatePresence>
 
       <main className="site">
+        <div className="draggable-logo-layer" aria-hidden="true">
+          {siteDragLogos.map((logo) => (
+            <DraggableLogo className={logo.className} id={logo.id} key={logo.id} />
+          ))}
+        </div>
+
         <nav className="nav">
           <div className="nav-left">
             <Link className="brand" href="/" aria-label="Sparkle home">
