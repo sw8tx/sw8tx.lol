@@ -1003,21 +1003,35 @@ function DraggableLogo({
   const [position, setPosition] = useState({ x: initialX, y: initialY });
   const storageKey = `sparkle-drag-logo-${id}`;
 
-  function getViewportBounds() {
+  function getLayerMetrics() {
+    const layer = logoRef.current?.offsetParent as HTMLElement | null;
     const rect = logoRef.current?.getBoundingClientRect();
     const width = rect?.width ?? size;
     const height = rect?.height ?? size;
 
     return {
-      maxX: Math.max(-width * 0.2, window.innerWidth - width * 0.8),
-      maxY: Math.max(-height * 0.2, window.innerHeight - height * 0.8),
+      layerHeight: layer?.clientHeight ?? document.documentElement.scrollHeight,
+      layerLeft: layer?.getBoundingClientRect().left ?? 0,
+      layerTop: layer?.getBoundingClientRect().top ?? 0,
+      layerWidth: layer?.clientWidth ?? window.innerWidth,
+      maxX: Math.max(-width * 0.2, (layer?.clientWidth ?? window.innerWidth) - width * 0.8),
+      maxY: Math.max(-height * 0.2, (layer?.clientHeight ?? document.documentElement.scrollHeight) - height * 0.8),
       minX: -width * 0.8,
       minY: -height * 0.8,
     };
   }
 
-  function clampToViewport(nextX: number, nextY: number) {
-    const bounds = getViewportBounds();
+  function getPointerPoint(event: ReactPointerEvent<HTMLDivElement>) {
+    const metrics = getLayerMetrics();
+
+    return {
+      x: event.clientX - metrics.layerLeft,
+      y: event.clientY - metrics.layerTop,
+    };
+  }
+
+  function clampToLayer(nextX: number, nextY: number) {
+    const bounds = getLayerMetrics();
 
     return {
       x: clamp(nextX, bounds.minX, bounds.maxX),
@@ -1028,12 +1042,13 @@ function DraggableLogo({
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       const clampStoredPosition = (nextX: number, nextY: number) => {
+        const layer = logoRef.current?.offsetParent as HTMLElement | null;
         const rect = logoRef.current?.getBoundingClientRect();
         const width = rect?.width ?? size;
         const height = rect?.height ?? size;
         const bounds = {
-          maxX: Math.max(-width * 0.2, window.innerWidth - width * 0.8),
-          maxY: Math.max(-height * 0.2, window.innerHeight - height * 0.8),
+          maxX: Math.max(-width * 0.2, (layer?.clientWidth ?? window.innerWidth) - width * 0.8),
+          maxY: Math.max(-height * 0.2, (layer?.clientHeight ?? document.documentElement.scrollHeight) - height * 0.8),
           minX: -width * 0.8,
           minY: -height * 0.8,
         };
@@ -1091,7 +1106,7 @@ function DraggableLogo({
 
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    pointerPoint.current = { x: event.clientX, y: event.clientY };
+    pointerPoint.current = getPointerPoint(event);
 
     if (reduceMotion) {
       setHoldState("ready");
@@ -1110,7 +1125,7 @@ function DraggableLogo({
   function moveLogo(event: ReactPointerEvent<HTMLDivElement>) {
     if (holdState === "idle") return;
 
-    const nextPoint = { x: event.clientX, y: event.clientY };
+    const nextPoint = getPointerPoint(event);
 
     if (holdState === "charging") {
       pointerPoint.current = nextPoint;
@@ -1122,7 +1137,7 @@ function DraggableLogo({
     const deltaY = nextPoint.y - previousPoint.y;
 
     pointerPoint.current = nextPoint;
-    setPosition((current) => clampToViewport(current.x + deltaX, current.y + deltaY));
+    setPosition((current) => clampToLayer(current.x + deltaX, current.y + deltaY));
   }
 
   function finishMove() {
