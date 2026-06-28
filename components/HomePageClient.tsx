@@ -1003,14 +1003,25 @@ function DraggableLogo({
   const [position, setPosition] = useState({ x: initialX, y: initialY });
   const storageKey = `sparkle-drag-logo-${id}`;
 
-  function clampToViewport(nextX: number, nextY: number) {
+  function getViewportBounds() {
     const rect = logoRef.current?.getBoundingClientRect();
     const width = rect?.width ?? size;
     const height = rect?.height ?? size;
 
     return {
-      x: clamp(nextX, 0, Math.max(0, window.innerWidth - width)),
-      y: clamp(nextY, 0, Math.max(0, window.innerHeight - height)),
+      maxX: Math.max(-width * 0.2, window.innerWidth - width * 0.8),
+      maxY: Math.max(-height * 0.2, window.innerHeight - height * 0.8),
+      minX: -width * 0.8,
+      minY: -height * 0.8,
+    };
+  }
+
+  function clampToViewport(nextX: number, nextY: number) {
+    const bounds = getViewportBounds();
+
+    return {
+      x: clamp(nextX, bounds.minX, bounds.maxX),
+      y: clamp(nextY, bounds.minY, bounds.maxY),
     };
   }
 
@@ -1020,10 +1031,16 @@ function DraggableLogo({
         const rect = logoRef.current?.getBoundingClientRect();
         const width = rect?.width ?? size;
         const height = rect?.height ?? size;
+        const bounds = {
+          maxX: Math.max(-width * 0.2, window.innerWidth - width * 0.8),
+          maxY: Math.max(-height * 0.2, window.innerHeight - height * 0.8),
+          minX: -width * 0.8,
+          minY: -height * 0.8,
+        };
 
         return {
-          x: clamp(nextX, 0, Math.max(0, window.innerWidth - width)),
-          y: clamp(nextY, 0, Math.max(0, window.innerHeight - height)),
+          x: clamp(nextX, bounds.minX, bounds.maxX),
+          y: clamp(nextY, bounds.minY, bounds.maxY),
         };
       };
       const storedPosition = window.localStorage.getItem(storageKey);
