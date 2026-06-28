@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, type PanInfo, useDragControls, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -22,12 +22,21 @@ function isLocale(value: string | null): value is Locale {
 }
 
 const floatingLogoSlots = Array.from({ length: 8 }, (_, index) => `float-logo-${index + 1}`);
-const heroLogoDragBounds = { x: 118, y: 82 };
+const heroLogoFallbackBounds = { x: 260, y: 190 };
 const heroLogoHoldTime = 680;
 const heroLogoStorageKey = "sparkle-hero-logo-position";
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
+}
+
+function getHeroLogoBounds() {
+  if (typeof window === "undefined") return heroLogoFallbackBounds;
+
+  return {
+    x: Math.max(heroLogoFallbackBounds.x, Math.round(window.innerWidth * 0.43)),
+    y: Math.max(heroLogoFallbackBounds.y, Math.round(window.innerHeight * 0.36)),
+  };
 }
 
 const siteCopy = {
@@ -967,8 +976,8 @@ function MarqueeRow({ items, reverse = false }: { items: readonly string[]; reve
 
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
-  const heroLogoDragControls = useDragControls();
   const heroLogoHoldTimer = useRef<number | undefined>(undefined);
+  const heroLogoPointerPoint = useRef<{ x: number; y: number } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
@@ -1018,9 +1027,10 @@ export function HomePageClient() {
           const parsed = JSON.parse(storedPosition) as { x?: unknown; y?: unknown };
 
           if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+            const bounds = getHeroLogoBounds();
             setHeroLogoPosition({
-              x: clamp(parsed.x, -heroLogoDragBounds.x, heroLogoDragBounds.x),
-              y: clamp(parsed.y, -heroLogoDragBounds.y, heroLogoDragBounds.y),
+              x: clamp(parsed.x, -bounds.x, bounds.x),
+              y: clamp(parsed.y, -bounds.y, bounds.y),
             });
           }
         } catch {
@@ -1277,7 +1287,8 @@ export function HomePageClient() {
       heroLogoHoldTimer.current = undefined;
     }
 
-    setHeroLogoHoldState((current) => (current === "ready" ? current : "idle"));
+    heroLogoPointerPoint.current = null;
+    setHeroLogoHoldState("idle");
   }
 
   function beginHeroLogoHold(event: ReactPointerEvent<HTMLDivElement>) {
@@ -1285,29 +1296,51 @@ export function HomePageClient() {
 
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
+    heroLogoPointerPoint.current = { x: event.clientX, y: event.clientY };
 
     if (reduceMotion) {
       setHeroLogoHoldState("ready");
-      heroLogoDragControls.start(event.nativeEvent);
       return;
     }
 
     if (heroLogoHoldTimer.current) window.clearTimeout(heroLogoHoldTimer.current);
-    const nativeEvent = event.nativeEvent;
 
     setHeroLogoHoldState("charging");
     heroLogoHoldTimer.current = window.setTimeout(() => {
       heroLogoHoldTimer.current = undefined;
       setHeroLogoHoldState("ready");
-      heroLogoDragControls.start(nativeEvent);
     }, heroLogoHoldTime);
   }
 
-  function handleHeroLogoDragEnd(_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) {
+  function moveHeroLogo(event: ReactPointerEvent<HTMLDivElement>) {
+    if (heroLogoHoldState === "idle") return;
+
+    const nextPoint = { x: event.clientX, y: event.clientY };
+
+    if (heroLogoHoldState === "charging") {
+      heroLogoPointerPoint.current = nextPoint;
+      return;
+    }
+
+    const previousPoint = heroLogoPointerPoint.current ?? nextPoint;
+    const deltaX = nextPoint.x - previousPoint.x;
+    const deltaY = nextPoint.y - previousPoint.y;
+    const bounds = getHeroLogoBounds();
+
+    heroLogoPointerPoint.current = nextPoint;
     setHeroLogoPosition((current) => ({
-      x: clamp(current.x + info.offset.x, -heroLogoDragBounds.x, heroLogoDragBounds.x),
-      y: clamp(current.y + info.offset.y, -heroLogoDragBounds.y, heroLogoDragBounds.y),
+      x: clamp(current.x + deltaX, -bounds.x, bounds.x),
+      y: clamp(current.y + deltaY, -bounds.y, bounds.y),
     }));
+  }
+
+  function finishHeroLogoMove() {
+    if (heroLogoHoldTimer.current) {
+      cancelHeroLogoHold();
+      return;
+    }
+
+    heroLogoPointerPoint.current = null;
     setHeroLogoHoldState("idle");
   }
 
@@ -1528,28 +1561,14 @@ export function HomePageClient() {
             <motion.div
               aria-hidden="true"
               className={`hero-back-logo is-${heroLogoHoldState}`}
-              drag
-              dragControls={heroLogoDragControls}
-              dragConstraints={{
-                bottom: heroLogoDragBounds.y,
-                left: -heroLogoDragBounds.x,
-                right: heroLogoDragBounds.x,
-                top: -heroLogoDragBounds.y,
-              }}
-              dragElastic={0.18}
-              dragListener={false}
-              dragMomentum={false}
-              onDragEnd={handleHeroLogoDragEnd}
               onPointerCancel={cancelHeroLogoHold}
               onPointerDown={beginHeroLogoHold}
               onPointerLeave={() => {
                 if (heroLogoHoldState === "charging") cancelHeroLogoHold();
               }}
-              onPointerUp={() => {
-                if (heroLogoHoldTimer.current) cancelHeroLogoHold();
-              }}
+              onPointerMove={moveHeroLogo}
+              onPointerUp={finishHeroLogoMove}
               style={{ x: heroLogoPosition.x, y: heroLogoPosition.y }}
-              whileDrag={reduceMotion ? undefined : { scale: 1.08, rotate: -3 }}
               whileHover={reduceMotion ? undefined : { scale: 1.04 }}
             >
               <span className="hero-logo-tooltip">
