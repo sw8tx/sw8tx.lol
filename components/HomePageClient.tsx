@@ -3,7 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
+import type {
+  CSSProperties,
+  FormEvent as ReactFormEvent,
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+} from "react";
 import { useEffect, useRef, useState } from "react";
 
 const primaryEmailParts = ["info", "tylerosthoff", "xyz"] as const;
@@ -32,6 +37,153 @@ const siteDragLogos = [
   { className: "drag-logo-work", id: "work", x: 94, y: 596, size: 96 },
   { className: "drag-logo-contact", id: "contact", x: 1320, y: 708, size: 118 },
 ] as const;
+const contactFormCopy = {
+  en: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  de: {
+    nameLabel: "Name",
+    emailLabel: "E-Mail",
+    messageLabel: "Projektnotiz",
+    namePlaceholder: "Dein Name",
+    emailPlaceholder: "du@beispiel.de",
+    messagePlaceholder: "Was baust du und was fuehlt sich gerade noch falsch an?",
+    submit: "Nachricht senden",
+    sending: "Wird gesendet...",
+    success: "Nachricht gesendet. Ich melde mich bald zurueck.",
+    error: "Das Senden hat nicht geklappt. Versuch es nochmal oder schreib an info@tylerosthoff.xyz.",
+    directLabel: "Direkt per E-Mail",
+  },
+  es: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  fr: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  sr: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  zh: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  it: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  pt: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  nl: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+  tr: {
+    nameLabel: "Name",
+    emailLabel: "Email",
+    messageLabel: "Project note",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "you@example.com",
+    messagePlaceholder: "What are you building and what feels off right now?",
+    submit: "Send note",
+    sending: "Sending...",
+    success: "Message sent. I will get back to you soon.",
+    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
+    directLabel: "Direct email",
+  },
+} satisfies Record<
+  Locale,
+  {
+    nameLabel: string;
+    emailLabel: string;
+    messageLabel: string;
+    namePlaceholder: string;
+    emailPlaceholder: string;
+    messagePlaceholder: string;
+    submit: string;
+    sending: string;
+    success: string;
+    error: string;
+    directLabel: string;
+  }
+>;
 
 const consentCopy = {
   en: {
@@ -1570,7 +1722,13 @@ export function HomePageClient() {
   const [heroLogoHoldState, setHeroLogoHoldState] = useState<"idle" | "charging" | "ready">("idle");
   const [heroLogoPosition, setHeroLogoPosition] = useState({ x: 0, y: 0 });
   const [typedReviewText, setTypedReviewText] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactStatus, setContactStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [contactFeedback, setContactFeedback] = useState("");
   const copy = localizedCopy[locale];
+  const contactForm = contactFormCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
   const activeReview = copy.reviews.items[reviewIndex] ?? copy.reviews.items[0];
   const activeConsent = consentCopy[locale];
@@ -2040,8 +2198,50 @@ export function HomePageClient() {
     );
   }
 
-  function openEmailDraft() {
-    window.location.href = `mailto:${primaryEmail}`;
+  async function submitContactForm(event: ReactFormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const cleanName = contactName.trim();
+    const cleanEmail = contactEmail.trim();
+    const cleanMessage = contactMessage.trim();
+
+    if (!cleanName || !cleanEmail || !cleanMessage) {
+      setContactStatus("error");
+      setContactFeedback(contactForm.error);
+      return;
+    }
+
+    setContactStatus("submitting");
+    setContactFeedback(contactForm.sending);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: cleanName,
+          email: cleanEmail,
+          message: cleanMessage,
+          locale,
+          page: window.location.href,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      setContactName("");
+      setContactEmail("");
+      setContactMessage("");
+      setContactStatus("success");
+      setContactFeedback(contactForm.success);
+    } catch {
+      setContactStatus("error");
+      setContactFeedback(contactForm.error);
+    }
   }
 
   return (
@@ -2657,16 +2857,76 @@ export function HomePageClient() {
               onPointerMove={handleSurfaceMove}
             >
               <p className="contact-note">{copy.contact.text}</p>
-              <button
-                className="email-row"
-                onClick={openEmailDraft}
-                onPointerLeave={handleSurfaceLeave}
-                onPointerMove={handleSurfaceMove}
-                type="button"
-              >
-                <span className="email-label">{copy.contact.emailLabel}</span>
-                <span className="email-address">{primaryEmail}</span>
-              </button>
+              <form className="contact-form" onSubmit={submitContactForm}>
+                <div className="contact-form-grid">
+                  <label className="contact-field">
+                    <span className="contact-field-label">{contactForm.nameLabel}</span>
+                    <input
+                      autoComplete="name"
+                      className="contact-input"
+                      name="name"
+                      onChange={(event) => setContactName(event.target.value)}
+                      placeholder={contactForm.namePlaceholder}
+                      required
+                      type="text"
+                      value={contactName}
+                    />
+                  </label>
+                  <label className="contact-field">
+                    <span className="contact-field-label">{contactForm.emailLabel}</span>
+                    <input
+                      autoComplete="email"
+                      className="contact-input"
+                      name="email"
+                      onChange={(event) => setContactEmail(event.target.value)}
+                      placeholder={contactForm.emailPlaceholder}
+                      required
+                      type="email"
+                      value={contactEmail}
+                    />
+                  </label>
+                </div>
+                <label className="contact-field contact-field-message">
+                  <span className="contact-field-label">{contactForm.messageLabel}</span>
+                  <textarea
+                    className="contact-input contact-textarea"
+                    name="message"
+                    onChange={(event) => setContactMessage(event.target.value)}
+                    placeholder={contactForm.messagePlaceholder}
+                    required
+                    rows={5}
+                    value={contactMessage}
+                  />
+                </label>
+                <div className="contact-actions">
+                  <button
+                    className="button contact-submit"
+                    disabled={contactStatus === "submitting"}
+                    onPointerLeave={handleSurfaceLeave}
+                    onPointerMove={handleSurfaceMove}
+                    type="submit"
+                  >
+                    {contactStatus === "submitting" ? contactForm.sending : contactForm.submit}
+                  </button>
+                  <a
+                    className="email-row"
+                    href={`mailto:${primaryEmail}`}
+                    onPointerLeave={handleSurfaceLeave}
+                    onPointerMove={handleSurfaceMove}
+                  >
+                    <span className="email-label">{contactForm.directLabel}</span>
+                    <span className="email-address">{primaryEmail}</span>
+                  </a>
+                </div>
+                <p
+                  aria-live="polite"
+                  className={`contact-feedback${contactStatus === "success" ? " is-success" : ""}${
+                    contactStatus === "error" ? " is-error" : ""
+                  }`}
+                >
+                  {contactFeedback}
+                </p>
+              </form>
             </div>
           </div>
         </section>
