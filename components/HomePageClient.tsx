@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
-const primaryEmail = "info@tylerosthoff.xyz";
+const primaryEmailParts = ["info", "tylerosthoff", "xyz"] as const;
+const primaryEmail = `${primaryEmailParts[0]}@${primaryEmailParts[1]}.${primaryEmailParts[2]}`;
 
 const languageOptions = [
   { code: "en", label: "English", short: "EN" },
@@ -14,6 +15,11 @@ const languageOptions = [
   { code: "es", label: "Espanol", short: "ES" },
   { code: "fr", label: "Francais", short: "FR" },
   { code: "sr", label: "Srpski", short: "SR" },
+  { code: "zh", label: "Zhongwen", short: "ZH" },
+  { code: "it", label: "Italiano", short: "IT" },
+  { code: "pt", label: "Portugues", short: "PT" },
+  { code: "nl", label: "Nederlands", short: "NL" },
+  { code: "tr", label: "Turkce", short: "TR" },
 ] as const;
 type Locale = (typeof languageOptions)[number]["code"];
 
@@ -31,6 +37,199 @@ const siteDragLogos = [
   { className: "drag-logo-work", id: "work", x: 94, y: 596, size: 96 },
   { className: "drag-logo-contact", id: "contact", x: 1320, y: 708, size: 118 },
 ] as const;
+const consentStorageKey = "sparkle-consent-accepted";
+type ConsentState = {
+  version: 1;
+  necessary: boolean;
+  preferences: boolean;
+  analytics: boolean;
+  acceptedAt: string;
+};
+
+function parseConsentState(value: string | null): ConsentState | null {
+  if (!value) return null;
+
+  try {
+    const parsed = JSON.parse(value) as Partial<ConsentState>;
+
+    if (
+      parsed.version !== 1 ||
+      typeof parsed.necessary !== "boolean" ||
+      typeof parsed.preferences !== "boolean" ||
+      typeof parsed.analytics !== "boolean" ||
+      typeof parsed.acceptedAt !== "string"
+    ) {
+      return null;
+    }
+
+    return {
+      version: 1,
+      necessary: parsed.necessary,
+      preferences: parsed.preferences,
+      analytics: parsed.analytics,
+      acceptedAt: parsed.acceptedAt,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function getStoredConsentState() {
+  if (typeof window === "undefined") return null;
+  return parseConsentState(window.localStorage.getItem(consentStorageKey));
+}
+
+function hasPreferenceConsent() {
+  return getStoredConsentState()?.preferences === true;
+}
+
+const consentCopy = {
+  en: {
+    title: "Privacy choices",
+    text: "Sparkle uses essential storage for consent and optional preference storage for language and interface settings. No advertising cookies, no third-party tracking and no data sale.",
+    essentialTitle: "Necessary",
+    essentialBody: "Required for consent, basic security and core site behavior.",
+    preferenceTitle: "Preferences",
+    preferenceBody: "Remembers language and interface settings across visits.",
+    analyticsTitle: "Improvement data",
+    analyticsBody: "Allows privacy-aware usage signals to improve layout, performance and device support later.",
+    essentialButton: "Necessary only",
+    selectedButton: "Save choices",
+    note: "Terms and Privacy stay available here at any time.",
+  },
+  de: {
+    title: "Datenschutz Auswahl",
+    text: "Sparkle nutzt notwendige Speicherung fuer Zustimmung und optionale Praeferenz-Speicherung fuer Sprache und Interface-Einstellungen. Keine Werbe-Cookies, kein Drittanbieter-Tracking und kein Datenverkauf.",
+    essentialTitle: "Notwendig",
+    essentialBody: "Erforderlich fuer Zustimmung, grundlegende Sicherheit und Kernfunktionen der Seite.",
+    preferenceTitle: "Praeferenzen",
+    preferenceBody: "Merkt sich Sprache und Interface-Einstellungen fuer spaetere Besuche.",
+    analyticsTitle: "Verbesserungsdaten",
+    analyticsBody: "Erlaubt datensparsame Nutzungs-Signale, um Layout, Performance und Geraete-Support spaeter zu verbessern.",
+    essentialButton: "Nur notwendig",
+    selectedButton: "Auswahl speichern",
+    note: "AGB und Datenschutz bleiben hier jederzeit erreichbar.",
+  },
+  es: {
+    title: "Opciones de privacidad",
+    text: "Sparkle usa almacenamiento esencial para el consentimiento y almacenamiento opcional de preferencias para idioma y ajustes de interfaz. Sin cookies publicitarias, sin seguimiento externo y sin venta de datos.",
+    essentialTitle: "Necesario",
+    essentialBody: "Necesario para consentimiento, seguridad basica y funcionamiento principal.",
+    preferenceTitle: "Preferencias",
+    preferenceBody: "Recuerda idioma y ajustes de interfaz entre visitas.",
+    analyticsTitle: "Datos de mejora",
+    analyticsBody: "Permite senales de uso cuidadosas con la privacidad para mejorar layout, rendimiento y soporte de dispositivos.",
+    essentialButton: "Solo necesario",
+    selectedButton: "Guardar opciones",
+    note: "Terminos y Privacidad siguen disponibles aqui en todo momento.",
+  },
+  fr: {
+    title: "Choix de confidentialite",
+    text: "Sparkle utilise un stockage essentiel pour le consentement et un stockage optionnel de preferences pour la langue et certains reglages d interface. Aucun cookie publicitaire, aucun suivi tiers et aucune vente de donnees.",
+    essentialTitle: "Necessaire",
+    essentialBody: "Requis pour le consentement, la securite de base et le fonctionnement principal du site.",
+    preferenceTitle: "Preferences",
+    preferenceBody: "Memorise la langue et certains reglages d interface entre les visites.",
+    analyticsTitle: "Donnees d amelioration",
+    analyticsBody: "Autorise des signaux d usage respectueux de la vie privee pour ameliorer la mise en page, la performance et le support des appareils.",
+    essentialButton: "Essentiel uniquement",
+    selectedButton: "Enregistrer les choix",
+    note: "Conditions et Privacy restent accessibles ici a tout moment.",
+  },
+  sr: {
+    title: "Izbor privatnosti",
+    text: "Sparkle koristi neophodno cuvanje za saglasnost i opciono cuvanje preferenci za jezik i podesavanja interfejsa. Nema reklamnih kolacica, nema pracenja trecih strana i nema prodaje podataka.",
+    essentialTitle: "Neophodno",
+    essentialBody: "Potrebno za saglasnost, osnovnu bezbednost i glavno funkcionisanje sajta.",
+    preferenceTitle: "Preference",
+    preferenceBody: "Pamti jezik i podesavanja interfejsa izmedju poseta.",
+    analyticsTitle: "Podaci za poboljsanje",
+    analyticsBody: "Dozvoljava pazljive signale koriscenja radi poboljsanja rasporeda, performansi i podrske za uredjaje.",
+    essentialButton: "Samo neophodno",
+    selectedButton: "Sacuvaj izbor",
+    note: "Uslovi i privatnost ostaju ovde dostupni u svakom trenutku.",
+  },
+  zh: {
+    title: "隐私选项",
+    text: "Sparkle 使用必要存储来保存同意状态，并提供可选偏好存储来记住语言和界面设置。没有广告 Cookie，没有第三方追踪，也不会出售数据。",
+    essentialTitle: "必要",
+    essentialBody: "用于同意状态、基础安全与站点核心功能。",
+    preferenceTitle: "偏好",
+    preferenceBody: "在下次访问时记住语言与界面设置。",
+    analyticsTitle: "改进数据",
+    analyticsBody: "允许更注重隐私的使用信号，用于后续优化布局、性能与设备支持。",
+    essentialButton: "仅必要",
+    selectedButton: "保存选择",
+    note: "服务条款和隐私政策始终可在这里查看。",
+  },
+  it: {
+    title: "Scelte privacy",
+    text: "Sparkle usa storage essenziale per il consenso e storage opzionale di preferenze per lingua e impostazioni di interfaccia. Nessun cookie pubblicitario, nessun tracciamento di terze parti e nessuna vendita di dati.",
+    essentialTitle: "Necessario",
+    essentialBody: "Serve per consenso, sicurezza di base e funzionamento principale del sito.",
+    preferenceTitle: "Preferenze",
+    preferenceBody: "Ricorda lingua e impostazioni di interfaccia tra le visite.",
+    analyticsTitle: "Dati di miglioramento",
+    analyticsBody: "Consente segnali d uso attenti alla privacy per migliorare layout, performance e supporto ai dispositivi.",
+    essentialButton: "Solo necessario",
+    selectedButton: "Salva scelte",
+    note: "Termini e Privacy restano disponibili qui in ogni momento.",
+  },
+  pt: {
+    title: "Escolhas de privacidade",
+    text: "Sparkle usa armazenamento essencial para consentimento e armazenamento opcional de preferencias para idioma e ajustes de interface. Sem cookies de anuncios, sem rastreamento de terceiros e sem venda de dados.",
+    essentialTitle: "Necessario",
+    essentialBody: "Necessario para consentimento, seguranca basica e funcionamento principal do site.",
+    preferenceTitle: "Preferencias",
+    preferenceBody: "Lembra idioma e ajustes de interface entre visitas.",
+    analyticsTitle: "Dados de melhoria",
+    analyticsBody: "Permite sinais de uso com foco em privacidade para melhorar layout, performance e suporte a dispositivos.",
+    essentialButton: "Somente necessario",
+    selectedButton: "Salvar escolhas",
+    note: "Termos e Privacidade seguem disponiveis aqui a qualquer momento.",
+  },
+  nl: {
+    title: "Privacykeuzes",
+    text: "Sparkle gebruikt essentiele opslag voor toestemming en optionele voorkeursopslag voor taal en interface-instellingen. Geen advertentiecookies, geen tracking van derden en geen verkoop van gegevens.",
+    essentialTitle: "Essentieel",
+    essentialBody: "Nodig voor toestemming, basisbeveiliging en kernfunctionaliteit van de site.",
+    preferenceTitle: "Voorkeuren",
+    preferenceBody: "Onthoudt taal en interface-instellingen tussen bezoeken.",
+    analyticsTitle: "Verbeteringsdata",
+    analyticsBody: "Laat privacybewuste gebruikssignalen toe om layout, performance en apparaatsupport later te verbeteren.",
+    essentialButton: "Alleen essentieel",
+    selectedButton: "Keuzes opslaan",
+    note: "Voorwaarden en Privacy blijven hier altijd beschikbaar.",
+  },
+  tr: {
+    title: "Gizlilik secimleri",
+    text: "Sparkle onay icin zorunlu depolama ve dil ile arayuz ayarlari icin istege bagli tercih depolamasi kullanir. Reklam cerezleri yok, ucuncu taraf takibi yok ve veri satisi yok.",
+    essentialTitle: "Zorunlu",
+    essentialBody: "Onay, temel guvenlik ve sitenin cekirdek isleyisi icin gereklidir.",
+    preferenceTitle: "Tercihler",
+    preferenceBody: "Dil ve arayuz ayarlarini ziyaretler arasinda hatirlar.",
+    analyticsTitle: "Iyilestirme verileri",
+    analyticsBody: "Yerlesim, performans ve cihaz destegini gelistirmek icin gizlilige dikkat eden kullanim sinyallerine izin verir.",
+    essentialButton: "Yalnizca zorunlu",
+    selectedButton: "Secimleri kaydet",
+    note: "Kosullar ve Gizlilik burada her zaman ulasilabilir kalir.",
+  },
+} satisfies Record<
+  Locale,
+  {
+    title: string;
+    text: string;
+    essentialTitle: string;
+    essentialBody: string;
+    preferenceTitle: string;
+    preferenceBody: string;
+    analyticsTitle: string;
+    analyticsBody: string;
+    essentialButton: string;
+    selectedButton: string;
+    note: string;
+  }
+>;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -121,6 +320,21 @@ const siteCopy = {
       title: "A stronger first impression starts with design choices that feel intentional.",
       text:
         "Sparkle sits between design and frontend, so the concept and the actual build stay in sync. The result is cleaner structure, better mobile behavior, smoother motion and a site that feels genuinely customized.",
+      points: [
+        {
+          title: "Design with a point of view",
+          body: "Direction, typography and pacing are set before polish, so the site feels owned from the first scroll.",
+        },
+        {
+          title: "Frontend that holds up",
+          body: "Spacing, responsiveness and motion are refined in code, not left behind after the mockup.",
+        },
+        {
+          title: "Custom over generic",
+          body: "The goal is presence and clarity, not another template look with a few colors swapped.",
+        },
+      ],
+      tags: ["Design + Frontend", "Smooth motion", "Responsive polish", "Custom build"],
     },
     process: {
       label: "Process",
@@ -314,6 +528,21 @@ const siteCopy = {
       title: "Ein starker erster Eindruck beginnt mit Designentscheidungen, die bewusst wirken.",
       text:
         "Sparkle sitzt zwischen Design und Frontend, damit Konzept und echter Build zusammenpassen. Das Ergebnis ist klarere Struktur, besseres Mobile-Verhalten, ruhigere Motion und eine Seite, die wirklich customized wirkt.",
+      points: [
+        {
+          title: "Design mit klarer Haltung",
+          body: "Richtung, Typografie und Rhythmus stehen vor dem Finish, damit die Seite vom ersten Scroll an eigen wirkt.",
+        },
+        {
+          title: "Frontend, das sauber traegt",
+          body: "Spacing, Responsiveness und Motion werden im Code verfeinert und nicht nach dem Mockup vergessen.",
+        },
+        {
+          title: "Custom statt generisch",
+          body: "Das Ziel ist Praesenz und Klarheit, nicht nur ein Template mit anderen Farben.",
+        },
+      ],
+      tags: ["Design + Frontend", "Ruhige Motion", "Responsive Polish", "Custom Build"],
     },
     process: {
       label: "Prozess",
@@ -855,6 +1084,177 @@ const localizedCopy = {
         "Posalji kratku poruku sa tim sta gradis i sta trenutno deluje off. Vracam se sa pravcem koji deluje ostrije i vise custom.",
     },
   },
+  zh: {
+    ...siteCopy.en,
+    loaderStatus: "Zhengzai zucheng xingtai...",
+    languageLabel: "YU YAN",
+    hero: {
+      ...siteCopy.en.hero,
+      text:
+        "Wei ba wangzhan kandao chengwei pinpai chuxiang, xinren he changqi jiazhi touzi de ren, dingzhi donghua portfolio, landing page he brand site.",
+    },
+    marqueeIntro: "Anjing de gongzuoshi wangzhan ye keyi you shengqi. Zhe jiushi wo changzuo de jiehe.",
+    about: {
+      ...siteCopy.en.about,
+      title: "Geng qiang de diyinxiang laizi you yisi de sheji juece.",
+      text:
+        "Sparkle ba sheji he frontend fang zai yiqi, rang gainian he zhenzheng de build yizhi. Jieguo shi geng qingxi de jiegou, geng hao de mobile biaoxian, geng shun de motion, yiji zhenzheng custom de ganjue.",
+      tags: ["Design + Frontend", "Motion", "Mobile", "Custom build"],
+    },
+  },
+  it: {
+    ...siteCopy.en,
+    loaderStatus: "Le forme stanno prendendo vita...",
+    languageLabel: "LINGUA",
+    menuButton: { open: "Menu", close: "Chiudi", openLabel: "Apri menu", closeLabel: "Chiudi menu" },
+    menuItems: [
+      { href: "#about", label: "About" },
+      { href: "#process", label: "Processo" },
+      { href: "#work", label: "Lavori" },
+      { href: "#reviews", label: "Feedback" },
+      { href: "#contact", label: "Contatto" },
+    ],
+    legal: { terms: "Termini", privacy: "Privacy", refund: "Rimborso" },
+    hero: {
+      ...siteCopy.en.hero,
+      eyebrow: "Web design e frontend",
+      tagline: "Websites con anima",
+      text:
+        "Portfolio animati, landing page e brand site su misura per chi vede un sito come un investimento in presenza, fiducia e momentum.",
+      ctaPrimary: "Avvia un progetto",
+      ctaSecondary: "Lavori",
+    },
+    marqueeIntro: "Un sito studio calmo puo comunque sembrare vivo. Questo e il mix che costruisco.",
+    about: {
+      ...siteCopy.en.about,
+      title: "Una prima impressione forte nasce da scelte di design intenzionali.",
+      text:
+        "Sparkle unisce design e frontend, cosi il concept e il build reale restano allineati. Il risultato e una struttura piu chiara, un mobile migliore, motion piu fluida e un sito che sembra davvero custom.",
+      tags: ["Design + Frontend", "Motion fluida", "Mobile", "Build custom"],
+    },
+    contact: {
+      ...siteCopy.en.contact,
+      label: "Contatto",
+      title: "Se il tuo sito sembra generico, possiamo sistemare la prima impressione.",
+      text:
+        "Mandami una nota breve su cosa stai costruendo e cosa oggi sembra ancora off. Torno con una direzione piu precisa e piu custom.",
+    },
+  },
+  pt: {
+    ...siteCopy.en,
+    loaderStatus: "As formas estao ganhando vida...",
+    languageLabel: "IDIOMA",
+    menuButton: { open: "Menu", close: "Fechar", openLabel: "Abrir menu", closeLabel: "Fechar menu" },
+    menuItems: [
+      { href: "#about", label: "Sobre" },
+      { href: "#process", label: "Processo" },
+      { href: "#work", label: "Trabalhos" },
+      { href: "#reviews", label: "Feedback" },
+      { href: "#contact", label: "Contato" },
+    ],
+    legal: { terms: "Termos", privacy: "Privacidade", refund: "Reembolso" },
+    hero: {
+      ...siteCopy.en.hero,
+      eyebrow: "Web design e frontend",
+      tagline: "Websites com alma",
+      text:
+        "Portfolios animados, landing pages e sites de marca sob medida para quem ve o site como investimento em presenca, confianca e momentum.",
+      ctaPrimary: "Comecar projeto",
+      ctaSecondary: "Trabalhos",
+    },
+    marqueeIntro: "Um site de estudio calmo ainda pode parecer vivo. Esse e o mix que eu construo.",
+    about: {
+      ...siteCopy.en.about,
+      title: "Uma primeira impressao forte comeca com decisoes de design intencionais.",
+      text:
+        "Sparkle fica entre design e frontend para manter conceito e build real alinhados. O resultado e estrutura mais clara, mobile melhor, motion mais suave e um site que parece realmente custom.",
+      tags: ["Design + Frontend", "Motion suave", "Mobile", "Build custom"],
+    },
+    contact: {
+      ...siteCopy.en.contact,
+      label: "Contato",
+      title: "Se o seu site parece generico, a gente pode consertar a primeira impressao.",
+      text:
+        "Me manda uma nota curta com o que voce esta construindo e o que ainda parece off. Eu volto com uma direcao mais afiada e mais custom.",
+    },
+  },
+  nl: {
+    ...siteCopy.en,
+    loaderStatus: "Vormen worden opgebouwd...",
+    languageLabel: "TAAL",
+    menuButton: { open: "Menu", close: "Sluiten", openLabel: "Open menu", closeLabel: "Sluit menu" },
+    menuItems: [
+      { href: "#about", label: "Over" },
+      { href: "#process", label: "Proces" },
+      { href: "#work", label: "Werk" },
+      { href: "#reviews", label: "Feedback" },
+      { href: "#contact", label: "Contact" },
+    ],
+    legal: { terms: "Voorwaarden", privacy: "Privacy", refund: "Terugbetaling" },
+    hero: {
+      ...siteCopy.en.hero,
+      eyebrow: "Webdesign en frontend",
+      tagline: "Websites met ziel",
+      text:
+        "Aangepaste geanimeerde portfolios, landingpages en brand sites voor mensen die een website zien als investering in uitstraling, vertrouwen en momentum.",
+      ctaPrimary: "Start een project",
+      ctaSecondary: "Werk",
+    },
+    marqueeIntro: "Een rustige studiosite kan nog steeds levendig aanvoelen. Dat is de mix die ik bouw.",
+    about: {
+      ...siteCopy.en.about,
+      label: "Over",
+      title: "Een sterke eerste indruk begint met ontwerpkeuzes die bewust aanvoelen.",
+      text:
+        "Sparkle zit tussen design en frontend zodat concept en echte build gelijk blijven lopen. Het resultaat is een duidelijkere structuur, beter mobiel gedrag, soepelere motion en een site die echt custom voelt.",
+      tags: ["Design + Frontend", "Soepele motion", "Mobiel", "Custom build"],
+    },
+    contact: {
+      ...siteCopy.en.contact,
+      title: "Als je site generiek voelt, kunnen we de eerste indruk fixen.",
+      text:
+        "Stuur kort wat je aan het bouwen bent en wat nu nog niet goed voelt. Ik kom terug met een scherpere en meer custom richting.",
+    },
+  },
+  tr: {
+    ...siteCopy.en,
+    loaderStatus: "Sekiller olusuyor...",
+    languageLabel: "DIL",
+    menuButton: { open: "Menu", close: "Kapat", openLabel: "Menuyu ac", closeLabel: "Menuyu kapat" },
+    menuItems: [
+      { href: "#about", label: "Hakkinda" },
+      { href: "#process", label: "Surec" },
+      { href: "#work", label: "Isler" },
+      { href: "#reviews", label: "Geri bildirim" },
+      { href: "#contact", label: "Iletisim" },
+    ],
+    legal: { terms: "Kosullar", privacy: "Gizlilik", refund: "Iade" },
+    hero: {
+      ...siteCopy.en.hero,
+      eyebrow: "Web tasarim ve frontend",
+      tagline: "Ruhu olan websites",
+      text:
+        "Siteyi gorunurluk, guven ve momentum yatirimi olarak goren insanlar icin ozel animasyonlu portfolyolar, landing pageler ve brand siteler.",
+      ctaPrimary: "Proje baslat",
+      ctaSecondary: "Isler",
+    },
+    marqueeIntro: "Sakin bir studio sitesi yine de canli hissettirebilir. Benim kurdugum karisim bu.",
+    about: {
+      ...siteCopy.en.about,
+      label: "Hakkinda",
+      title: "Guclu bir ilk izlenim, bilincli tasarim kararlarinda baslar.",
+      text:
+        "Sparkle tasarim ile frontend arasinda durur; boylece fikir ve gercek build ayni hizada kalir. Sonuc daha temiz yapi, daha iyi mobile davranisi, daha yumusak motion ve gercekten custom hissettiren bir site olur.",
+      tags: ["Design + Frontend", "Yumusak motion", "Mobile", "Custom build"],
+    },
+    contact: {
+      ...siteCopy.en.contact,
+      label: "Iletisim",
+      title: "Siten generic geliyorsa ilk izlenimi birlikte duzeltebiliriz.",
+      text:
+        "Ne yaptigini ve su an neyin off hissettirdigini kisaca yaz. Daha keskin ve daha custom bir yonle geri donerim.",
+    },
+  },
 } as const;
 
 function setSurfacePosition(element: HTMLElement, clientX: number, clientY: number) {
@@ -964,17 +1364,41 @@ function Loader({ status, footer }: { status: string; footer: string }) {
   );
 }
 
-function MarqueeRow({ items, reverse = false }: { items: readonly string[]; reverse?: boolean }) {
-  const rowItems = [...items, ...items, ...items];
+function MarqueeRow({
+  items,
+  reverse = false,
+  rowIndex = 0,
+}: {
+  items: readonly string[];
+  reverse?: boolean;
+  rowIndex?: number;
+}) {
+  const rowSpinBases = [3.1, 5.2, 7.8];
+  const spinBase = rowSpinBases[rowIndex] ?? (4.2 + rowIndex * 1.8);
 
   return (
     <div className={`marquee-row${reverse ? " is-reverse" : ""}`} aria-hidden="true">
       <div className="marquee-track">
-        {rowItems.map((item, index) => (
-          <span className="marquee-item" key={`${item}-${index}`}>
-            {item}
-            <Image className="marquee-logo" src="/logo-transparent.png" alt="" width={46} height={46} />
-          </span>
+        {[0, 1].map((groupIndex) => (
+          <div className="marquee-group" key={`group-${groupIndex}`}>
+            {items.map((item, index) => (
+              <span className="marquee-item" key={`${groupIndex}-${item}-${index}`}>
+                {item}
+                <Image
+                  className="marquee-logo"
+                  src="/logo-transparent.png"
+                  alt=""
+                  width={46}
+                  height={46}
+                  style={
+                    {
+                      "--logo-spin-duration": `${(spinBase + (index % items.length) * 1.65 + groupIndex * 0.9).toFixed(2)}s`,
+                    } as CSSProperties
+                  }
+                />
+              </span>
+            ))}
+          </div>
         ))}
       </div>
     </div>
@@ -1178,12 +1602,17 @@ function DraggableLogo({
 
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
+  const cursorLogoRef = useRef<HTMLDivElement | null>(null);
   const heroLogoHoldTimer = useRef<number | undefined>(undefined);
   const heroLogoPointerPoint = useRef<{ x: number; y: number } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [showLoader, setShowLoader] = useState(true);
+  const [consentOpen, setConsentOpen] = useState(false);
+  const [consentNecessaryEnabled, setConsentNecessaryEnabled] = useState(true);
+  const [consentPreferencesEnabled, setConsentPreferencesEnabled] = useState(false);
+  const [consentAnalyticsEnabled, setConsentAnalyticsEnabled] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const [menuClosing, setMenuClosing] = useState(false);
@@ -1195,12 +1624,14 @@ export function HomePageClient() {
   const copy = localizedCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
   const activeReview = copy.reviews.items[reviewIndex] ?? copy.reviews.items[0];
+  const activeConsent = consentCopy[locale];
   const visibleReviewText = reduceMotion ? activeReview.text : typedReviewText;
+  const heroRevealOffset = showLoader ? 0.18 : 0.02;
   const year = new Date().getFullYear();
 
   useEffect(() => {
     const id = window.setTimeout(() => {
-      const stored = window.localStorage.getItem("sparkle-locale");
+      const stored = hasPreferenceConsent() ? window.localStorage.getItem("sparkle-locale") : null;
       const browserLanguage = window.navigator.language.toLowerCase();
       const nextLocale = isLocale(stored)
         ? stored
@@ -1212,7 +1643,17 @@ export function HomePageClient() {
               ? "fr"
               : browserLanguage.startsWith("sr")
                 ? "sr"
-                : "en";
+                : browserLanguage.startsWith("zh")
+                  ? "zh"
+                  : browserLanguage.startsWith("it")
+                    ? "it"
+                    : browserLanguage.startsWith("pt")
+                      ? "pt"
+                      : browserLanguage.startsWith("nl")
+                        ? "nl"
+                        : browserLanguage.startsWith("tr")
+                          ? "tr"
+                          : "en";
 
       setLocale(nextLocale);
     }, 0);
@@ -1222,7 +1663,7 @@ export function HomePageClient() {
 
   useEffect(() => {
     const id = window.setTimeout(() => {
-      const storedPosition = window.localStorage.getItem(heroLogoStorageKey);
+      const storedPosition = hasPreferenceConsent() ? window.localStorage.getItem(heroLogoStorageKey) : null;
 
       if (storedPosition) {
         try {
@@ -1248,7 +1689,12 @@ export function HomePageClient() {
 
   useEffect(() => {
     if (!logoPositionReady) return;
-    window.localStorage.setItem(heroLogoStorageKey, JSON.stringify(heroLogoPosition));
+    if (hasPreferenceConsent()) {
+      window.localStorage.setItem(heroLogoStorageKey, JSON.stringify(heroLogoPosition));
+      return;
+    }
+
+    window.localStorage.removeItem(heroLogoStorageKey);
   }, [heroLogoPosition, logoPositionReady]);
 
   useEffect(() => {
@@ -1293,6 +1739,73 @@ export function HomePageClient() {
     document.body.classList.toggle("is-loading", showLoader);
     return () => document.body.classList.remove("is-loading");
   }, [showLoader]);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    if (typeof window === "undefined") return;
+
+    const cursorLogo = cursorLogoRef.current;
+    const desktopPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+    if (!cursorLogo || !desktopPointer.matches) return;
+
+    let frame = 0;
+    let active = false;
+    const target = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+    const current = { ...target };
+
+    const render = () => {
+      const easing = active ? 0.18 : 0.12;
+      current.x += (target.x - current.x) * easing;
+      current.y += (target.y - current.y) * easing;
+
+      cursorLogo.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`;
+
+      if (active || Math.abs(target.x - current.x) > 0.24 || Math.abs(target.y - current.y) > 0.24) {
+        frame = window.requestAnimationFrame(render);
+      } else {
+        frame = 0;
+      }
+    };
+
+    const ensureFrame = () => {
+      if (!frame) frame = window.requestAnimationFrame(render);
+    };
+
+    const handlePointerEnter = (event: PointerEvent) => {
+      target.x = event.clientX;
+      target.y = event.clientY;
+      current.x = event.clientX;
+      current.y = event.clientY;
+      cursorLogo.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`;
+      cursorLogo.dataset.visible = "true";
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      target.x = event.clientX;
+      target.y = event.clientY;
+      active = true;
+      cursorLogo.dataset.visible = "true";
+      ensureFrame();
+    };
+
+    const handlePointerLeave = () => {
+      active = false;
+      cursorLogo.dataset.visible = "false";
+      ensureFrame();
+    };
+
+    window.addEventListener("pointerenter", handlePointerEnter);
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerleave", handlePointerLeave);
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("pointerenter", handlePointerEnter);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+    };
+  }, [reduceMotion]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -1364,9 +1877,41 @@ export function HomePageClient() {
   }, [menuOpen]);
 
   useEffect(() => {
-    window.localStorage.setItem("sparkle-locale", locale);
+    if (hasPreferenceConsent()) {
+      window.localStorage.setItem("sparkle-locale", locale);
+    } else {
+      window.localStorage.removeItem("sparkle-locale");
+    }
+
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    if (showLoader) return;
+
+    const timer = window.setTimeout(() => {
+      const storedConsent = getStoredConsentState();
+
+      if (storedConsent) {
+        setConsentNecessaryEnabled(storedConsent.necessary);
+        setConsentPreferencesEnabled(storedConsent.preferences);
+        setConsentAnalyticsEnabled(storedConsent.analytics);
+        return;
+      }
+
+      setConsentNecessaryEnabled(true);
+      setConsentPreferencesEnabled(false);
+      setConsentAnalyticsEnabled(false);
+      setConsentOpen(true);
+    }, 3000);
+
+    return () => window.clearTimeout(timer);
+  }, [showLoader]);
+
+  useEffect(() => {
+    document.body.classList.toggle("consent-open", consentOpen);
+    return () => document.body.classList.remove("consent-open");
+  }, [consentOpen]);
 
   useEffect(() => {
     let frame: number | undefined;
@@ -1575,11 +2120,67 @@ export function HomePageClient() {
     setReviewIndex((current) => (current + direction + copy.reviews.items.length) % copy.reviews.items.length);
   }
 
+  function saveConsent(necessary: boolean, preferences: boolean, analytics: boolean) {
+    setConsentNecessaryEnabled(necessary);
+    setConsentPreferencesEnabled(preferences);
+    setConsentAnalyticsEnabled(analytics);
+
+    if (!necessary) {
+      window.localStorage.removeItem(consentStorageKey);
+      window.localStorage.removeItem("sparkle-locale");
+      window.localStorage.removeItem(heroLogoStorageKey);
+      document.cookie = `${consentStorageKey}=; Max-Age=0; Path=/; SameSite=Lax; Secure`;
+      setConsentOpen(false);
+      return;
+    }
+
+    const consentState: ConsentState = {
+      version: 1,
+      necessary,
+      preferences,
+      analytics,
+      acceptedAt: new Date().toISOString(),
+    };
+
+    window.localStorage.setItem(consentStorageKey, JSON.stringify(consentState));
+    document.cookie = `${consentStorageKey}=${preferences ? "preferences" : "essential"}; Max-Age=31536000; Path=/; SameSite=Lax; Secure`;
+
+    if (!preferences) {
+      window.localStorage.removeItem("sparkle-locale");
+      window.localStorage.removeItem(heroLogoStorageKey);
+    } else {
+      window.localStorage.setItem("sparkle-locale", locale);
+      window.localStorage.setItem(heroLogoStorageKey, JSON.stringify(heroLogoPosition));
+    }
+
+    setConsentOpen(false);
+  }
+
+  function acceptEssentialOnly() {
+    saveConsent(true, false, false);
+  }
+
+  function acceptSelectedConsent() {
+    saveConsent(
+      consentNecessaryEnabled,
+      consentNecessaryEnabled && consentPreferencesEnabled,
+      consentNecessaryEnabled && consentAnalyticsEnabled,
+    );
+  }
+
+  function openEmailDraft() {
+    window.location.href = `mailto:${primaryEmail}`;
+  }
+
   return (
     <>
       <AnimatePresence>{showLoader ? <Loader footer={copy.loaderFooter} status={copy.loaderStatus} /> : null}</AnimatePresence>
 
       <main className="site">
+        <div className="cursor-logo" aria-hidden="true" data-visible="false" ref={cursorLogoRef}>
+          <Image src="/logo-transparent.png" alt="" width={148} height={148} loading="eager" />
+        </div>
+
         <div className="draggable-logo-layer" aria-hidden="true">
           {siteDragLogos.map((logo) => (
             <DraggableLogo
@@ -1618,25 +2219,28 @@ export function HomePageClient() {
               <AnimatePresence>
                 {languageOpen ? (
                   <motion.div
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={{ clipPath: "inset(0% 0% 0% 0% round 20px)", opacity: 1, y: 0 }}
                     className="language-menu"
-                    exit={{ opacity: 0, y: -8 }}
-                    initial={{ opacity: 0, y: -8 }}
+                    exit={{ clipPath: "inset(0% 0% 100% 0% round 20px)", opacity: 0, y: -10 }}
+                    initial={{ clipPath: "inset(0% 0% 100% 0% round 20px)", opacity: 0, y: -10 }}
                     role="menu"
-                    transition={{ duration: 0.18 }}
+                    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    {languageOptions.map((item) => (
-                      <button
+                    {languageOptions.map((item, index) => (
+                      <motion.button
+                        animate={{ opacity: 1, y: 0 }}
                         aria-current={locale === item.code ? "true" : undefined}
                         className="language-option"
+                        initial={{ opacity: 0, y: -8 }}
                         key={item.code}
                         onClick={() => selectLocale(item.code)}
                         role="menuitem"
+                        transition={{ delay: index * 0.035, duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
                         type="button"
                       >
                         <span className="language-chip">{item.short}</span>
                         {item.label}
-                      </button>
+                      </motion.button>
                     ))}
                   </motion.div>
                 ) : null}
@@ -1757,6 +2361,103 @@ export function HomePageClient() {
           ) : null}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {consentOpen ? (
+            <motion.div
+              animate={{ opacity: 1 }}
+              className="consent-overlay"
+              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0.12 : 0.34 }}
+            >
+              <motion.aside
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="consent-panel"
+                exit={{ opacity: 0, y: 16, scale: 0.98 }}
+                initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                transition={{ duration: reduceMotion ? 0.16 : 0.44, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <span className="consent-kicker">Sparkle</span>
+                <h2>{activeConsent.title}</h2>
+                <p>{activeConsent.text}</p>
+                <div className="consent-categories" aria-label="Cookie preferences">
+                  <button
+                    aria-pressed={consentNecessaryEnabled}
+                    className={`consent-option${consentNecessaryEnabled ? " is-active" : ""}`}
+                    onClick={() => {
+                      setConsentNecessaryEnabled((current) => {
+                        const next = !current;
+                        if (!next) setConsentPreferencesEnabled(false);
+                        return next;
+                      });
+                    }}
+                    type="button"
+                  >
+                    <div className="consent-option-copy">
+                      <strong>{activeConsent.essentialTitle}</strong>
+                      <span>{activeConsent.essentialBody}</span>
+                    </div>
+                    <span className={`consent-switch${consentNecessaryEnabled ? " is-on" : ""}`} aria-hidden="true">
+                      <span />
+                    </span>
+                  </button>
+                  <button
+                    aria-pressed={consentNecessaryEnabled && consentPreferencesEnabled}
+                    className={`consent-option${consentNecessaryEnabled && consentPreferencesEnabled ? " is-active" : ""}`}
+                    disabled={!consentNecessaryEnabled}
+                    onClick={() => setConsentPreferencesEnabled((current) => !current)}
+                    type="button"
+                  >
+                    <div className="consent-option-copy">
+                      <strong>{activeConsent.preferenceTitle}</strong>
+                      <span>{activeConsent.preferenceBody}</span>
+                    </div>
+                    <span
+                      className={`consent-switch${consentNecessaryEnabled && consentPreferencesEnabled ? " is-on" : ""}`}
+                      aria-hidden="true"
+                    >
+                      <span />
+                    </span>
+                  </button>
+                  <button
+                    aria-pressed={consentNecessaryEnabled && consentAnalyticsEnabled}
+                    className={`consent-option${consentNecessaryEnabled && consentAnalyticsEnabled ? " is-active" : ""}`}
+                    disabled={!consentNecessaryEnabled}
+                    onClick={() => setConsentAnalyticsEnabled((current) => !current)}
+                    type="button"
+                  >
+                    <div className="consent-option-copy">
+                      <strong>{activeConsent.analyticsTitle}</strong>
+                      <span>{activeConsent.analyticsBody}</span>
+                    </div>
+                    <span
+                      className={`consent-switch${consentNecessaryEnabled && consentAnalyticsEnabled ? " is-on" : ""}`}
+                      aria-hidden="true"
+                    >
+                      <span />
+                    </span>
+                  </button>
+                </div>
+                <div className="consent-links">
+                  <Link href="/tos">{copy.legal.terms}</Link>
+                  <Link href="/privacy">{copy.legal.privacy}</Link>
+                </div>
+                <div className="consent-actions">
+                  <span className="consent-note">{activeConsent.note}</span>
+                  <div className="consent-button-row">
+                    <button className="consent-button is-secondary" onClick={acceptEssentialOnly} type="button">
+                      {activeConsent.essentialButton}
+                    </button>
+                    <button className="consent-button" onClick={acceptSelectedConsent} type="button">
+                      {activeConsent.selectedButton}
+                    </button>
+                  </div>
+                </div>
+              </motion.aside>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
         <section className="hero" id="home">
           <div className="floating-logo-field" aria-hidden="true">
             {floatingLogoSlots.map((slot) => (
@@ -1798,7 +2499,7 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="eyebrow"
               initial={{ opacity: 0, y: 14 }}
-              transition={{ delay: showLoader ? 0.12 : 0, duration: 0.42 }}
+              transition={{ delay: heroRevealOffset + 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
               {copy.hero.eyebrow}
             </motion.p>
@@ -1806,7 +2507,7 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="hero-title"
               initial={{ opacity: 0, y: 18 }}
-              transition={{ delay: showLoader ? 0.18 : 0.04, duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: heroRevealOffset + 0.16, duration: 0.74, ease: [0.16, 1, 0.3, 1] }}
             >
               {copy.hero.title}
             </motion.h1>
@@ -1814,7 +2515,7 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="hero-credit"
               initial={{ opacity: 0, y: 10 }}
-              transition={{ delay: showLoader ? 0.2 : 0.06, duration: 0.42 }}
+              transition={{ delay: heroRevealOffset + 0.26, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
               {copy.hero.credit}
             </motion.p>
@@ -1822,7 +2523,7 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="hero-tagline"
               initial={{ opacity: 0, y: 14 }}
-              transition={{ delay: showLoader ? 0.24 : 0.08, duration: 0.48 }}
+              transition={{ delay: heroRevealOffset + 0.34, duration: 0.64, ease: [0.16, 1, 0.3, 1] }}
             >
               {copy.hero.tagline}
             </motion.p>
@@ -1830,7 +2531,7 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="hero-text"
               initial={{ opacity: 0, y: 14 }}
-              transition={{ delay: showLoader ? 0.3 : 0.12, duration: 0.48 }}
+              transition={{ delay: heroRevealOffset + 0.44, duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
             >
               {copy.hero.text}
             </motion.p>
@@ -1839,11 +2540,11 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="hero-actions"
               initial={{ opacity: 0, y: 14 }}
-              transition={{ delay: showLoader ? 0.34 : 0.14, duration: 0.44 }}
+              transition={{ delay: heroRevealOffset + 0.56, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
               <motion.a
                 className="button primary"
-                href={`mailto:${primaryEmail}`}
+                href="#contact"
                 onPointerLeave={handleSurfaceLeave}
                 onPointerMove={handleSurfaceMove}
                 whileHover={reduceMotion ? undefined : { y: -2 }}
@@ -1872,7 +2573,11 @@ export function HomePageClient() {
                   key={`service-${index}`}
                   onPointerLeave={handleSurfaceLeave}
                   onPointerMove={handleSurfaceMove}
-                  transition={{ delay: showLoader ? 0.38 + index * 0.08 : 0.18 + index * 0.05, duration: 0.46 }}
+                  transition={{
+                    delay: heroRevealOffset + 0.66 + index * 0.09,
+                    duration: 0.68,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                 >
                   <button
                     aria-label={card.action}
@@ -1905,10 +2610,10 @@ export function HomePageClient() {
                             </span>
                           </motion.div>
                           <motion.div
-                            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
                             className="service-card-copy"
-                            exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-                            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                            exit={{ opacity: 0, scale: 0.985, y: -8 }}
+                            initial={{ opacity: 0, scale: 0.985, y: 10 }}
                             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                           >
                             <span className="service-index">{String(index + 1).padStart(2, "0")}</span>
@@ -1934,7 +2639,7 @@ export function HomePageClient() {
         <section className="motion-strip" id="motion-strip">
           <p className="strip-intro">{copy.marqueeIntro}</p>
           {copy.marqueeRows.map((row, index) => (
-            <MarqueeRow items={row} key={row.join("-")} reverse={index % 2 === 1} />
+            <MarqueeRow items={row} key={row.join("-")} reverse={index % 2 === 1} rowIndex={index} />
           ))}
         </section>
 
@@ -1944,8 +2649,37 @@ export function HomePageClient() {
               <p className="section-label">{copy.about.label}</p>
               <h2 className="section-title">{copy.about.title}</h2>
             </div>
-            <div className="reveal reveal-right delay-1">
-              <p className="section-text">{copy.about.text}</p>
+            <div className="about-stack reveal reveal-right delay-1">
+              <article className="about-panel" onPointerLeave={handleSurfaceLeave} onPointerMove={handleSurfaceMove}>
+                <span className="about-watermark" aria-hidden="true">
+                  <Image src="/logo-transparent.png" alt="" width={240} height={240} loading="lazy" />
+                </span>
+                <div className="about-topline">
+                  <div className="about-lead-wrap">
+                    <p className="section-text about-lead">{copy.about.text}</p>
+                    <div className="about-tags" aria-label="About highlights">
+                      {copy.about.tags.map((tag) => (
+                        <span className="about-tag" key={`${locale}-${tag}`}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="about-sidecard">
+                    <span className="about-side-kicker">Sparkle</span>
+                    <strong>Design that feels intentional in motion and in code.</strong>
+                  </div>
+                </div>
+                <div className="about-points">
+                  {copy.about.points.map((point, index) => (
+                    <article className="about-point" key={`${locale}-${point.title}`}>
+                      <span className="about-point-index">{String(index + 1).padStart(2, "0")}</span>
+                      <h3>{point.title}</h3>
+                      <p>{point.body}</p>
+                    </article>
+                  ))}
+                </div>
+              </article>
             </div>
           </div>
         </section>
@@ -1958,7 +2692,12 @@ export function HomePageClient() {
             </div>
             <div className="process-grid reveal reveal-rise delay-1">
               {copy.process.items.map((item) => (
-                <article className="process-card" key={`${locale}-${item.title}`}>
+                <article
+                  className="process-card"
+                  key={`${locale}-${item.title}`}
+                  onPointerLeave={handleSurfaceLeave}
+                  onPointerMove={handleSurfaceMove}
+                >
                   <span className="process-line-num">{item.num}</span>
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
@@ -1976,7 +2715,12 @@ export function HomePageClient() {
             </div>
             <div className="work-grid reveal reveal-right delay-1">
               {copy.work.items.map((project) => (
-                <article className="work-card" key={`${locale}-${project.title}`}>
+                <article
+                  className="work-card"
+                  key={`${locale}-${project.title}`}
+                  onPointerLeave={handleSurfaceLeave}
+                  onPointerMove={handleSurfaceMove}
+                >
                   <p className="project-label">{project.category}</p>
                   <h3>{project.title}</h3>
                   <p>{project.summary}</p>
@@ -1992,7 +2736,11 @@ export function HomePageClient() {
               <p className="section-label">{copy.reviews.label}</p>
               <h2 className="section-title">{copy.reviews.title}</h2>
             </div>
-            <div className="review-shell reveal reveal-scale delay-1">
+            <div
+              className="review-shell reveal reveal-scale delay-1"
+              onPointerLeave={handleSurfaceLeave}
+              onPointerMove={handleSurfaceMove}
+            >
               <div className="review-topline">
                 <div>
                   <span className="review-score">{copy.reviews.score}</span>
@@ -2031,17 +2779,22 @@ export function HomePageClient() {
               <p className="section-label">{copy.contact.label}</p>
               <h2 className="section-title">{copy.contact.title}</h2>
             </div>
-            <div className="contact-panel reveal reveal-float delay-1">
+            <div
+              className="contact-panel reveal reveal-float delay-1"
+              onPointerLeave={handleSurfaceLeave}
+              onPointerMove={handleSurfaceMove}
+            >
               <p className="contact-note">{copy.contact.text}</p>
-              <a
+              <button
                 className="email-row"
-                href={`mailto:${primaryEmail}`}
+                onClick={openEmailDraft}
                 onPointerLeave={handleSurfaceLeave}
                 onPointerMove={handleSurfaceMove}
+                type="button"
               >
                 <span className="email-label">{copy.contact.emailLabel}</span>
                 <span className="email-address">{primaryEmail}</span>
-              </a>
+              </button>
             </div>
           </div>
         </section>

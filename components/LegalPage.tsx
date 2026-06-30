@@ -22,6 +22,10 @@ type LegalPageProps = {
 
 const sectionColors = ["#0050d8", "#4db6e5", "#18bfa5", "#9bd3ff", "#2f9cff"];
 
+function obfuscateEmail(email: string) {
+  return email.replace("@", " [at] ").replace(/\./g, " [dot] ");
+}
+
 export function LegalPage({ tone, label, title, updated, intro, sections }: LegalPageProps) {
   const year = new Date().getFullYear();
 
@@ -61,7 +65,7 @@ export function LegalPage({ tone, label, title, updated, intro, sections }: Lega
               <p>{section.content}</p>
               {section.contact && (
                 <a className="legal-contact" href={`mailto:${section.contact}`}>
-                  {section.contact}
+                  {obfuscateEmail(section.contact)}
                 </a>
               )}
               {section.listNote && <p className="legal-list-note">{section.listNote}</p>}
