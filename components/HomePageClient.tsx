@@ -13,6 +13,56 @@ import { useEffect, useRef, useState } from "react";
 
 const primaryEmailParts = ["info", "tylerosthoff", "xyz"] as const;
 const primaryEmail = `${primaryEmailParts[0]}@${primaryEmailParts[1]}.${primaryEmailParts[2]}`;
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA";
+let turnstileScriptPromise: Promise<void> | null = null;
+
+type TurnstileRenderOptions = {
+  callback?: (token: string) => void;
+  "error-callback"?: () => void;
+  "expired-callback"?: () => void;
+  language?: string;
+  sitekey: string;
+  theme?: "auto" | "light" | "dark";
+};
+
+type TurnstileApi = {
+  remove: (widgetId: string) => void;
+  render: (container: HTMLElement, options: TurnstileRenderOptions) => string;
+  reset: (widgetId?: string) => void;
+};
+
+declare global {
+  interface Window {
+    turnstile?: TurnstileApi;
+  }
+}
+
+function loadTurnstileScript() {
+  if (typeof window === "undefined") return Promise.resolve();
+  if (window.turnstile) return Promise.resolve();
+  if (turnstileScriptPromise) return turnstileScriptPromise;
+
+  turnstileScriptPromise = new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>('script[data-turnstile-script="true"]');
+
+    if (existing) {
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("Turnstile failed to load")), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    script.async = true;
+    script.defer = true;
+    script.dataset.turnstileScript = "true";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Turnstile failed to load"));
+    document.head.appendChild(script);
+  });
+
+  return turnstileScriptPromise;
+}
 
 const languageOptions = [
   { code: "en", label: "English", short: "EN" },
@@ -50,6 +100,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   de: {
     nameLabel: "Name",
@@ -63,6 +115,8 @@ const contactFormCopy = {
     success: "Nachricht gesendet. Ich melde mich bald zurueck.",
     error: "Das Senden hat nicht geklappt. Versuch es nochmal oder schreib an info@tylerosthoff.xyz.",
     directLabel: "Direkt per E-Mail",
+    turnstileLabel: "Kurze Verifizierung",
+    turnstileError: "Bitte schliesse zuerst die Verifizierung ab.",
   },
   es: {
     nameLabel: "Name",
@@ -76,6 +130,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   fr: {
     nameLabel: "Name",
@@ -89,6 +145,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   sr: {
     nameLabel: "Name",
@@ -102,6 +160,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   zh: {
     nameLabel: "Name",
@@ -115,6 +175,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   it: {
     nameLabel: "Name",
@@ -128,6 +190,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   pt: {
     nameLabel: "Name",
@@ -141,6 +205,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   nl: {
     nameLabel: "Name",
@@ -154,6 +220,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
   tr: {
     nameLabel: "Name",
@@ -167,6 +235,8 @@ const contactFormCopy = {
     success: "Message sent. I will get back to you soon.",
     error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
     directLabel: "Direct email",
+    turnstileLabel: "Quick verification",
+    turnstileError: "Please complete the verification first.",
   },
 } satisfies Record<
   Locale,
@@ -182,6 +252,8 @@ const contactFormCopy = {
     success: string;
     error: string;
     directLabel: string;
+    turnstileLabel: string;
+    turnstileError: string;
   }
 >;
 
@@ -1707,6 +1779,8 @@ export function HomePageClient() {
   const cursorLogoRef = useRef<HTMLDivElement | null>(null);
   const heroLogoHoldTimer = useRef<number | undefined>(undefined);
   const heroLogoPointerPoint = useRef<{ x: number; y: number } | null>(null);
+  const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
@@ -1725,8 +1799,11 @@ export function HomePageClient() {
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");
+  const [contactCompany, setContactCompany] = useState("");
   const [contactStatus, setContactStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [contactFeedback, setContactFeedback] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReady, setTurnstileReady] = useState(false);
   const copy = localizedCopy[locale];
   const contactForm = contactFormCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
@@ -1946,6 +2023,64 @@ export function HomePageClient() {
 
   useEffect(() => {
     document.documentElement.lang = locale;
+  }, [locale]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function mountTurnstile() {
+      if (!turnstileContainerRef.current) return;
+
+      try {
+        await loadTurnstileScript();
+      } catch {
+        if (!cancelled) {
+          setTurnstileReady(false);
+        }
+        return;
+      }
+
+      if (cancelled || !window.turnstile || !turnstileContainerRef.current) return;
+
+      if (turnstileWidgetIdRef.current) {
+        window.turnstile.remove(turnstileWidgetIdRef.current);
+        turnstileWidgetIdRef.current = null;
+      }
+
+      turnstileContainerRef.current.innerHTML = "";
+      setTurnstileToken("");
+      setTurnstileReady(false);
+
+      turnstileWidgetIdRef.current = window.turnstile.render(turnstileContainerRef.current, {
+        sitekey: turnstileSiteKey,
+        language: locale,
+        theme: "light",
+        callback: (token) => {
+          if (!cancelled) {
+            setTurnstileToken(token);
+            setTurnstileReady(true);
+          }
+        },
+        "expired-callback": () => {
+          if (!cancelled) {
+            setTurnstileToken("");
+            setTurnstileReady(false);
+          }
+        },
+        "error-callback": () => {
+          if (!cancelled) {
+            setTurnstileToken("");
+            setTurnstileReady(false);
+          }
+        },
+      });
+    }
+
+    mountTurnstile();
+
+    return () => {
+      cancelled = true;
+    };
   }, [locale]);
 
   useEffect(() => {
@@ -2204,10 +2339,23 @@ export function HomePageClient() {
     const cleanName = contactName.trim();
     const cleanEmail = contactEmail.trim();
     const cleanMessage = contactMessage.trim();
+    const cleanCompany = contactCompany.trim();
+
+    if (cleanCompany) {
+      setContactStatus("success");
+      setContactFeedback(contactForm.success);
+      return;
+    }
 
     if (!cleanName || !cleanEmail || !cleanMessage) {
       setContactStatus("error");
       setContactFeedback(contactForm.error);
+      return;
+    }
+
+    if (!turnstileToken) {
+      setContactStatus("error");
+      setContactFeedback(contactForm.turnstileError);
       return;
     }
 
@@ -2226,21 +2374,34 @@ export function HomePageClient() {
           message: cleanMessage,
           locale,
           page: window.location.href,
+          turnstileToken,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Request failed");
+        const errorPayload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(errorPayload?.error || "Request failed");
       }
 
       setContactName("");
       setContactEmail("");
       setContactMessage("");
+      setContactCompany("");
+      setTurnstileToken("");
+      setTurnstileReady(false);
       setContactStatus("success");
       setContactFeedback(contactForm.success);
-    } catch {
+      if (window.turnstile && turnstileWidgetIdRef.current) {
+        window.turnstile.reset(turnstileWidgetIdRef.current);
+      }
+    } catch (error) {
+      setTurnstileToken("");
+      setTurnstileReady(false);
       setContactStatus("error");
-      setContactFeedback(contactForm.error);
+      setContactFeedback(error instanceof Error && error.message ? error.message : contactForm.error);
+      if (window.turnstile && turnstileWidgetIdRef.current) {
+        window.turnstile.reset(turnstileWidgetIdRef.current);
+      }
     }
   }
 
@@ -2858,6 +3019,20 @@ export function HomePageClient() {
             >
               <p className="contact-note">{copy.contact.text}</p>
               <form className="contact-form" onSubmit={submitContactForm}>
+                <div aria-hidden="true" className="contact-trap">
+                  <label className="contact-field">
+                    <span className="contact-field-label">Company</span>
+                    <input
+                      autoComplete="off"
+                      className="contact-input"
+                      name="company"
+                      onChange={(event) => setContactCompany(event.target.value)}
+                      tabIndex={-1}
+                      type="text"
+                      value={contactCompany}
+                    />
+                  </label>
+                </div>
                 <div className="contact-form-grid">
                   <label className="contact-field">
                     <span className="contact-field-label">{contactForm.nameLabel}</span>
@@ -2898,10 +3073,14 @@ export function HomePageClient() {
                     value={contactMessage}
                   />
                 </label>
+                <div className="contact-turnstile-wrap">
+                  <span className="contact-field-label">{contactForm.turnstileLabel}</span>
+                  <div className="contact-turnstile" ref={turnstileContainerRef} />
+                </div>
                 <div className="contact-actions">
                   <button
                     className="button contact-submit"
-                    disabled={contactStatus === "submitting"}
+                    disabled={contactStatus === "submitting" || !turnstileReady}
                     onPointerLeave={handleSurfaceLeave}
                     onPointerMove={handleSurfaceMove}
                     type="submit"

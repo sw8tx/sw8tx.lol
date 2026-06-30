@@ -2311,6 +2311,16 @@ img {
   gap: 16px;
 }
 
+.contact-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .contact-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2373,8 +2383,28 @@ img {
   flex-wrap: wrap;
 }
 
+.contact-turnstile-wrap {
+  display: grid;
+  gap: 10px;
+}
+
+.contact-turnstile {
+  min-height: 66px;
+  display: flex;
+  align-items: center;
+}
+
 .contact-submit {
   justify-content: center;
+}
+
+.contact-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+  transform: none;
+  box-shadow:
+    0 10px 22px rgba(89, 61, 35, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44);
 }
 
 .email-row {
