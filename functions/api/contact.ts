@@ -196,19 +196,31 @@ export const onRequestPost: PagesHandler<Env> = async ({ env, request }) => {
     },
     body: JSON.stringify({
       username: "Sparkle Contact",
+      avatar_url: "https://sw8tx.lol/logo-transparent.png",
+      content: "New contact inquiry for Sparkle.",
       embeds: [
         {
-          title: "New Sparkle contact note",
+          title: "New Sparkle inquiry",
+          description: "A new contact form note just came in from `sw8tx.lol`.",
           color: 0xc95d37,
+          author: {
+            name: "Sparkle",
+            url: "https://sw8tx.lol",
+            icon_url: "https://sw8tx.lol/logo-transparent.png",
+          },
           fields: [
-            { name: "Name", value: name },
-            { name: "Email", value: email },
-            { name: "Language", value: locale, inline: true },
-            { name: "Page", value: page.slice(0, 1024) || "unknown", inline: true },
-            { name: "Message", value: message.slice(0, 1024) },
+            { name: "From", value: name, inline: true },
+            { name: "Reply", value: email, inline: true },
+            { name: "Locale", value: locale.toUpperCase(), inline: true },
+            { name: "Page", value: `[Open page](${page.slice(0, 1024) || requestUrl.origin})`, inline: true },
+            { name: "Abuse key", value: `\`${ipHashPrefix}\``, inline: true },
+            {
+              name: "Message",
+              value: `>>> ${message.slice(0, 980).replace(/\n/g, "\n> ")}`,
+            },
           ],
           footer: {
-            text: "Submitted from sw8tx.lol",
+            text: "Sparkle Contact • Server-validated submit",
           },
           timestamp: new Date().toISOString(),
         },
