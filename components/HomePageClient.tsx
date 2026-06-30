@@ -23,65 +23,15 @@ const languageOptions = [
 ] as const;
 type Locale = (typeof languageOptions)[number]["code"];
 
-function isLocale(value: string | null): value is Locale {
-  return languageOptions.some((item) => item.code === value);
-}
-
 const floatingLogoSlots = Array.from({ length: 8 }, (_, index) => `float-logo-${index + 1}`);
 const heroLogoFallbackBounds = { x: 260, y: 190 };
 const heroLogoHoldTime = 680;
-const heroLogoStorageKey = "sparkle-hero-logo-position";
 const siteDragLogos = [
   { className: "drag-logo-about", id: "about", x: 112, y: 168, size: 104 },
   { className: "drag-logo-process", id: "process", x: 1230, y: 224, size: 122 },
   { className: "drag-logo-work", id: "work", x: 94, y: 596, size: 96 },
   { className: "drag-logo-contact", id: "contact", x: 1320, y: 708, size: 118 },
 ] as const;
-const consentStorageKey = "sparkle-consent-accepted";
-type ConsentState = {
-  version: 1;
-  necessary: boolean;
-  preferences: boolean;
-  analytics: boolean;
-  acceptedAt: string;
-};
-
-function parseConsentState(value: string | null): ConsentState | null {
-  if (!value) return null;
-
-  try {
-    const parsed = JSON.parse(value) as Partial<ConsentState>;
-
-    if (
-      parsed.version !== 1 ||
-      typeof parsed.necessary !== "boolean" ||
-      typeof parsed.preferences !== "boolean" ||
-      typeof parsed.analytics !== "boolean" ||
-      typeof parsed.acceptedAt !== "string"
-    ) {
-      return null;
-    }
-
-    return {
-      version: 1,
-      necessary: parsed.necessary,
-      preferences: parsed.preferences,
-      analytics: parsed.analytics,
-      acceptedAt: parsed.acceptedAt,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function getStoredConsentState() {
-  if (typeof window === "undefined") return null;
-  return parseConsentState(window.localStorage.getItem(consentStorageKey));
-}
-
-function hasPreferenceConsent() {
-  return getStoredConsentState()?.preferences === true;
-}
 
 const consentCopy = {
   en: {
@@ -1617,7 +1567,6 @@ export function HomePageClient() {
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const [menuClosing, setMenuClosing] = useState(false);
   const [menuJump, setMenuJump] = useState<{ href: string; label: string } | null>(null);
-  const [logoPositionReady, setLogoPositionReady] = useState(false);
   const [heroLogoHoldState, setHeroLogoHoldState] = useState<"idle" | "charging" | "ready">("idle");
   const [heroLogoPosition, setHeroLogoPosition] = useState({ x: 0, y: 0 });
   const [typedReviewText, setTypedReviewText] = useState("");
@@ -1631,71 +1580,32 @@ export function HomePageClient() {
 
   useEffect(() => {
     const id = window.setTimeout(() => {
-      const stored = hasPreferenceConsent() ? window.localStorage.getItem("sparkle-locale") : null;
       const browserLanguage = window.navigator.language.toLowerCase();
-      const nextLocale = isLocale(stored)
-        ? stored
-        : browserLanguage.startsWith("de")
-          ? "de"
-          : browserLanguage.startsWith("es")
-            ? "es"
-            : browserLanguage.startsWith("fr")
-              ? "fr"
-              : browserLanguage.startsWith("sr")
-                ? "sr"
-                : browserLanguage.startsWith("zh")
-                  ? "zh"
-                  : browserLanguage.startsWith("it")
-                    ? "it"
-                    : browserLanguage.startsWith("pt")
-                      ? "pt"
-                      : browserLanguage.startsWith("nl")
-                        ? "nl"
-                        : browserLanguage.startsWith("tr")
-                          ? "tr"
-                          : "en";
+      const nextLocale = browserLanguage.startsWith("de")
+        ? "de"
+        : browserLanguage.startsWith("es")
+          ? "es"
+          : browserLanguage.startsWith("fr")
+            ? "fr"
+            : browserLanguage.startsWith("sr")
+              ? "sr"
+              : browserLanguage.startsWith("zh")
+                ? "zh"
+                : browserLanguage.startsWith("it")
+                  ? "it"
+                  : browserLanguage.startsWith("pt")
+                    ? "pt"
+                    : browserLanguage.startsWith("nl")
+                      ? "nl"
+                      : browserLanguage.startsWith("tr")
+                        ? "tr"
+                        : "en";
 
       setLocale(nextLocale);
     }, 0);
 
     return () => window.clearTimeout(id);
   }, []);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => {
-      const storedPosition = hasPreferenceConsent() ? window.localStorage.getItem(heroLogoStorageKey) : null;
-
-      if (storedPosition) {
-        try {
-          const parsed = JSON.parse(storedPosition) as { x?: unknown; y?: unknown };
-
-          if (typeof parsed.x === "number" && typeof parsed.y === "number") {
-            const bounds = getHeroLogoBounds();
-            setHeroLogoPosition({
-              x: clamp(parsed.x, -bounds.x, bounds.x),
-              y: clamp(parsed.y, -bounds.y, bounds.y),
-            });
-          }
-        } catch {
-          window.localStorage.removeItem(heroLogoStorageKey);
-        }
-      }
-
-      setLogoPositionReady(true);
-    }, 0);
-
-    return () => window.clearTimeout(id);
-  }, []);
-
-  useEffect(() => {
-    if (!logoPositionReady) return;
-    if (hasPreferenceConsent()) {
-      window.localStorage.setItem(heroLogoStorageKey, JSON.stringify(heroLogoPosition));
-      return;
-    }
-
-    window.localStorage.removeItem(heroLogoStorageKey);
-  }, [heroLogoPosition, logoPositionReady]);
 
   useEffect(() => {
     return () => {
@@ -1877,12 +1787,6 @@ export function HomePageClient() {
   }, [menuOpen]);
 
   useEffect(() => {
-    if (hasPreferenceConsent()) {
-      window.localStorage.setItem("sparkle-locale", locale);
-    } else {
-      window.localStorage.removeItem("sparkle-locale");
-    }
-
     document.documentElement.lang = locale;
   }, [locale]);
 
@@ -1890,15 +1794,6 @@ export function HomePageClient() {
     if (showLoader) return;
 
     const timer = window.setTimeout(() => {
-      const storedConsent = getStoredConsentState();
-
-      if (storedConsent) {
-        setConsentNecessaryEnabled(storedConsent.necessary);
-        setConsentPreferencesEnabled(storedConsent.preferences);
-        setConsentAnalyticsEnabled(storedConsent.analytics);
-        return;
-      }
-
       setConsentNecessaryEnabled(true);
       setConsentPreferencesEnabled(false);
       setConsentAnalyticsEnabled(false);
@@ -2126,31 +2021,8 @@ export function HomePageClient() {
     setConsentAnalyticsEnabled(analytics);
 
     if (!necessary) {
-      window.localStorage.removeItem(consentStorageKey);
-      window.localStorage.removeItem("sparkle-locale");
-      window.localStorage.removeItem(heroLogoStorageKey);
-      document.cookie = `${consentStorageKey}=; Max-Age=0; Path=/; SameSite=Lax; Secure`;
       setConsentOpen(false);
       return;
-    }
-
-    const consentState: ConsentState = {
-      version: 1,
-      necessary,
-      preferences,
-      analytics,
-      acceptedAt: new Date().toISOString(),
-    };
-
-    window.localStorage.setItem(consentStorageKey, JSON.stringify(consentState));
-    document.cookie = `${consentStorageKey}=${preferences ? "preferences" : "essential"}; Max-Age=31536000; Path=/; SameSite=Lax; Secure`;
-
-    if (!preferences) {
-      window.localStorage.removeItem("sparkle-locale");
-      window.localStorage.removeItem(heroLogoStorageKey);
-    } else {
-      window.localStorage.setItem("sparkle-locale", locale);
-      window.localStorage.setItem(heroLogoStorageKey, JSON.stringify(heroLogoPosition));
     }
 
     setConsentOpen(false);
