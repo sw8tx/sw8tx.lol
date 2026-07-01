@@ -2,14 +2,27 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Sparkle | Custom Animated Websites and Portfolios",
-  description: "Sparkle is the portfolio of Tyler Osthoff, focused on custom animated websites, landing pages and portfolios with sharp design, clean code and a stronger first impression.",
+  title: "sw8tx | Sparkle Custom Animated Websites and Portfolios",
+  description: "sw8tx.lol is the Sparkle portfolio by Tyler Osthoff: custom animated websites, landing pages, portfolios, UI/UX design, responsive frontend and performance-focused web design.",
   metadataBase: new URL("https://sw8tx.lol"),
   applicationName: "Sparkle",
   authors: [{ name: "Tyler Osthoff", url: "https://sw8tx.lol" }],
   creator: "Tyler Osthoff",
   publisher: "Sparkle",
   category: "portfolio",
+  keywords: [
+    "sw8tx",
+    "sw8tx.lol",
+    "Sparkle",
+    "Tyler Osthoff",
+    "custom animated websites",
+    "animated portfolio",
+    "landing page design",
+    "UI UX design",
+    "responsive frontend",
+    "web design",
+    "frontend developer",
+  ],
   alternates: {
     canonical: "https://sw8tx.lol",
   },
@@ -31,8 +44,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Sparkle | Custom Animated Websites and Portfolios",
-    description: "Custom animated websites, landing pages and portfolios by Tyler Osthoff.",
+    title: "sw8tx | Sparkle Custom Animated Websites and Portfolios",
+    description: "Custom animated websites, landing pages, portfolios and responsive frontend by Tyler Osthoff.",
     url: "https://sw8tx.lol",
     siteName: "Sparkle",
     images: [{ url: "/logo-transparent.png", width: 1024, height: 1024, alt: "Sparkle Logo" }],
@@ -40,8 +53,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Sparkle | Custom Animated Websites and Portfolios",
-    description: "Custom animated websites, landing pages and portfolios by Tyler Osthoff.",
+    title: "sw8tx | Sparkle Custom Animated Websites and Portfolios",
+    description: "Custom animated websites, landing pages, portfolios and responsive frontend by Tyler Osthoff.",
     images: ["/logo-transparent.png"],
   },
   icons: {
@@ -51,9 +64,31 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "sw8tx | Sparkle",
+    alternateName: ["Sparkle", "sw8tx", "sw8tx.lol"],
+    url: "https://sw8tx.lol",
+    creator: {
+      "@type": "Person",
+      name: "Tyler Osthoff",
+      url: "https://sw8tx.lol",
+    },
+    description:
+      "Custom animated websites, landing pages, portfolios, UI/UX design and responsive frontend by Tyler Osthoff.",
+    inLanguage: ["en", "de"],
+  };
+
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

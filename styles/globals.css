@@ -3236,12 +3236,14 @@ body.onboarding-open .footer {
 
   .service-card {
     min-height: 350px;
-    transform: none !important;
   }
 
-  .about-panel,
-  .about-point {
-    transform: none !important;
+  .about-point:nth-child(2) {
+    transform: translateY(10px);
+  }
+
+  .about-point:nth-child(3) {
+    transform: translateY(20px);
   }
 
   .service-card::after,
@@ -3259,20 +3261,8 @@ body.onboarding-open .footer {
     transform: none;
   }
 
-  .process-card,
-  .work-card,
-  .review-shell,
-  .contact-panel {
-    animation: none;
-  }
-
   .reveal {
     transition-duration: 560ms;
-  }
-
-  .reveal.visible .process-card,
-  .reveal.visible .work-card {
-    animation: none;
   }
 
   .marquee-logo {
@@ -3291,7 +3281,6 @@ body.onboarding-open .footer {
     grid-template-columns: 1fr;
   }
 
-  .email-row,
   .footer,
   .legal-footer {
     align-items: stretch;
@@ -3299,12 +3288,7 @@ body.onboarding-open .footer {
   }
 
   .email-row {
-    width: 100%;
-    max-width: none;
-    gap: 8px;
-    padding: 12px 14px;
-    border-radius: 28px;
-    align-items: flex-start;
+    display: none;
   }
 
   .contact-actions {

@@ -109,14 +109,14 @@ const contactFormCopy = {
     messageLabel: "Projektnotiz",
     namePlaceholder: "Dein Name",
     emailPlaceholder: "du@beispiel.de",
-    messagePlaceholder: "Was baust du und was fuehlt sich gerade noch falsch an?",
+    messagePlaceholder: "Was baust du und was fühlt sich gerade noch falsch an?",
     submit: "Nachricht senden",
     sending: "Wird gesendet...",
-    success: "Nachricht gesendet. Ich melde mich bald zurueck.",
+    success: "Nachricht gesendet. Ich melde mich bald zurück.",
     error: "Das Senden hat nicht geklappt. Versuch es nochmal oder schreib an info@tylerosthoff.xyz.",
     directLabel: "Direkt per E-Mail",
     turnstileLabel: "Kurze Verifizierung",
-    turnstileError: "Bitte schliesse zuerst die Verifizierung ab.",
+    turnstileError: "Bitte schließe zuerst die Verifizierung ab.",
   },
   es: {
     nameLabel: "Name",
@@ -273,13 +273,13 @@ const consentCopy = {
   },
   de: {
     title: "Datenschutz Auswahl",
-    text: "Sparkle nutzt notwendige Speicherung fuer Zustimmung und optionale Praeferenz-Speicherung fuer Sprache und Interface-Einstellungen. Keine Werbe-Cookies, kein Drittanbieter-Tracking und kein Datenverkauf.",
+    text: "Sparkle nutzt notwendige Speicherung für Zustimmung und optionale Präferenz-Speicherung für Sprache und Interface-Einstellungen. Keine Werbe-Cookies, kein Drittanbieter-Tracking und kein Datenverkauf.",
     essentialTitle: "Notwendig",
-    essentialBody: "Erforderlich fuer Zustimmung, grundlegende Sicherheit und Kernfunktionen der Seite.",
-    preferenceTitle: "Praeferenzen",
-    preferenceBody: "Merkt sich Sprache und Interface-Einstellungen fuer spaetere Besuche.",
+    essentialBody: "Erforderlich für Zustimmung, grundlegende Sicherheit und Kernfunktionen der Seite.",
+    preferenceTitle: "Präferenzen",
+    preferenceBody: "Merkt sich Sprache und Interface-Einstellungen für spätere Besuche.",
     analyticsTitle: "Verbesserungsdaten",
-    analyticsBody: "Erlaubt datensparsame Nutzungs-Signale, um Layout, Performance und Geraete-Support spaeter zu verbessern.",
+    analyticsBody: "Erlaubt datensparsame Nutzungs-Signale, um Layout, Performance und Geräte-Support später zu verbessern.",
     essentialButton: "Nur notwendig",
     selectedButton: "Auswahl speichern",
     note: "AGB und Datenschutz bleiben hier jederzeit erreichbar.",
@@ -666,10 +666,10 @@ const siteCopy = {
     loaderFooter: "sw8tx.lol - EST 2026",
     languageLabel: "SPRACHE",
     menuButton: {
-      open: "Menue",
-      close: "Schliessen",
-      openLabel: "Menue oeffnen",
-      closeLabel: "Menue schliessen",
+      open: "Menü",
+      close: "Schließen",
+      openLabel: "Menü öffnen",
+      closeLabel: "Menü schließen",
     },
     menuBadge: "Sparkle",
     tabTitles: [
@@ -679,31 +679,31 @@ const siteCopy = {
       "Sparkle | Sauberer Frontend-Polish",
     ],
     menuItems: [
-      { href: "#about", label: "Ueberblick" },
+      { href: "#about", label: "Überblick" },
       { href: "#process", label: "Prozess" },
       { href: "#work", label: "Past work" },
       { href: "#reviews", label: "Feedback" },
       { href: "#contact", label: "Kontakt" },
     ],
-    legal: { terms: "AGB", privacy: "Datenschutz", refund: "Rueckerstattung" },
+    legal: { terms: "AGB", privacy: "Datenschutz", refund: "Rückerstattung" },
     hero: {
       eyebrow: "Webdesign und Frontend",
       title: "Sparkle",
       credit: "by Tyler Osthoff - Webdesign & Frontend",
       tagline: "Websites mit Charakter",
       text:
-        "Individuell animierte Portfolios, Landingpages und Brand-Sites fuer Menschen, die ihre Website als Investment in Wirkung, Vertrauen und Momentum sehen.",
+        "Individuell animierte Portfolios, Landingpages und Brand-Sites für Menschen, die ihre Website als Investment in Wirkung, Vertrauen, Conversion und Momentum sehen.",
       ctaPrimary: "Projekt starten",
       ctaSecondary: "Arbeiten",
       scroll: "Scroll",
       cards: [
         {
-          action: "Naechstes Detail zeigen",
+          action: "Nächstes Detail zeigen",
           variants: [
             {
               label: "Animierte Portfolios",
-              title: "Praesenz mit Substanz",
-              body: "Ein staerkerer First Screen, sauberer Rhythmus und gezielte Motion, die die Marke lebendig macht.",
+              title: "Präsenz mit Substanz",
+              body: "Ein stärkerer First Screen, klare Informationsarchitektur und gezielte Micro-Interactions, die die Marke lebendig machen.",
             },
             {
               label: "Signature Projekte",
@@ -713,17 +713,17 @@ const siteCopy = {
           ],
         },
         {
-          action: "Naechstes Detail zeigen",
+          action: "Nächstes Detail zeigen",
           variants: [
             {
               label: "Landingpages",
               title: "Seiten, die den Vibe verkaufen",
-              body: "Klare Sections, individuelle visuelle Richtung und Frontend-Polish, der auch mobil ruhig bleibt.",
+              body: "Klare Sections, individuelle visuelle Richtung und UI/UX-Polish, der auch mobil ruhig bleibt.",
             },
             {
               label: "Launch Investment",
               title: "Smooth bevor man scrollt",
-              body: "Schnelle First Loads, responsive Abstaende und Motion, die bewusst statt schwer wirkt.",
+              body: "Schnelle First Loads, responsive Abstände und Motion, die bewusst statt schwer wirkt.",
             },
           ],
         },
@@ -736,25 +736,25 @@ const siteCopy = {
       ["Erster Eindruck", "Past Work", "Launch Pages", "Creator Sites"],
     ],
     about: {
-      label: "Ueberblick",
+      label: "Überblick",
       title: "Ein starker erster Eindruck beginnt mit Designentscheidungen, die bewusst wirken.",
       text:
-        "Sparkle sitzt zwischen Design und Frontend, damit Konzept und echter Build zusammenpassen. Das Ergebnis ist klarere Struktur, besseres Mobile-Verhalten, ruhigere Motion und eine Seite, die wirklich customized wirkt.",
+        "Sparkle sitzt zwischen Branding, UI/UX Design und Frontend, damit Konzept und echter Build zusammenpassen. Das Ergebnis ist klarere Struktur, bessere Responsiveness, ruhigere Motion und eine Seite, die wirklich custom wirkt.",
       points: [
         {
           title: "Design mit klarer Haltung",
           body: "Richtung, Typografie und Rhythmus stehen vor dem Finish, damit die Seite vom ersten Scroll an eigen wirkt.",
         },
         {
-          title: "Frontend, das sauber traegt",
-          body: "Spacing, Responsiveness und Motion werden im Code verfeinert und nicht nach dem Mockup vergessen.",
+          title: "Frontend, das sauber trägt",
+          body: "Spacing, Responsiveness, Performance und Motion werden im Code verfeinert und nicht nach dem Mockup vergessen.",
         },
         {
           title: "Custom statt generisch",
-          body: "Das Ziel ist Praesenz und Klarheit, nicht nur ein Template mit anderen Farben.",
+          body: "Das Ziel ist Präsenz, Conversion und Klarheit, nicht nur ein Template mit anderen Farben.",
         },
       ],
-      tags: ["Design + Frontend", "Ruhige Motion", "Responsive Polish", "Custom Build"],
+      tags: ["UI/UX Design", "Interaction Design", "Responsive Frontend", "Performance Polish"],
     },
     process: {
       label: "Prozess",
@@ -767,25 +767,25 @@ const siteCopy = {
         },
         {
           num: "02",
-          title: "Design, das sich eigen anfuehlt",
-          body: "Layout, Typorhythmus und unterstuetzende Visuals werden um die Marke herum gebaut und nicht aus einem generischen Template geliehen.",
+          title: "Design, das sich eigen anfühlt",
+          body: "Layout, Typorhythmus und unterstützende Visuals werden um die Marke herum gebaut und nicht aus einem generischen Template geliehen.",
         },
         {
           num: "03",
           title: "Sauber bauen und polieren",
-          body: "Responsives Frontend, kontrollierte Motion und finale Spacing-Paesse halten die Seite auf Desktop und Mobile stark.",
+          body: "Responsives Frontend, kontrollierte Motion und finale Spacing-Pässe halten die Seite auf Desktop, iPad und Mobile stark.",
         },
       ],
     },
     work: {
       label: "Past work",
-      title: "Ausgewaehlte Richtungen fuer Marken mit Anspruch auf mehr Praesenz online.",
+      title: "Ausgewählte Richtungen für Marken mit Anspruch auf mehr Präsenz online.",
       items: [
         {
           title: "Nova Studio",
           category: "Kreatives Portfolio",
           summary:
-            "Eine ruhigere Studio-Site mit groesserer Typografie, staerkerem Projekt-Frame und Motion, die hochwertig statt hektisch wirkt.",
+            "Eine ruhigere Studio-Site mit größerer Typografie, stärkerem Projekt-Frame und Motion, die hochwertig statt hektisch wirkt.",
         },
         {
           title: "Orbis Homes",
@@ -797,7 +797,7 @@ const siteCopy = {
           title: "Axis Club",
           category: "Personal Brand Site",
           summary:
-            "Ein custom Portfolio-System fuer einen Creator, der online staerker auftreten wollte, ohne Fake-Tech-Look.",
+            "Ein custom Portfolio-System für einen Creator, der online stärker auftreten wollte, ohne Fake-Tech-Look.",
         },
       ],
     },
@@ -806,7 +806,7 @@ const siteCopy = {
       title: "Was Menschen meistens sofort bemerken.",
       score: "Kundenfeedback",
       previous: "Vorherige Review",
-      next: "Naechste Review",
+      next: "Nächste Review",
       starsLabel: "{rating} von 5 Sternen",
       items: [
         {
@@ -817,7 +817,7 @@ const siteCopy = {
         {
           name: "Maya R.",
           rating: 5,
-          text: "Am meisten veraendert hat sich der erste Eindruck. Es wirkte professionell, bevor man viel gelesen hat.",
+          text: "Am meisten verändert hat sich der erste Eindruck. Es wirkte professionell, bevor man viel gelesen hat.",
         },
         {
           name: "Noah K.",
@@ -832,12 +832,12 @@ const siteCopy = {
         {
           name: "Jonas M.",
           rating: 4,
-          text: "Mobil funktioniert es endlich, ohne wie eine zusammengedrueckte Desktop-Seite zu wirken.",
+          text: "Mobil funktioniert es endlich, ohne wie eine zusammengedrückte Desktop-Seite zu wirken.",
         },
         {
           name: "Ava P.",
           rating: 5,
-          text: "Die neue Richtung wirkt hochwertiger, ohne unnoetig kompliziert zu werden.",
+          text: "Die neue Richtung wirkt hochwertiger, ohne unnötig kompliziert zu werden.",
         },
         {
           name: "Theo B.",
@@ -847,7 +847,7 @@ const siteCopy = {
         {
           name: "Sofia L.",
           rating: 5,
-          text: "Die Seite hat jetzt Persoenlichkeit. Sie wirkt gestaltet statt nur zusammengebaut.",
+          text: "Die Seite hat jetzt Persönlichkeit. Sie wirkt gestaltet statt nur zusammengebaut.",
         },
         {
           name: "Milan C.",
@@ -857,15 +857,15 @@ const siteCopy = {
         {
           name: "Nina H.",
           rating: 5,
-          text: "Die Marke wirkt online staerker, ohne den persoenlichen Charakter zu verlieren.",
+          text: "Die Marke wirkt online stärker, ohne den persönlichen Charakter zu verlieren.",
         },
       ],
     },
     contact: {
       label: "Kontakt",
-      title: "Wenn deine Seite generisch wirkt, koennen wir den ersten Eindruck fixen.",
+      title: "Wenn deine Seite generisch wirkt, können wir den ersten Eindruck fixen.",
       text:
-        "Schick eine kurze Nachricht mit dem, was du baust, und was sich aktuell falsch anfuehlt. Ich komme dann mit einer Richtung zurueck, die schaerfer und custom wirkt.",
+        "Schick eine kurze Nachricht mit dem, was du baust, und was sich aktuell falsch anfühlt. Ich komme dann mit einer Richtung zurück, die in Positionierung, UI/UX, Conversion-Flow und visueller Hierarchie schärfer wirkt.",
       emailLabel: "E-Mail",
     },
   },
@@ -2869,7 +2869,7 @@ export function HomePageClient() {
                       role="alert"
                     >
                       {locale === "de"
-                        ? "Bitte waehle mindestens eine der drei Optionen aus."
+                        ? "Bitte wähle mindestens eine der drei Optionen aus."
                         : "Please select at least one of the three options."}
                     </motion.p>
                   ) : null}
