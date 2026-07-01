@@ -2193,14 +2193,15 @@ export function HomePageClient() {
 
       setActiveTarget(target);
 
+      document.body.classList.add("onboarding-measuring");
       const measuredRect = target.getBoundingClientRect();
-      const currentCamera = onboardingCameraRef.current;
       const rect = {
-        height: measuredRect.height / currentCamera.scale,
-        left: (measuredRect.left - currentCamera.x) / currentCamera.scale,
-        top: (measuredRect.top - currentCamera.y) / currentCamera.scale,
-        width: measuredRect.width / currentCamera.scale,
+        height: measuredRect.height,
+        left: measuredRect.left,
+        top: measuredRect.top,
+        width: measuredRect.width,
       };
+      document.body.classList.remove("onboarding-measuring");
       const isMobile = window.matchMedia("(max-width: 720px)").matches;
       const pad = isMobile ? 24 : 34;
       const focusX = rect.left + rect.width / 2;
