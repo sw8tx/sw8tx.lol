@@ -405,6 +405,40 @@ const consentCopy = {
   }
 >;
 
+const onboardingStorageKey = "sparkle-onboarding-complete";
+const onboardingSteps = [
+  {
+    selector: ".language-button",
+    title: "Welcome to Sparkle.",
+    body: "Here you can select your preferred language.",
+  },
+  {
+    selector: ".menu-toggle",
+    title: "See what we do.",
+    body: "Open the menu to jump through the work, process, feedback and contact sections.",
+  },
+  {
+    selector: ".scroll-cue",
+    title: "Explore the site.",
+    body: "This opens the next part of the website. Feel free to look around and send feedback.",
+    placement: "top",
+  },
+  {
+    selector: ".hero-actions .button.primary",
+    title: "Start a project.",
+    body: "When you are ready, this button takes you straight to the project form.",
+  },
+] as const;
+
+type OnboardingSpotlight = {
+  centerX: number;
+  centerY: number;
+  height: number;
+  left: number;
+  top: number;
+  width: number;
+};
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
@@ -1785,10 +1819,16 @@ export function HomePageClient() {
   const [languageOpen, setLanguageOpen] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [showLoader, setShowLoader] = useState(true);
+  const [showJourneyLoader, setShowJourneyLoader] = useState(false);
   const [consentOpen, setConsentOpen] = useState(false);
   const [consentNecessaryEnabled, setConsentNecessaryEnabled] = useState(true);
   const [consentPreferencesEnabled, setConsentPreferencesEnabled] = useState(false);
   const [consentAnalyticsEnabled, setConsentAnalyticsEnabled] = useState(false);
+  const [consentNudge, setConsentNudge] = useState(0);
+  const [showConsentWarning, setShowConsentWarning] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  const [onboardingSpotlight, setOnboardingSpotlight] = useState<OnboardingSpotlight | null>(null);
   const [locale, setLocale] = useState<Locale>("en");
   const [serviceCardPages, setServiceCardPages] = useState([0, 0]);
   const [menuClosing, setMenuClosing] = useState(false);
@@ -1811,6 +1851,8 @@ export function HomePageClient() {
   const activeConsent = consentCopy[locale];
   const visibleReviewText = reduceMotion ? activeReview.text : typedReviewText;
   const heroRevealOffset = showLoader ? 0.18 : 0.02;
+  const activeOnboardingStep = onboardingSteps[onboardingStep] ?? onboardingSteps[0];
+  const onboardingIsLastStep = onboardingStep >= onboardingSteps.length - 1;
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -1884,6 +1926,18 @@ export function HomePageClient() {
     document.body.classList.toggle("is-loading", showLoader);
     return () => document.body.classList.remove("is-loading");
   }, [showLoader]);
+
+  useEffect(() => {
+    if (showLoader) return;
+
+    const timeout = window.setTimeout(() => {
+      if (window.localStorage.getItem(onboardingStorageKey) !== "true") {
+        setOnboardingOpen(true);
+      }
+    }, reduceMotion ? 0 : 420);
+
+    return () => window.clearTimeout(timeout);
+  }, [reduceMotion, showLoader]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -2084,7 +2138,7 @@ export function HomePageClient() {
   }, [locale]);
 
   useEffect(() => {
-    if (showLoader) return;
+    if (showLoader || onboardingOpen || showJourneyLoader) return;
 
     const timer = window.setTimeout(() => {
       setConsentNecessaryEnabled(true);
@@ -2094,12 +2148,81 @@ export function HomePageClient() {
     }, 3000);
 
     return () => window.clearTimeout(timer);
-  }, [showLoader]);
+  }, [onboardingOpen, showJourneyLoader, showLoader]);
 
   useEffect(() => {
     document.body.classList.toggle("consent-open", consentOpen);
     return () => document.body.classList.remove("consent-open");
   }, [consentOpen]);
+
+  useEffect(() => {
+    const locked = onboardingOpen || showJourneyLoader;
+    document.body.classList.toggle("onboarding-open", locked);
+    return () => document.body.classList.remove("onboarding-open");
+  }, [onboardingOpen, showJourneyLoader]);
+
+  useEffect(() => {
+    if (!onboardingOpen) return;
+
+    let frame: number | undefined;
+    let activeTarget: HTMLElement | null = null;
+
+    const setActiveTarget = (target: HTMLElement | null) => {
+      if (activeTarget === target) return;
+      activeTarget?.classList.remove("is-onboarding-target");
+      activeTarget = target;
+      activeTarget?.classList.add("is-onboarding-target");
+    };
+
+    const updateSpotlight = () => {
+      if (!activeOnboardingStep.selector) {
+        setActiveTarget(null);
+        setOnboardingSpotlight(null);
+        return;
+      }
+
+      const target = document.querySelector<HTMLElement>(activeOnboardingStep.selector);
+
+      if (!target) {
+        setActiveTarget(null);
+        setOnboardingSpotlight(null);
+        return;
+      }
+
+      setActiveTarget(target);
+
+      const rect = target.getBoundingClientRect();
+      const pad = window.matchMedia("(max-width: 720px)").matches ? 22 : 32;
+
+      setOnboardingSpotlight({
+        centerX: Math.round(rect.left + rect.width / 2),
+        centerY: Math.round(rect.top + rect.height / 2),
+        height: Math.round(rect.height + pad * 2),
+        left: Math.round(rect.left - pad),
+        top: Math.round(rect.top - pad),
+        width: Math.round(rect.width + pad * 2),
+      });
+    };
+
+    const requestUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = undefined;
+        updateSpotlight();
+      });
+    };
+
+    updateSpotlight();
+    window.addEventListener("resize", requestUpdate);
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      activeTarget?.classList.remove("is-onboarding-target");
+      window.removeEventListener("resize", requestUpdate);
+      window.removeEventListener("scroll", requestUpdate);
+    };
+  }, [activeOnboardingStep.selector, onboardingOpen]);
 
   useEffect(() => {
     let frame: number | undefined;
@@ -2308,6 +2431,22 @@ export function HomePageClient() {
     setReviewIndex((current) => (current + direction + copy.reviews.items.length) % copy.reviews.items.length);
   }
 
+  function goToNextOnboardingStep() {
+    if (!onboardingIsLastStep) {
+      setOnboardingStep((current) => Math.min(current + 1, onboardingSteps.length - 1));
+      return;
+    }
+
+    window.localStorage.setItem(onboardingStorageKey, "true");
+    setOnboardingOpen(false);
+    setShowJourneyLoader(true);
+
+    window.setTimeout(() => {
+      setShowJourneyLoader(false);
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    }, reduceMotion ? 120 : 1280);
+  }
+
   function saveConsent(necessary: boolean, preferences: boolean, analytics: boolean) {
     setConsentNecessaryEnabled(necessary);
     setConsentPreferencesEnabled(preferences);
@@ -2326,6 +2465,13 @@ export function HomePageClient() {
   }
 
   function acceptSelectedConsent() {
+    if (!consentNecessaryEnabled && !consentPreferencesEnabled && !consentAnalyticsEnabled) {
+      setConsentNudge((current) => current + 1);
+      setShowConsentWarning(true);
+      window.setTimeout(() => setShowConsentWarning(false), 2100);
+      return;
+    }
+
     saveConsent(
       consentNecessaryEnabled,
       consentNecessaryEnabled && consentPreferencesEnabled,
@@ -2407,7 +2553,9 @@ export function HomePageClient() {
 
   return (
     <>
-      <AnimatePresence>{showLoader ? <Loader footer={copy.loaderFooter} status={copy.loaderStatus} /> : null}</AnimatePresence>
+      <AnimatePresence>
+        {showLoader || showJourneyLoader ? <Loader footer={copy.loaderFooter} status={copy.loaderStatus} /> : null}
+      </AnimatePresence>
 
       <main className="site">
         <div className="cursor-logo" aria-hidden="true" data-visible="false" ref={cursorLogoRef}>
@@ -2605,9 +2753,10 @@ export function HomePageClient() {
             >
               <motion.aside
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="consent-panel"
+                className={`consent-panel${showConsentWarning ? " is-warning" : ""}`}
                 exit={{ opacity: 0, y: 16, scale: 0.98 }}
                 initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                key={`consent-panel-${consentNudge}`}
                 transition={{ duration: reduceMotion ? 0.16 : 0.44, ease: [0.16, 1, 0.3, 1] }}
               >
                 <span className="consent-kicker">Sparkle</span>
@@ -2621,6 +2770,7 @@ export function HomePageClient() {
                       setConsentNecessaryEnabled((current) => {
                         const next = !current;
                         if (!next) setConsentPreferencesEnabled(false);
+                        if (!next) setConsentAnalyticsEnabled(false);
                         return next;
                       });
                     }}
@@ -2675,6 +2825,21 @@ export function HomePageClient() {
                   <Link href="/tos">{copy.legal.terms}</Link>
                   <Link href="/privacy">{copy.legal.privacy}</Link>
                 </div>
+                <AnimatePresence>
+                  {showConsentWarning ? (
+                    <motion.p
+                      animate={{ opacity: 1, y: 0 }}
+                      className="consent-warning"
+                      exit={{ opacity: 0, y: -6 }}
+                      initial={{ opacity: 0, y: 6 }}
+                      role="alert"
+                    >
+                      {locale === "de"
+                        ? "Bitte waehle mindestens eine der drei Optionen aus."
+                        : "Please select at least one of the three options."}
+                    </motion.p>
+                  ) : null}
+                </AnimatePresence>
                 <div className="consent-actions">
                   <span className="consent-note">{activeConsent.note}</span>
                   <div className="consent-button-row">
@@ -2687,6 +2852,63 @@ export function HomePageClient() {
                   </div>
                 </div>
               </motion.aside>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {onboardingOpen ? (
+            <motion.div
+              animate={{ opacity: 1 }}
+              className={`onboarding-overlay${onboardingSpotlight ? "" : " is-centered"}`}
+              exit={{ opacity: 0, transition: { duration: 0.28 } }}
+              initial={{ opacity: 0 }}
+              style={
+                {
+                  "--spotlight-height": `${onboardingSpotlight?.height ?? 220}px`,
+                  "--spotlight-center-x": `${onboardingSpotlight?.centerX ?? 0}px`,
+                  "--spotlight-center-y": `${onboardingSpotlight?.centerY ?? 0}px`,
+                  "--spotlight-left": `${onboardingSpotlight?.left ?? 0}px`,
+                  "--spotlight-top": `${onboardingSpotlight?.top ?? 0}px`,
+                  "--spotlight-width": `${onboardingSpotlight?.width ?? 220}px`,
+                } as CSSProperties
+              }
+              transition={{ duration: reduceMotion ? 0.12 : 0.34 }}
+            >
+              {onboardingSpotlight ? (
+                <motion.span
+                  animate={{
+                    height: onboardingSpotlight.height,
+                    left: onboardingSpotlight.left,
+                    top: onboardingSpotlight.top,
+                    width: onboardingSpotlight.width,
+                  }}
+                  aria-hidden="true"
+                  className="onboarding-spotlight-ring"
+                  initial={false}
+                  transition={{ duration: reduceMotion ? 0 : 0.74, ease: [0.16, 1, 0.3, 1] }}
+                />
+              ) : null}
+              <motion.section
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="onboarding-card"
+                exit={{ opacity: 0, scale: 0.96 }}
+                initial={{ opacity: 0, scale: 0.96, y: 12 }}
+                key={onboardingStep}
+                transition={{ duration: reduceMotion ? 0.12 : 0.42, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <span className="onboarding-kicker">Sparkle guide</span>
+                <h2>{activeOnboardingStep.title}</h2>
+                <p>{activeOnboardingStep.body}</p>
+                <div className="onboarding-actions">
+                  <span>
+                    {onboardingStep + 1}/{onboardingSteps.length}
+                  </span>
+                  <button className="onboarding-next" onClick={goToNextOnboardingStep} type="button">
+                    {onboardingIsLastStep ? "Start journey" : "Next"}
+                  </button>
+                </div>
+              </motion.section>
             </motion.div>
           ) : null}
         </AnimatePresence>
