@@ -385,7 +385,6 @@ img {
 .language-button,
 .menu-toggle,
 .button,
-.email-row,
 .legal-link,
 .footer-link,
 .menu-legal-link {
@@ -412,7 +411,6 @@ img {
 .language-button::after,
 .menu-toggle::after,
 .button::after,
-.email-row::after,
 .menu-legal-link::after {
   content: "";
   position: absolute;
@@ -2587,19 +2585,15 @@ body.onboarding-open .footer {
     inset 0 1px 0 rgba(255, 255, 255, 0.44);
 }
 
-.email-row {
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  max-width: 540px;
-  padding: 12px 16px;
-  border-radius: 999px;
+.contact-email-plain {
+  margin-left: auto;
   color: var(--ink);
-  text-align: left;
+  font-family: var(--font-serif);
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1;
   text-decoration: none;
-  align-self: start;
+  white-space: nowrap;
 }
 
 .contact-feedback {
@@ -2615,12 +2609,6 @@ body.onboarding-open .footer {
 
 .contact-feedback.is-error {
   color: var(--rust);
-}
-
-.email-address {
-  font-family: var(--font-serif);
-  font-size: 1.18rem;
-  font-weight: 800;
 }
 
 .footer,
@@ -2764,7 +2752,6 @@ body.onboarding-open .footer {
   .language-button:hover,
   .menu-toggle:hover,
   .button:hover,
-  .email-row:hover,
   .legal-link:hover,
   .footer-link:hover,
   .menu-legal-link:hover {
@@ -2775,7 +2762,6 @@ body.onboarding-open .footer {
   .language-button:hover::after,
   .menu-toggle:hover::after,
   .button:hover::after,
-  .email-row:hover::after,
   .menu-legal-link:hover::after {
     opacity: 1;
     transform: translate3d(55%, 0, 0) rotate(8deg);
@@ -3287,10 +3273,6 @@ body.onboarding-open .footer {
     flex-direction: column;
   }
 
-  .email-row {
-    display: none;
-  }
-
   .contact-actions {
     align-items: stretch;
     flex-direction: column;
@@ -3300,9 +3282,11 @@ body.onboarding-open .footer {
     width: 100%;
   }
 
-  .email-address {
-    font-size: 1.15rem;
+  .contact-email-plain {
+    margin-left: 0;
+    font-size: 1.06rem;
     overflow-wrap: anywhere;
+    white-space: normal;
   }
 }
 

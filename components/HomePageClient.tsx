@@ -405,7 +405,6 @@ const consentCopy = {
   }
 >;
 
-const onboardingStorageKey = "sparkle-onboarding-complete";
 const onboardingSteps = [
   {
     selector: ".language-button",
@@ -1935,9 +1934,7 @@ export function HomePageClient() {
     if (showLoader) return;
 
     const timeout = window.setTimeout(() => {
-      if (window.localStorage.getItem(onboardingStorageKey) !== "true") {
-        setOnboardingOpen(true);
-      }
+      setOnboardingOpen(true);
     }, reduceMotion ? 0 : 420);
 
     return () => window.clearTimeout(timeout);
@@ -2462,7 +2459,6 @@ export function HomePageClient() {
       return;
     }
 
-    window.localStorage.setItem(onboardingStorageKey, "true");
     setOnboardingOpen(false);
     setShowJourneyLoader(true);
 
@@ -3343,14 +3339,8 @@ export function HomePageClient() {
                   >
                     {contactStatus === "submitting" ? contactForm.sending : contactForm.submit}
                   </button>
-                  <a
-                    className="email-row"
-                    href={`mailto:${primaryEmail}`}
-                    onPointerLeave={handleSurfaceLeave}
-                    onPointerMove={handleSurfaceMove}
-                  >
-                    <span className="email-label">{contactForm.directLabel}</span>
-                    <span className="email-address">{primaryEmail}</span>
+                  <a className="contact-email-plain" href={`mailto:${primaryEmail}`}>
+                    Email: {primaryEmail}
                   </a>
                 </div>
                 <p
