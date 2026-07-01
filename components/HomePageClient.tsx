@@ -407,24 +407,34 @@ const consentCopy = {
 
 const onboardingSteps = [
   {
-    selector: ".language-button",
+    selector: "",
     title: "Welcome to Sparkle.",
+    body: "Start here.",
+    logo: true,
+  },
+  {
+    selector: ".language-button",
+    title: "Sprache auswählen",
     body: "Here you can select your preferred language.",
+    logo: false,
   },
   {
     selector: ".menu-toggle",
     title: "See what we do.",
     body: "Open the menu to jump through the work, process, feedback and contact sections.",
+    logo: false,
   },
   {
     selector: ".scroll-cue",
     title: "Explore the Site",
     body: "This opens the next part of the website.",
+    logo: false,
   },
   {
     selector: ".hero-actions .button.primary",
     title: "Start a project.",
     body: "When you are ready, this button takes you straight to the project form.",
+    logo: false,
   },
 ] as const;
 
@@ -2179,7 +2189,28 @@ export function HomePageClient() {
     const updateSpotlight = () => {
       if (!activeOnboardingStep.selector) {
         setActiveTarget(null);
-        setOnboardingSpotlight(null);
+        const isMobile = window.matchMedia("(max-width: 720px)").matches;
+        const centerX = Math.round(window.innerWidth * (isMobile ? 0.5 : 0.62));
+        const centerY = Math.round(window.innerHeight * (isMobile ? 0.34 : 0.3));
+        const width = isMobile ? 260 : 340;
+        const height = isMobile ? 170 : 210;
+
+        const nextSpotlight = {
+          cameraX: 0,
+          cameraY: 0,
+          cameraScale: 1,
+          centerX,
+          centerY,
+          height,
+          labelX: centerX,
+          labelY: Math.round(centerY + height * 0.28),
+          left: Math.round(centerX - width / 2),
+          top: Math.round(centerY - height / 2),
+          width,
+        };
+
+        onboardingCameraRef.current = { scale: 1, x: 0, y: 0 };
+        setOnboardingSpotlight(nextSpotlight);
         return;
       }
 
@@ -2207,8 +2238,8 @@ export function HomePageClient() {
       const focusX = rect.left + rect.width / 2;
       const focusY = rect.top + rect.height / 2;
       const cameraScale = reduceMotion ? 1 : isMobile ? 1.28 : 1.42;
-      const desiredX = window.innerWidth * 0.5;
-      const desiredY = window.innerHeight * (activeOnboardingStep.selector === ".scroll-cue" ? 0.52 : 0.4);
+      const desiredX = window.innerWidth * (isMobile ? 0.5 : 0.62);
+      const desiredY = window.innerHeight * (activeOnboardingStep.selector === ".scroll-cue" ? 0.44 : 0.31);
       const cameraX = reduceMotion ? 0 : desiredX - focusX * cameraScale;
       const cameraY = reduceMotion ? 0 : desiredY - focusY * cameraScale;
       const nextLeft = rect.left * cameraScale + cameraX - pad;
@@ -2944,12 +2975,22 @@ export function HomePageClient() {
               ) : null}
               <motion.section
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="onboarding-card"
+                className={`onboarding-card${activeOnboardingStep.logo ? " is-intro" : ""}`}
                 exit={{ opacity: 0, scale: 0.96 }}
                 initial={{ opacity: 0, scale: 0.96, y: 12 }}
                 key={onboardingStep}
                 transition={{ duration: reduceMotion ? 0.12 : 0.42, ease: [0.16, 1, 0.3, 1] }}
               >
+                {activeOnboardingStep.logo ? (
+                  <Image
+                    className="onboarding-logo"
+                    src="/logo-transparent.png"
+                    alt=""
+                    width={58}
+                    height={58}
+                    priority
+                  />
+                ) : null}
                 <h2>{activeOnboardingStep.title}</h2>
                 <div className="onboarding-actions">
                   <button className="onboarding-next" onClick={goToNextOnboardingStep} type="button">

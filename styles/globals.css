@@ -928,6 +928,24 @@ body.onboarding-measuring .footer {
   pointer-events: none;
 }
 
+.onboarding-card.is-intro {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.onboarding-logo {
+  width: 72px;
+  height: 72px;
+  padding: 8px;
+  border: 1px solid rgba(255, 250, 238, 0.7);
+  border-radius: 999px;
+  background: rgba(255, 250, 238, 0.92);
+  object-fit: contain;
+  filter:
+    drop-shadow(0 8px 20px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 18px rgba(255, 250, 238, 0.3));
+}
+
 .onboarding-card h2 {
   margin: 0;
   font-family: var(--font-serif);
