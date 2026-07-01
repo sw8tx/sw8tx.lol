@@ -5,7 +5,6 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type {
   CSSProperties,
-  FormEvent as ReactFormEvent,
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
@@ -13,56 +12,6 @@ import { useEffect, useRef, useState } from "react";
 
 const primaryEmailParts = ["info", "tylerosthoff", "xyz"] as const;
 const primaryEmail = `${primaryEmailParts[0]}@${primaryEmailParts[1]}.${primaryEmailParts[2]}`;
-const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA";
-let turnstileScriptPromise: Promise<void> | null = null;
-
-type TurnstileRenderOptions = {
-  callback?: (token: string) => void;
-  "error-callback"?: () => void;
-  "expired-callback"?: () => void;
-  language?: string;
-  sitekey: string;
-  theme?: "auto" | "light" | "dark";
-};
-
-type TurnstileApi = {
-  remove: (widgetId: string) => void;
-  render: (container: HTMLElement, options: TurnstileRenderOptions) => string;
-  reset: (widgetId?: string) => void;
-};
-
-declare global {
-  interface Window {
-    turnstile?: TurnstileApi;
-  }
-}
-
-function loadTurnstileScript() {
-  if (typeof window === "undefined") return Promise.resolve();
-  if (window.turnstile) return Promise.resolve();
-  if (turnstileScriptPromise) return turnstileScriptPromise;
-
-  turnstileScriptPromise = new Promise<void>((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>('script[data-turnstile-script="true"]');
-
-    if (existing) {
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Turnstile failed to load")), { once: true });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-    script.async = true;
-    script.defer = true;
-    script.dataset.turnstileScript = "true";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Turnstile failed to load"));
-    document.head.appendChild(script);
-  });
-
-  return turnstileScriptPromise;
-}
 
 const languageOptions = [
   { code: "en", label: "English", short: "EN" },
@@ -87,176 +36,6 @@ const siteDragLogos = [
   { className: "drag-logo-work", id: "work", x: 94, y: 596, size: 96 },
   { className: "drag-logo-contact", id: "contact", x: 1320, y: 708, size: 118 },
 ] as const;
-const contactFormCopy = {
-  en: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  de: {
-    nameLabel: "Name",
-    emailLabel: "E-Mail",
-    messageLabel: "Projektnotiz",
-    namePlaceholder: "Dein Name",
-    emailPlaceholder: "du@beispiel.de",
-    messagePlaceholder: "Was baust du und was fühlt sich gerade noch falsch an?",
-    submit: "Nachricht senden",
-    sending: "Wird gesendet...",
-    success: "Nachricht gesendet. Ich melde mich bald zurück.",
-    error: "Das Senden hat nicht geklappt. Versuch es nochmal oder schreib an info@tylerosthoff.xyz.",
-    directLabel: "Direkt per E-Mail",
-    turnstileLabel: "Kurze Verifizierung",
-    turnstileError: "Bitte schließe zuerst die Verifizierung ab.",
-  },
-  es: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  fr: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  sr: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  zh: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  it: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  pt: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  nl: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-  tr: {
-    nameLabel: "Name",
-    emailLabel: "Email",
-    messageLabel: "Project note",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "you@example.com",
-    messagePlaceholder: "What are you building and what feels off right now?",
-    submit: "Send note",
-    sending: "Sending...",
-    success: "Message sent. I will get back to you soon.",
-    error: "That did not send. Please try again or write to info@tylerosthoff.xyz.",
-    directLabel: "Direct email",
-    turnstileLabel: "Quick verification",
-    turnstileError: "Please complete the verification first.",
-  },
-} satisfies Record<
-  Locale,
-  {
-    nameLabel: string;
-    emailLabel: string;
-    messageLabel: string;
-    namePlaceholder: string;
-    emailPlaceholder: string;
-    messagePlaceholder: string;
-    submit: string;
-    sending: string;
-    success: string;
-    error: string;
-    directLabel: string;
-    turnstileLabel: string;
-    turnstileError: string;
-  }
->;
-
 const consentCopy = {
   en: {
     title: "Privacy choices",
@@ -1485,59 +1264,6 @@ function resetMenuCloseMagnet(sheet: HTMLElement) {
   button.style.setProperty("--magnet-angle-back", "0deg");
 }
 
-function nextPaint() {
-  return new Promise<void>((resolve) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => resolve());
-    });
-  });
-}
-
-function waitForHeroImages() {
-  const visibleImages = Array.from(document.images).filter((image) => {
-    const rect = image.getBoundingClientRect();
-    return rect.top < window.innerHeight * 1.4 && rect.bottom > -window.innerHeight * 0.2;
-  });
-
-  return Promise.all(
-    visibleImages.map((image) => {
-      if (image.complete && image.naturalWidth !== 0) return Promise.resolve();
-      if (typeof image.decode === "function") return image.decode().catch(() => undefined);
-
-      return new Promise<void>((resolve) => {
-        image.addEventListener("load", () => resolve(), { once: true });
-        image.addEventListener("error", () => resolve(), { once: true });
-      });
-    }),
-  );
-}
-
-function Loader({ status, footer }: { status: string; footer: string }) {
-  return (
-    <motion.div
-      animate={{ opacity: 1 }}
-      className="load-gate"
-      exit={{
-        clipPath: "inset(0 0 100% 0)",
-        opacity: 0.88,
-        transition: { duration: 0.72, ease: [0.76, 0, 0.24, 1] },
-      }}
-      initial={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-      role="status"
-    >
-      <div className="load-grain" aria-hidden="true" />
-      <div className="load-cut-lines" aria-hidden="true" />
-      <div className="load-center">
-        <div className="load-mark" aria-hidden="true">
-          <Image src="/logo-transparent.png" alt="" width={62} height={62} loading="eager" />
-        </div>
-        <span className="load-status">{status}</span>
-      </div>
-      <span className="load-footer">{footer}</span>
-    </motion.div>
-  );
-}
-
 function MarqueeRow({
   items,
   reverse = false,
@@ -1779,12 +1505,9 @@ export function HomePageClient() {
   const cursorLogoRef = useRef<HTMLDivElement | null>(null);
   const heroLogoHoldTimer = useRef<number | undefined>(undefined);
   const heroLogoPointerPoint = useRef<{ x: number; y: number } | null>(null);
-  const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
-  const turnstileWidgetIdRef = useRef<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
-  const [showLoader, setShowLoader] = useState(true);
   const [consentOpen, setConsentOpen] = useState(false);
   const [consentNecessaryEnabled, setConsentNecessaryEnabled] = useState(true);
   const [consentPreferencesEnabled, setConsentPreferencesEnabled] = useState(false);
@@ -1798,21 +1521,12 @@ export function HomePageClient() {
   const [heroLogoHoldState, setHeroLogoHoldState] = useState<"idle" | "charging" | "ready">("idle");
   const [heroLogoPosition, setHeroLogoPosition] = useState({ x: 0, y: 0 });
   const [typedReviewText, setTypedReviewText] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactMessage, setContactMessage] = useState("");
-  const [contactCompany, setContactCompany] = useState("");
-  const [contactStatus, setContactStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [contactFeedback, setContactFeedback] = useState("");
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileReady, setTurnstileReady] = useState(false);
   const copy = localizedCopy[locale];
-  const contactForm = contactFormCopy[locale];
   const activeLanguage = languageOptions.find((item) => item.code === locale) ?? languageOptions[0];
   const activeReview = copy.reviews.items[reviewIndex] ?? copy.reviews.items[0];
   const activeConsent = consentCopy[locale];
   const visibleReviewText = reduceMotion ? activeReview.text : typedReviewText;
-  const heroRevealOffset = showLoader ? 0.18 : 0.02;
+  const heroRevealOffset = 0.02;
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -1849,43 +1563,6 @@ export function HomePageClient() {
       if (heroLogoHoldTimer.current) window.clearTimeout(heroLogoHoldTimer.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      const id = window.setTimeout(() => setShowLoader(false), 0);
-      return () => window.clearTimeout(id);
-    }
-
-    let cancelled = false;
-    const waitForWindow = new Promise<void>((resolve) => {
-      if (document.readyState === "complete") {
-        resolve();
-        return;
-      }
-
-      window.addEventListener("load", () => resolve(), { once: true });
-    });
-    const waitForFonts = document.fonts?.ready.catch(() => undefined) ?? Promise.resolve();
-    const minimumTime = new Promise<void>((resolve) => window.setTimeout(resolve, 1050));
-    const hardLimit = new Promise<void>((resolve) => window.setTimeout(resolve, 2600));
-
-    const readyForFirstPaint = Promise.all([waitForWindow, waitForFonts, minimumTime])
-      .then(() => waitForHeroImages())
-      .then(() => nextPaint());
-
-    Promise.race([readyForFirstPaint, hardLimit]).then(() => {
-      if (!cancelled) setShowLoader(false);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [reduceMotion]);
-
-  useEffect(() => {
-    document.body.classList.toggle("is-loading", showLoader);
-    return () => document.body.classList.remove("is-loading");
-  }, [showLoader]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -2028,66 +1705,6 @@ export function HomePageClient() {
   }, [locale]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function mountTurnstile() {
-      if (!turnstileContainerRef.current) return;
-
-      try {
-        await loadTurnstileScript();
-      } catch {
-        if (!cancelled) {
-          setTurnstileReady(false);
-        }
-        return;
-      }
-
-      if (cancelled || !window.turnstile || !turnstileContainerRef.current) return;
-
-      if (turnstileWidgetIdRef.current) {
-        window.turnstile.remove(turnstileWidgetIdRef.current);
-        turnstileWidgetIdRef.current = null;
-      }
-
-      turnstileContainerRef.current.innerHTML = "";
-      setTurnstileToken("");
-      setTurnstileReady(false);
-
-      turnstileWidgetIdRef.current = window.turnstile.render(turnstileContainerRef.current, {
-        sitekey: turnstileSiteKey,
-        language: locale,
-        theme: "light",
-        callback: (token) => {
-          if (!cancelled) {
-            setTurnstileToken(token);
-            setTurnstileReady(true);
-          }
-        },
-        "expired-callback": () => {
-          if (!cancelled) {
-            setTurnstileToken("");
-            setTurnstileReady(false);
-          }
-        },
-        "error-callback": () => {
-          if (!cancelled) {
-            setTurnstileToken("");
-            setTurnstileReady(false);
-          }
-        },
-      });
-    }
-
-    mountTurnstile();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [locale]);
-
-  useEffect(() => {
-    if (showLoader) return;
-
     const timer = window.setTimeout(() => {
       setConsentNecessaryEnabled(true);
       setConsentPreferencesEnabled(false);
@@ -2096,7 +1713,7 @@ export function HomePageClient() {
     }, 3000);
 
     return () => window.clearTimeout(timer);
-  }, [showLoader]);
+  }, []);
 
   useEffect(() => {
     document.body.classList.toggle("consent-open", consentOpen);
@@ -2342,84 +1959,8 @@ export function HomePageClient() {
     );
   }
 
-  async function submitContactForm(event: ReactFormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const cleanName = contactName.trim();
-    const cleanEmail = contactEmail.trim();
-    const cleanMessage = contactMessage.trim();
-    const cleanCompany = contactCompany.trim();
-
-    if (cleanCompany) {
-      setContactStatus("success");
-      setContactFeedback(contactForm.success);
-      return;
-    }
-
-    if (!cleanName || !cleanEmail || !cleanMessage) {
-      setContactStatus("error");
-      setContactFeedback(contactForm.error);
-      return;
-    }
-
-    if (!turnstileToken) {
-      setContactStatus("error");
-      setContactFeedback(contactForm.turnstileError);
-      return;
-    }
-
-    setContactStatus("submitting");
-    setContactFeedback(contactForm.sending);
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: cleanName,
-          email: cleanEmail,
-          message: cleanMessage,
-          locale,
-          page: window.location.href,
-          turnstileToken,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorPayload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(errorPayload?.error || "Request failed");
-      }
-
-      setContactName("");
-      setContactEmail("");
-      setContactMessage("");
-      setContactCompany("");
-      setTurnstileToken("");
-      setTurnstileReady(false);
-      setContactStatus("success");
-      setContactFeedback(contactForm.success);
-      if (window.turnstile && turnstileWidgetIdRef.current) {
-        window.turnstile.reset(turnstileWidgetIdRef.current);
-      }
-    } catch (error) {
-      setTurnstileToken("");
-      setTurnstileReady(false);
-      setContactStatus("error");
-      setContactFeedback(error instanceof Error && error.message ? error.message : contactForm.error);
-      if (window.turnstile && turnstileWidgetIdRef.current) {
-        window.turnstile.reset(turnstileWidgetIdRef.current);
-      }
-    }
-  }
-
   return (
     <>
-      <AnimatePresence>
-        {showLoader ? <Loader footer={copy.loaderFooter} status={copy.loaderStatus} /> : null}
-      </AnimatePresence>
-
       <main className="site">
         <div className="cursor-logo" aria-hidden="true" data-visible="false" ref={cursorLogoRef}>
           <Image src="/logo-transparent.png" alt="" width={148} height={148} loading="eager" />
@@ -3035,99 +2576,18 @@ export function HomePageClient() {
         </section>
 
         <section className="contact" id="contact">
-          <div className="section-grid">
-            <div className="reveal reveal-left">
+          <div className="section-grid contact-grid">
+            <div className="contact-copy reveal reveal-left">
               <p className="section-label">{copy.contact.label}</p>
               <h2 className="section-title">{copy.contact.title}</h2>
-            </div>
-            <div
-              className="contact-panel reveal reveal-float delay-1"
-              onPointerLeave={handleSurfaceLeave}
-              onPointerMove={handleSurfaceMove}
-            >
-              <p className="contact-note">{copy.contact.text}</p>
-              <form className="contact-form" onSubmit={submitContactForm}>
-                <div aria-hidden="true" className="contact-trap">
-                  <label className="contact-field">
-                    <span className="contact-field-label">Company</span>
-                    <input
-                      autoComplete="off"
-                      className="contact-input"
-                      name="company"
-                      onChange={(event) => setContactCompany(event.target.value)}
-                      tabIndex={-1}
-                      type="text"
-                      value={contactCompany}
-                    />
-                  </label>
-                </div>
-                <div className="contact-form-grid">
-                  <label className="contact-field">
-                    <span className="contact-field-label">{contactForm.nameLabel}</span>
-                    <input
-                      autoComplete="name"
-                      className="contact-input"
-                      name="name"
-                      onChange={(event) => setContactName(event.target.value)}
-                      placeholder={contactForm.namePlaceholder}
-                      required
-                      type="text"
-                      value={contactName}
-                    />
-                  </label>
-                  <label className="contact-field">
-                    <span className="contact-field-label">{contactForm.emailLabel}</span>
-                    <input
-                      autoComplete="email"
-                      className="contact-input"
-                      name="email"
-                      onChange={(event) => setContactEmail(event.target.value)}
-                      placeholder={contactForm.emailPlaceholder}
-                      required
-                      type="email"
-                      value={contactEmail}
-                    />
-                  </label>
-                </div>
-                <label className="contact-field contact-field-message">
-                  <span className="contact-field-label">{contactForm.messageLabel}</span>
-                  <textarea
-                    className="contact-input contact-textarea"
-                    name="message"
-                    onChange={(event) => setContactMessage(event.target.value)}
-                    placeholder={contactForm.messagePlaceholder}
-                    required
-                    rows={5}
-                    value={contactMessage}
-                  />
-                </label>
-                <div className="contact-turnstile-wrap">
-                  <span className="contact-field-label">{contactForm.turnstileLabel}</span>
-                  <div className="contact-turnstile" ref={turnstileContainerRef} />
-                </div>
-                <div className="contact-actions">
-                  <button
-                    className="button contact-submit"
-                    disabled={contactStatus === "submitting" || !turnstileReady}
-                    onPointerLeave={handleSurfaceLeave}
-                    onPointerMove={handleSurfaceMove}
-                    type="submit"
-                  >
-                    {contactStatus === "submitting" ? contactForm.sending : contactForm.submit}
-                  </button>
-                  <a className="contact-email-plain" href={`mailto:${primaryEmail}`}>
-                    Email: {primaryEmail}
-                  </a>
-                </div>
-                <p
-                  aria-live="polite"
-                  className={`contact-feedback${contactStatus === "success" ? " is-success" : ""}${
-                    contactStatus === "error" ? " is-error" : ""
-                  }`}
-                >
-                  {contactFeedback}
-                </p>
-              </form>
+              <a
+                className="button contact-email-button"
+                href={`mailto:${primaryEmail}`}
+                onPointerLeave={handleSurfaceLeave}
+                onPointerMove={handleSurfaceMove}
+              >
+                Email: {primaryEmail}
+              </a>
             </div>
           </div>
         </section>
