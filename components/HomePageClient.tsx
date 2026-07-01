@@ -431,6 +431,8 @@ const onboardingSteps = [
 ] as const;
 
 type OnboardingSpotlight = {
+  cameraX: number;
+  cameraY: number;
   centerX: number;
   centerY: number;
   height: number;
@@ -2193,13 +2195,23 @@ export function HomePageClient() {
 
       const rect = target.getBoundingClientRect();
       const pad = window.matchMedia("(max-width: 720px)").matches ? 22 : 32;
+      const isMobile = window.matchMedia("(max-width: 720px)").matches;
+      const focusX = rect.left + rect.width / 2;
+      const focusY = rect.top + rect.height / 2;
+      const cameraStrength = isMobile ? 0.08 : 0.14;
+      const maxShiftX = isMobile ? 18 : 46;
+      const maxShiftY = isMobile ? 16 : 34;
+      const cameraX = reduceMotion ? 0 : clamp((window.innerWidth / 2 - focusX) * cameraStrength, -maxShiftX, maxShiftX);
+      const cameraY = reduceMotion ? 0 : clamp((window.innerHeight * 0.42 - focusY) * cameraStrength, -maxShiftY, maxShiftY);
 
       setOnboardingSpotlight({
-        centerX: Math.round(rect.left + rect.width / 2),
-        centerY: Math.round(rect.top + rect.height / 2),
+        cameraX: Math.round(cameraX),
+        cameraY: Math.round(cameraY),
+        centerX: Math.round(focusX + cameraX),
+        centerY: Math.round(focusY + cameraY),
         height: Math.round(rect.height + pad * 2),
-        left: Math.round(rect.left - pad),
-        top: Math.round(rect.top - pad),
+        left: Math.round(rect.left - pad + cameraX),
+        top: Math.round(rect.top - pad + cameraY),
         width: Math.round(rect.width + pad * 2),
       });
     };
@@ -2222,7 +2234,7 @@ export function HomePageClient() {
       window.removeEventListener("resize", requestUpdate);
       window.removeEventListener("scroll", requestUpdate);
     };
-  }, [activeOnboardingStep.selector, onboardingOpen]);
+  }, [activeOnboardingStep.selector, onboardingOpen, reduceMotion]);
 
   useEffect(() => {
     let frame: number | undefined;
@@ -2557,7 +2569,15 @@ export function HomePageClient() {
         {showLoader || showJourneyLoader ? <Loader footer={copy.loaderFooter} status={copy.loaderStatus} /> : null}
       </AnimatePresence>
 
-      <main className="site">
+      <main
+        className="site"
+        style={
+          {
+            "--onboarding-camera-x": `${onboardingSpotlight?.cameraX ?? 0}px`,
+            "--onboarding-camera-y": `${onboardingSpotlight?.cameraY ?? 0}px`,
+          } as CSSProperties
+        }
+      >
         <div className="cursor-logo" aria-hidden="true" data-visible="false" ref={cursorLogoRef}>
           <Image src="/logo-transparent.png" alt="" width={148} height={148} loading="eager" />
         </div>
@@ -2866,6 +2886,8 @@ export function HomePageClient() {
               style={
                 {
                   "--spotlight-height": `${onboardingSpotlight?.height ?? 220}px`,
+                  "--onboarding-camera-x": `${onboardingSpotlight?.cameraX ?? 0}px`,
+                  "--onboarding-camera-y": `${onboardingSpotlight?.cameraY ?? 0}px`,
                   "--spotlight-center-x": `${onboardingSpotlight?.centerX ?? 0}px`,
                   "--spotlight-center-y": `${onboardingSpotlight?.centerY ?? 0}px`,
                   "--spotlight-left": `${onboardingSpotlight?.left ?? 0}px`,

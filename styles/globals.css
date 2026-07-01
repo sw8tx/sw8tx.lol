@@ -20,6 +20,8 @@
   --scroll-drift-wide: 0px;
   --scroll-float: 0px;
   --scroll-float-soft: 0px;
+  --onboarding-camera-x: 0px;
+  --onboarding-camera-y: 0px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --font-serif: "Cormorant Garamond", "Baskerville", "Libre Baskerville", Georgia, serif;
   --font-script: "Brush Script MT", "Segoe Script", cursive;
@@ -825,6 +827,8 @@ img {
 }
 
 .onboarding-overlay {
+  --onboarding-camera-x: 0px;
+  --onboarding-camera-y: 0px;
   --spotlight-center-x: 0px;
   --spotlight-center-y: 0px;
   --spotlight-height: 220px;
@@ -835,6 +839,19 @@ img {
   inset: 0;
   z-index: 135;
   pointer-events: auto;
+}
+
+body.onboarding-open .nav,
+body.onboarding-open .draggable-logo-layer,
+body.onboarding-open .hero,
+body.onboarding-open .motion-strip,
+body.onboarding-open .section,
+body.onboarding-open .contact,
+body.onboarding-open .footer {
+  transform: translate3d(var(--onboarding-camera-x), var(--onboarding-camera-y), 0) scale(1.012);
+  transform-origin: center;
+  transition: transform 760ms var(--ease), filter 760ms var(--ease);
+  will-change: transform;
 }
 
 .onboarding-overlay::before {
