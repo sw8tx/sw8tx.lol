@@ -419,9 +419,8 @@ const onboardingSteps = [
   },
   {
     selector: ".scroll-cue",
-    title: "Explore the site.",
-    body: "This opens the next part of the website. Feel free to look around and send feedback.",
-    placement: "top",
+    title: "Explore the Site",
+    body: "This opens the next part of the website.",
   },
   {
     selector: ".hero-actions .button.primary",
@@ -433,9 +432,12 @@ const onboardingSteps = [
 type OnboardingSpotlight = {
   cameraX: number;
   cameraY: number;
+  cameraScale: number;
   centerX: number;
   centerY: number;
   height: number;
+  labelX: number;
+  labelY: number;
   left: number;
   top: number;
   width: number;
@@ -2194,25 +2196,36 @@ export function HomePageClient() {
       setActiveTarget(target);
 
       const rect = target.getBoundingClientRect();
-      const pad = window.matchMedia("(max-width: 720px)").matches ? 22 : 32;
       const isMobile = window.matchMedia("(max-width: 720px)").matches;
+      const pad = isMobile ? 24 : 34;
       const focusX = rect.left + rect.width / 2;
       const focusY = rect.top + rect.height / 2;
-      const cameraStrength = isMobile ? 0.08 : 0.14;
-      const maxShiftX = isMobile ? 18 : 46;
-      const maxShiftY = isMobile ? 16 : 34;
-      const cameraX = reduceMotion ? 0 : clamp((window.innerWidth / 2 - focusX) * cameraStrength, -maxShiftX, maxShiftX);
-      const cameraY = reduceMotion ? 0 : clamp((window.innerHeight * 0.42 - focusY) * cameraStrength, -maxShiftY, maxShiftY);
+      const cameraScale = reduceMotion ? 1 : isMobile ? 1.28 : 1.42;
+      const desiredX = window.innerWidth * 0.5;
+      const desiredY = window.innerHeight * (activeOnboardingStep.selector === ".scroll-cue" ? 0.52 : 0.4);
+      const cameraX = reduceMotion ? 0 : desiredX - focusX * cameraScale;
+      const cameraY = reduceMotion ? 0 : desiredY - focusY * cameraScale;
+      const nextLeft = rect.left * cameraScale + cameraX - pad;
+      const nextTop = rect.top * cameraScale + cameraY - pad;
+      const nextWidth = rect.width * cameraScale + pad * 2;
+      const nextHeight = rect.height * cameraScale + pad * 2;
+      const nextCenterX = nextLeft + nextWidth / 2;
+      const nextCenterY = nextTop + nextHeight / 2;
+      const placeLabelBelow = nextCenterY < window.innerHeight * 0.54;
+      const rawLabelY = placeLabelBelow ? nextTop + nextHeight + 22 : nextTop - 86;
 
       setOnboardingSpotlight({
         cameraX: Math.round(cameraX),
         cameraY: Math.round(cameraY),
-        centerX: Math.round(focusX + cameraX),
-        centerY: Math.round(focusY + cameraY),
-        height: Math.round(rect.height + pad * 2),
-        left: Math.round(rect.left - pad + cameraX),
-        top: Math.round(rect.top - pad + cameraY),
-        width: Math.round(rect.width + pad * 2),
+        cameraScale,
+        centerX: Math.round(nextCenterX),
+        centerY: Math.round(nextCenterY),
+        height: Math.round(nextHeight),
+        labelX: Math.round(clamp(nextCenterX, isMobile ? 116 : 160, window.innerWidth - (isMobile ? 116 : 160))),
+        labelY: Math.round(clamp(rawLabelY, 86, window.innerHeight - 126)),
+        left: Math.round(nextLeft),
+        top: Math.round(nextTop),
+        width: Math.round(nextWidth),
       });
     };
 
@@ -2575,6 +2588,7 @@ export function HomePageClient() {
           {
             "--onboarding-camera-x": `${onboardingSpotlight?.cameraX ?? 0}px`,
             "--onboarding-camera-y": `${onboardingSpotlight?.cameraY ?? 0}px`,
+            "--onboarding-camera-scale": `${onboardingSpotlight?.cameraScale ?? 1}`,
           } as CSSProperties
         }
       >
@@ -2888,6 +2902,9 @@ export function HomePageClient() {
                   "--spotlight-height": `${onboardingSpotlight?.height ?? 220}px`,
                   "--onboarding-camera-x": `${onboardingSpotlight?.cameraX ?? 0}px`,
                   "--onboarding-camera-y": `${onboardingSpotlight?.cameraY ?? 0}px`,
+                  "--onboarding-camera-scale": `${onboardingSpotlight?.cameraScale ?? 1}`,
+                  "--onboarding-label-x": `${onboardingSpotlight?.labelX ?? 0}px`,
+                  "--onboarding-label-y": `${onboardingSpotlight?.labelY ?? 0}px`,
                   "--spotlight-center-x": `${onboardingSpotlight?.centerX ?? 0}px`,
                   "--spotlight-center-y": `${onboardingSpotlight?.centerY ?? 0}px`,
                   "--spotlight-left": `${onboardingSpotlight?.left ?? 0}px`,
@@ -2919,13 +2936,8 @@ export function HomePageClient() {
                 key={onboardingStep}
                 transition={{ duration: reduceMotion ? 0.12 : 0.42, ease: [0.16, 1, 0.3, 1] }}
               >
-                <span className="onboarding-kicker">Sparkle guide</span>
                 <h2>{activeOnboardingStep.title}</h2>
-                <p>{activeOnboardingStep.body}</p>
                 <div className="onboarding-actions">
-                  <span>
-                    {onboardingStep + 1}/{onboardingSteps.length}
-                  </span>
                   <button className="onboarding-next" onClick={goToNextOnboardingStep} type="button">
                     {onboardingIsLastStep ? "Start journey" : "Next"}
                   </button>
