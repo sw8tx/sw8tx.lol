@@ -1816,6 +1816,7 @@ export function HomePageClient() {
   const cursorLogoRef = useRef<HTMLDivElement | null>(null);
   const heroLogoHoldTimer = useRef<number | undefined>(undefined);
   const heroLogoPointerPoint = useRef<{ x: number; y: number } | null>(null);
+  const onboardingCameraRef = useRef({ scale: 1, x: 0, y: 0 });
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -2192,7 +2193,14 @@ export function HomePageClient() {
 
       setActiveTarget(target);
 
-      const rect = target.getBoundingClientRect();
+      const measuredRect = target.getBoundingClientRect();
+      const currentCamera = onboardingCameraRef.current;
+      const rect = {
+        height: measuredRect.height / currentCamera.scale,
+        left: (measuredRect.left - currentCamera.x) / currentCamera.scale,
+        top: (measuredRect.top - currentCamera.y) / currentCamera.scale,
+        width: measuredRect.width / currentCamera.scale,
+      };
       const isMobile = window.matchMedia("(max-width: 720px)").matches;
       const pad = isMobile ? 24 : 34;
       const focusX = rect.left + rect.width / 2;
@@ -2211,7 +2219,7 @@ export function HomePageClient() {
       const placeLabelBelow = nextCenterY < window.innerHeight * 0.54;
       const rawLabelY = placeLabelBelow ? nextTop + nextHeight + 22 : nextTop - 86;
 
-      setOnboardingSpotlight({
+      const nextSpotlight = {
         cameraX: Math.round(cameraX),
         cameraY: Math.round(cameraY),
         cameraScale,
@@ -2223,7 +2231,14 @@ export function HomePageClient() {
         left: Math.round(nextLeft),
         top: Math.round(nextTop),
         width: Math.round(nextWidth),
-      });
+      };
+
+      onboardingCameraRef.current = {
+        scale: cameraScale,
+        x: nextSpotlight.cameraX,
+        y: nextSpotlight.cameraY,
+      };
+      setOnboardingSpotlight(nextSpotlight);
     };
 
     const requestUpdate = () => {
@@ -2241,6 +2256,7 @@ export function HomePageClient() {
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
       activeTarget?.classList.remove("is-onboarding-target");
+      onboardingCameraRef.current = { scale: 1, x: 0, y: 0 };
       window.removeEventListener("resize", requestUpdate);
       window.removeEventListener("scroll", requestUpdate);
     };
@@ -2460,6 +2476,7 @@ export function HomePageClient() {
     }
 
     setOnboardingOpen(false);
+    onboardingCameraRef.current = { scale: 1, x: 0, y: 0 };
     setShowJourneyLoader(true);
 
     window.setTimeout(() => {
