@@ -83,7 +83,7 @@ export function LegalPage({ tone, label, title, updated, intro, sections }: Lega
       </section>
 
       <footer className="legal-footer">
-        <span>(C) {year} Sparkle / Tyler Osthoff</span>
+        <span>(C) {year} Sparkle / Tyler</span>
         <div className="footer-links">
           <Link className="terms" href="/tos">Terms</Link>
           <Link className="privacy" href="/privacy">Privacy</Link>

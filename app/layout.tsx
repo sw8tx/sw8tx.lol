@@ -3,18 +3,18 @@ import "../styles/globals.css";
 
 export const metadata: Metadata = {
   title: "sw8tx | Sparkle Custom Animated Websites and Portfolios",
-  description: "sw8tx.lol is the Sparkle portfolio by Tyler Osthoff: custom animated websites, landing pages, portfolios, UI/UX design, responsive frontend and performance-focused web design.",
+  description: "sw8tx.lol is the Sparkle portfolio by Tyler: custom animated websites, landing pages, portfolios, UI/UX design, responsive frontend and performance-focused web design.",
   metadataBase: new URL("https://sw8tx.lol"),
   applicationName: "Sparkle",
-  authors: [{ name: "Tyler Osthoff", url: "https://sw8tx.lol" }],
-  creator: "Tyler Osthoff",
+  authors: [{ name: "Tyler", url: "https://sw8tx.lol" }],
+  creator: "Tyler",
   publisher: "Sparkle",
   category: "portfolio",
   keywords: [
     "sw8tx",
     "sw8tx.lol",
     "Sparkle",
-    "Tyler Osthoff",
+    "Tyler",
     "custom animated websites",
     "animated portfolio",
     "landing page design",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "sw8tx | Sparkle Custom Animated Websites and Portfolios",
-    description: "Custom animated websites, landing pages, portfolios and responsive frontend by Tyler Osthoff.",
+    description: "Custom animated websites, landing pages, portfolios and responsive frontend by Tyler.",
     url: "https://sw8tx.lol",
     siteName: "Sparkle",
     images: [{ url: "/logo-transparent.png", width: 1024, height: 1024, alt: "Sparkle Logo" }],
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "sw8tx | Sparkle Custom Animated Websites and Portfolios",
-    description: "Custom animated websites, landing pages, portfolios and responsive frontend by Tyler Osthoff.",
+    description: "Custom animated websites, landing pages, portfolios and responsive frontend by Tyler.",
     images: ["/logo-transparent.png"],
   },
   icons: {
@@ -72,11 +72,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     url: "https://sw8tx.lol",
     creator: {
       "@type": "Person",
-      name: "Tyler Osthoff",
+      name: "Tyler",
       url: "https://sw8tx.lol",
     },
     description:
-      "Custom animated websites, landing pages, portfolios, UI/UX design and responsive frontend by Tyler Osthoff.",
+      "Custom animated websites, landing pages, portfolios, UI/UX design and responsive frontend by Tyler.",
     inLanguage: ["en", "de"],
   };
 

@@ -8,7 +8,7 @@ import type {
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const primaryEmailParts = ["info", "tylerosthoff", "xyz"] as const;
 const primaryEmail = `${primaryEmailParts[0]}@${primaryEmailParts[1]}.${primaryEmailParts[2]}`;
@@ -222,7 +222,7 @@ const siteCopy = {
     hero: {
       eyebrow: "Web design and frontend",
       title: "Sparkle",
-      credit: "by Tyler Osthoff - Web Design & Frontend",
+      credit: "by Tyler - Web Design & Frontend",
       tagline: "Websites with soul",
       text:
         "Customized animated portfolios, landing pages and brand sites for people who see a website as an investment in presence, trust and momentum.",
@@ -430,7 +430,7 @@ const siteCopy = {
     hero: {
       eyebrow: "Webdesign und Frontend",
       title: "Sparkle",
-      credit: "by Tyler Osthoff - Webdesign & Frontend",
+      credit: "by Tyler - Webdesign & Frontend",
       tagline: "Websites mit Charakter",
       text:
         "Individuell animierte Portfolios, Landingpages und Brand-Sites für Menschen, die ihre Website als Investment in Wirkung, Vertrauen, Conversion und Momentum sehen.",
@@ -1500,6 +1500,195 @@ function DraggableLogo({
   );
 }
 
+function ContactCubeWidget({
+  initialY,
+  side,
+  stageRef,
+  storageKey,
+}: {
+  initialY: number;
+  side: "left" | "right";
+  stageRef: React.RefObject<HTMLDivElement | null>;
+  storageKey: string;
+}) {
+  const reduceMotion = useReducedMotion();
+  const widgetRef = useRef<HTMLDivElement | null>(null);
+  const dragStateRef = useRef<{
+    pointerId: number;
+    startPointerX: number;
+    startPointerY: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const [positionReady, setPositionReady] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: initialY });
+  const [isDragging, setIsDragging] = useState(false);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const getBounds = useCallback(() => {
+    const stage = stageRef.current?.getBoundingClientRect();
+    const widget = widgetRef.current?.getBoundingClientRect();
+    const stageLeft = stage?.left ?? 0;
+    const stageTop = stage?.top ?? 0;
+    const widgetWidth = widget?.width ?? 140;
+    const widgetHeight = widget?.height ?? 140;
+    const gutter = 10;
+
+    return {
+      minX: -stageLeft + gutter,
+      maxX: Math.max(-stageLeft + gutter, window.innerWidth - stageLeft - widgetWidth - gutter),
+      minY: -stageTop + gutter,
+      maxY: Math.max(-stageTop + gutter, window.innerHeight - stageTop - widgetHeight - gutter),
+    };
+  }, [stageRef]);
+
+  const clampPosition = useCallback((nextX: number, nextY: number) => {
+    const bounds = getBounds();
+
+    return {
+      x: clamp(nextX, bounds.minX, bounds.maxX),
+      y: clamp(nextY, bounds.minY, bounds.maxY),
+    };
+  }, [getBounds]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const hostWidth = stageRef.current?.clientWidth ?? window.innerWidth;
+      const hostHeight = stageRef.current?.clientHeight ?? 260;
+      const widgetRect = widgetRef.current?.getBoundingClientRect();
+      const widgetWidth = widgetRect?.width ?? 140;
+      const widgetHeight = widgetRect?.height ?? widgetWidth;
+      const gutter = 18;
+      const centerX = hostWidth / 2 - widgetWidth / 2;
+      const spread = Math.min(240, Math.max(150, hostWidth * 0.28));
+      const fallback = {
+        x:
+          side === "right"
+            ? Math.min(hostWidth - widgetWidth - gutter, centerX + spread / 2)
+            : Math.max(gutter, centerX - spread / 2),
+        y: Math.max(gutter, Math.min(hostHeight - widgetHeight - gutter, hostHeight * 0.45)),
+      };
+
+      const storedPosition = window.localStorage.getItem(storageKey);
+      if (storedPosition) {
+        try {
+          const parsed = JSON.parse(storedPosition) as { x?: unknown; y?: unknown };
+          if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+            setPosition(clampPosition(parsed.x, parsed.y));
+          } else {
+            setPosition(fallback);
+          }
+        } catch {
+          setPosition(fallback);
+        }
+      } else {
+        setPosition(fallback);
+      }
+
+      setPositionReady(true);
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [clampPosition, initialY, side, stageRef, storageKey]);
+
+  useEffect(() => {
+    if (!positionReady) return;
+    window.localStorage.setItem(storageKey, JSON.stringify(position));
+  }, [position, positionReady, storageKey]);
+
+  function handlePointerLeave() {
+    if (!isDragging) setTilt({ x: 0, y: 0 });
+  }
+
+  function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (reduceMotion) return;
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startPointerX: event.clientX,
+      startPointerY: event.clientY,
+      startX: position.x,
+      startY: position.y,
+    };
+    setIsDragging(true);
+  }
+
+  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+
+    setTilt({
+      x: clamp(-y * 12, -12, 12),
+      y: clamp(x * 14, -14, 14),
+    });
+
+    const dragState = dragStateRef.current;
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+    const nextX = dragState.startX + (event.clientX - dragState.startPointerX);
+    const nextY = dragState.startY + (event.clientY - dragState.startPointerY);
+    setPosition(clampPosition(nextX, nextY));
+  }
+
+  function finishPointerInteraction(event: ReactPointerEvent<HTMLDivElement>) {
+    const dragState = dragStateRef.current;
+    if (dragState && dragState.pointerId === event.pointerId) {
+      dragStateRef.current = null;
+      setIsDragging(false);
+      setTilt({ x: 0, y: 0 });
+    }
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }
+
+  return (
+    <motion.div
+      aria-hidden="true"
+      className={`contact-cube-widget is-${side}`}
+      onPointerCancel={finishPointerInteraction}
+      onPointerDown={handlePointerDown}
+      onPointerLeave={handlePointerLeave}
+      onPointerMove={handlePointerMove}
+      onPointerUp={finishPointerInteraction}
+      ref={widgetRef}
+      style={
+        {
+          opacity: positionReady ? 1 : 0,
+          left: position.x,
+          top: position.y,
+          "--tilt-x": `${tilt.x}deg`,
+          "--tilt-y": `${tilt.y}deg`,
+        } as CSSProperties
+      }
+      whileHover={reduceMotion ? undefined : { scale: 1.02 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+    >
+      <div className="contact-cube-shell">
+        <div className="contact-cube-tilt" aria-hidden="true">
+          <div className={`contact-cube-spin is-${side}`}>
+            <div className="contact-cube" aria-hidden="true">
+              <span className="contact-cube-face contact-cube-face-front">
+                <Image src="/logo-transparent.png" alt="" width={88} height={88} loading="lazy" />
+              </span>
+              <span className="contact-cube-face contact-cube-face-back" />
+              <span className="contact-cube-face contact-cube-face-left" />
+              <span className="contact-cube-face contact-cube-face-right" />
+              <span className="contact-cube-face contact-cube-face-top" />
+              <span className="contact-cube-face contact-cube-face-bottom" />
+              <span className="contact-cube-edge contact-cube-edge-1" />
+              <span className="contact-cube-edge contact-cube-edge-2" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export function HomePageClient() {
   const reduceMotion = useReducedMotion();
   const cursorLogoRef = useRef<HTMLDivElement | null>(null);
@@ -1528,6 +1717,7 @@ export function HomePageClient() {
   const visibleReviewText = reduceMotion ? activeReview.text : typedReviewText;
   const heroRevealOffset = 0.02;
   const year = new Date().getFullYear();
+  const contactCubeStageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const id = window.setTimeout(() => {
@@ -2315,17 +2505,9 @@ export function HomePageClient() {
             </motion.h1>
             <motion.p
               animate={{ opacity: 1, y: 0 }}
-              className="hero-credit"
-              initial={{ opacity: 0, y: 10 }}
-              transition={{ delay: heroRevealOffset + 0.26, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {copy.hero.credit}
-            </motion.p>
-            <motion.p
-              animate={{ opacity: 1, y: 0 }}
               className="hero-tagline"
               initial={{ opacity: 0, y: 14 }}
-              transition={{ delay: heroRevealOffset + 0.34, duration: 0.64, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: heroRevealOffset + 0.28, duration: 0.64, ease: [0.16, 1, 0.3, 1] }}
             >
               {copy.hero.tagline}
             </motion.p>
@@ -2333,7 +2515,7 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="hero-text"
               initial={{ opacity: 0, y: 14 }}
-              transition={{ delay: heroRevealOffset + 0.44, duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: heroRevealOffset + 0.38, duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
             >
               {copy.hero.text}
             </motion.p>
@@ -2342,7 +2524,7 @@ export function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               className="hero-actions"
               initial={{ opacity: 0, y: 14 }}
-              transition={{ delay: heroRevealOffset + 0.56, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: heroRevealOffset + 0.5, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
               <motion.a
                 className="button primary"
@@ -2376,7 +2558,7 @@ export function HomePageClient() {
                   onPointerLeave={handleSurfaceLeave}
                   onPointerMove={handleSurfaceMove}
                   transition={{
-                    delay: heroRevealOffset + 0.66 + index * 0.09,
+                    delay: heroRevealOffset + 0.6 + index * 0.09,
                     duration: 0.68,
                     ease: [0.16, 1, 0.3, 1],
                   }}
@@ -2580,6 +2762,20 @@ export function HomePageClient() {
             <div className="contact-copy reveal reveal-left">
               <p className="section-label">{copy.contact.label}</p>
               <h2 className="section-title">{copy.contact.title}</h2>
+              <div className="contact-cube-stage" ref={contactCubeStageRef}>
+                <ContactCubeWidget
+                  initialY={18}
+                  side="left"
+                  stageRef={contactCubeStageRef}
+                  storageKey="sparkle-contact-card-center-v2-left"
+                />
+                <ContactCubeWidget
+                  initialY={18}
+                  side="right"
+                  stageRef={contactCubeStageRef}
+                  storageKey="sparkle-contact-card-center-v2-right"
+                />
+              </div>
               <a
                 className="button contact-email-button"
                 href={`mailto:${primaryEmail}`}
