@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties } from "react";
 
 export type LegalSection = {
   title: string;
@@ -20,8 +18,6 @@ type LegalPageProps = {
   sections: LegalSection[];
 };
 
-const sectionColors = ["#0050d8", "#4db6e5", "#18bfa5", "#9bd3ff", "#2f9cff"];
-
 function obfuscateEmail(email: string) {
   return email.replace("@", " [at] ").replace(/\./g, " [dot] ");
 }
@@ -33,9 +29,6 @@ export function LegalPage({ tone, label, title, updated, intro, sections }: Lega
     <main className={`legal-page ${tone}`}>
       <nav className="legal-nav">
         <Link href="/" className="legal-brand" aria-label="Sparkle home">
-          <span className="legal-brand-mark">
-            <Image src="/logo-transparent.png" alt="" width={40} height={40} />
-          </span>
           <span className="legal-brand-name">Sparkle</span>
         </Link>
         <div className="legal-links">
@@ -52,15 +45,8 @@ export function LegalPage({ tone, label, title, updated, intro, sections }: Lega
         {intro && <p className="legal-intro">{intro}</p>}
 
         <div className="legal-sections">
-          {sections.map((section, index) => (
-            <article
-              className="legal-section"
-              key={section.title}
-              style={{
-                "--section-color": sectionColors[index % sectionColors.length],
-                "--section-delay": `${220 + index * 58}ms`,
-              } as CSSProperties}
-            >
+          {sections.map((section) => (
+            <article className="legal-section" key={section.title}>
               <h2>{section.title}</h2>
               <p>{section.content}</p>
               {section.contact && (
