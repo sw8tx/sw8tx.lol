@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "sw8tx | Sparkle Custom Animated Websites and Portfolios",
-  description: "sw8tx.lol is the Sparkle portfolio by Tyler: custom animated websites, landing pages, portfolios, UI/UX design, responsive frontend and performance-focused web design.",
+  title: "made by Sparkle",
+  description: "made by Sparkle",
   metadataBase: new URL("https://sw8tx.lol"),
   applicationName: "Sparkle",
   authors: [{ name: "Tyler", url: "https://sw8tx.lol" }],
