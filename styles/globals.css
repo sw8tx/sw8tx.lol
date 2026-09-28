@@ -47,7 +47,7 @@ body:has(.legal-page) {
 
 .sparkle-letter {
   display: inline-block;
-  transition: transform 140ms ease-out;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
