@@ -52,6 +52,17 @@ export function HomePageClient() {
           );
         })}
       </p>
+
+      <footer className="sparkle-footer" aria-label="Legal links and contact">
+        <nav className="sparkle-legal" aria-label="Legal">
+          <a href="/tos">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/refund">Refund</a>
+        </nav>
+        <a className="sparkle-email" href="mailto:info@tylerosthoff.xyz">
+          info@tylerosthoff.xyz
+        </a>
+      </footer>
     </main>
   );
 }
