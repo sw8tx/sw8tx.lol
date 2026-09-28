@@ -26,13 +26,7 @@ body {
   min-height: 100svh;
   width: 100%;
   place-items: center;
-  cursor: grab;
-  touch-action: none;
   user-select: none;
-}
-
-.sparkle-stage:active {
-  cursor: grabbing;
 }
 
 .sparkle-credit {
