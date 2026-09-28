@@ -34,9 +34,9 @@ export function HomePageClient() {
           const distanceX = letterX - (cursor?.x ?? 0.5);
           const distanceY = letterY - (cursor?.y ?? 0.5);
           const distance = Math.hypot(distanceX, distanceY);
-          const force = cursor ? Math.max(0, 1 - distance / 0.18) ** 2 : 0;
-          const offsetX = distance === 0 ? 0 : (distanceX / distance) * force * 48;
-          const offsetY = distance === 0 ? 0 : (distanceY / distance) * force * 48;
+          const force = cursor ? Math.max(0, 1 - distance / 0.22) ** 2 : 0;
+          const offsetX = distance === 0 ? 0 : (distanceX / distance) * force * 72;
+          const offsetY = distance === 0 ? 0 : (distanceY / distance) * force * 60;
 
           return (
             <span
@@ -47,7 +47,12 @@ export function HomePageClient() {
               }}
               aria-hidden="true"
             >
-              {isSpace ? "\u00a0" : letter}
+              <span
+                className="sparkle-letter-sway"
+                style={{ animationDelay: `${index * -0.16}s` }}
+              >
+                {isSpace ? "\u00a0" : letter}
+              </span>
             </span>
           );
         })}
