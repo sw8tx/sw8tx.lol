@@ -71,6 +71,7 @@ export function HomePageClient() {
           <a href="/refund">Refund</a>
         </nav>
         <a className="sparkle-email" href="mailto:info@tylerosthoff.xyz">
+          <span className="sparkle-email-bubble" aria-hidden="true">✦</span>
           info@tylerosthoff.xyz
         </a>
       </footer>

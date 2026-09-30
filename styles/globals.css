@@ -134,15 +134,54 @@ body:has(.legal-page) {
 }
 
 .sparkle-email {
+  position: relative;
   border: 1px solid #d2d2d2;
   border-radius: 999px;
   padding: 8px 12px;
   color: #777777 !important;
+  transition: border-color 140ms ease-out, color 140ms ease-out, transform 140ms ease-out;
 }
 
 .sparkle-email:hover {
   border-color: #999999;
   color: #333333 !important;
+  transform: translateY(-1px);
+}
+
+.sparkle-email-bubble {
+  position: absolute;
+  right: 12px;
+  bottom: calc(100% + 8px);
+  display: grid;
+  width: 22px;
+  height: 18px;
+  place-items: center;
+  border: 1px solid #d2d2d2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #8b8b8b;
+  font-size: 0.65rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.82);
+}
+
+.sparkle-email-bubble::after {
+  position: absolute;
+  right: 4px;
+  bottom: -4px;
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid #d2d2d2;
+  border-bottom: 1px solid #d2d2d2;
+  background: #ffffff;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.sparkle-email:hover .sparkle-email-bubble,
+.sparkle-email:focus-visible .sparkle-email-bubble {
+  animation: emailBubble 1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (max-width: 560px) {
@@ -181,6 +220,27 @@ body:has(.legal-page) {
 
   50% {
     transform: translateY(-3px) rotate(1.2deg);
+  }
+}
+
+@keyframes emailBubble {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.82);
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.92);
   }
 }
 
