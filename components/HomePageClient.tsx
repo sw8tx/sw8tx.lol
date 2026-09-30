@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const message = "made by Sparkle";
 const letters = Array.from(message);
@@ -10,6 +10,14 @@ type CursorPosition = { x: number; y: number } | null;
 
 export function HomePageClient() {
   const [cursor, setCursor] = useState<CursorPosition>(null);
+  const [showEmailBubble, setShowEmailBubble] = useState(false);
+  const emailBubbleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function triggerEmailBubble() {
+    if (emailBubbleTimer.current) clearTimeout(emailBubbleTimer.current);
+    setShowEmailBubble(true);
+    emailBubbleTimer.current = setTimeout(() => setShowEmailBubble(false), 1000);
+  }
 
   function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -70,8 +78,13 @@ export function HomePageClient() {
           <a href="/privacy">Privacy</a>
           <a href="/refund">Refund</a>
         </nav>
-        <a className="sparkle-email" href="mailto:info@tylerosthoff.xyz">
-          <span className="sparkle-email-bubble" aria-hidden="true">✦</span>
+        <a
+          className={`sparkle-email${showEmailBubble ? " bubble-active" : ""}`}
+          href="mailto:info@tylerosthoff.xyz"
+          onPointerEnter={triggerEmailBubble}
+          onFocus={triggerEmailBubble}
+        >
+          <span className="sparkle-email-bubble" aria-hidden="true">say hi</span>
           info@tylerosthoff.xyz
         </a>
       </footer>
