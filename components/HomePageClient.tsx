@@ -84,7 +84,9 @@ export function HomePageClient() {
           onPointerEnter={triggerEmailBubble}
           onFocus={triggerEmailBubble}
         >
-          <span className="sparkle-email-bubble" aria-hidden="true">say hi</span>
+          <span className="sparkle-email-bubble" aria-hidden="true">
+            <span className="sparkle-email-wave">👋</span>
+          </span>
           info@tylerosthoff.xyz
         </a>
       </footer>
