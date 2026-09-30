@@ -1,7 +1,7 @@
 :root {
   color-scheme: light;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffff;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #fafafa;
   color: #111111;
 }
 
@@ -14,7 +14,7 @@ body {
   width: 100%;
   min-height: 100%;
   margin: 0;
-  background: #ffffff;
+  background: #fafafa;
 }
 
 body {
@@ -26,22 +26,64 @@ body:has(.legal-page) {
 }
 
 .sparkle-stage {
+  --cursor-x: 50%;
+  --cursor-y: 50%;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
   min-height: 100svh;
   width: 100%;
   place-items: center;
+  background: #fafafa;
+  text-rendering: optimizeLegibility;
   user-select: none;
 }
 
+.sparkle-stage::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: radial-gradient(#d8d8d8 0.7px, transparent 0.7px);
+  background-position: center;
+  background-size: 28px 28px;
+  content: "";
+  mask-image: linear-gradient(to bottom, transparent 0%, black 35%, transparent 100%);
+  opacity: 0.2;
+}
+
+.sparkle-stage::after {
+  position: absolute;
+  top: var(--cursor-y);
+  left: var(--cursor-x);
+  z-index: -1;
+  width: min(42vw, 560px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 68%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 500ms ease, top 500ms cubic-bezier(0.22, 1, 0.36, 1), left 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sparkle-stage.has-cursor::after {
+  opacity: 0.72;
+}
+
 .sparkle-credit {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: baseline;
   margin: 0;
   color: #111111;
   font-size: clamp(2rem, 5vw, 5rem);
-  font-weight: 500;
+  font-weight: 450;
   letter-spacing: -0.03em;
   line-height: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
   white-space: pre;
 }
 

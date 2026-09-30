@@ -1,6 +1,6 @@
 "use client";
 
-import type { PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { useState } from "react";
 
 const message = "made by Sparkle";
@@ -21,7 +21,13 @@ export function HomePageClient() {
 
   return (
     <main
-      className="sparkle-stage"
+      className={`sparkle-stage${cursor ? " has-cursor" : ""}`}
+      style={
+        {
+          "--cursor-x": `${(cursor?.x ?? 0.5) * 100}%`,
+          "--cursor-y": `${(cursor?.y ?? 0.5) * 100}%`,
+        } as CSSProperties
+      }
       onPointerMove={handlePointerMove}
       onPointerLeave={() => setCursor(null)}
       aria-label="Interactive made by Sparkle lettering"
